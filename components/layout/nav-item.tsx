@@ -1,0 +1,54 @@
+"use client";
+
+import Link from "next/link";
+import type { NavigationItem } from "@/types/navigation";
+import { cn } from "@/lib/utils";
+
+type NavItemProps = {
+  item: NavigationItem;
+  isActive: boolean;
+  onNavigate?: () => void;
+};
+
+export function NavItem({ item, isActive, onNavigate }: NavItemProps) {
+  const Icon = item.icon;
+
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      className={cn(
+        "group flex items-start gap-3 rounded-xl border px-3 py-3 text-sm transition-colors",
+        isActive
+          ? "border-sidebar-primary/20 bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+          : "border-transparent text-sidebar-foreground hover:border-sidebar-border hover:bg-sidebar-accent"
+      )}
+    >
+      <span
+        className={cn(
+          "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg",
+          isActive
+            ? "bg-sidebar-primary-foreground/12"
+            : "bg-sidebar-accent text-sidebar-accent-foreground"
+        )}
+      >
+        <Icon className="size-4" />
+      </span>
+      <span className="min-w-0">
+        <span className="block font-medium">{item.label}</span>
+        {item.description ? (
+          <span
+            className={cn(
+              "mt-0.5 block text-xs",
+              isActive
+                ? "text-sidebar-primary-foreground/80"
+                : "text-muted-foreground"
+            )}
+          >
+            {item.description}
+          </span>
+        ) : null}
+      </span>
+    </Link>
+  );
+}
