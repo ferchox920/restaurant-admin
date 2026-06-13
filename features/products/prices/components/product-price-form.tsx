@@ -74,7 +74,15 @@ export function ProductPriceForm({
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-full" aria-invalid={Boolean(form.formState.errors.salesChannelId)}>
-                  <SelectValue />
+                  <SelectValue placeholder="Selecciona un canal">
+                    {(value) => {
+                      const channel = channels.find((item) => item.id === value);
+
+                      return channel
+                        ? `${channel.name}${!channel.active ? " (inactivo)" : ""}`
+                        : "Selecciona un canal";
+                    }}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {channels.map((channel) => (

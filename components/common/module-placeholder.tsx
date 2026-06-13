@@ -25,10 +25,12 @@ export function ModulePlaceholder({
         <Card className="bg-[linear-gradient(135deg,color-mix(in_oklch,var(--card),var(--sidebar-primary)_8%)_0%,var(--card)_100%)] shadow-sm">
           <CardHeader>
             <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-              <Clock3 className="size-3.5" />
+              <Clock3 aria-hidden="true" className="size-3.5" />
               {status}
             </div>
-            <CardTitle className="text-3xl">{title}</CardTitle>
+            <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground">
+              {title}
+            </h1>
           </CardHeader>
           <CardContent className="space-y-4 text-sm text-muted-foreground">
             <p>{description}</p>
@@ -58,18 +60,27 @@ export function ModulePlaceholder({
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground">
             <div className="flex items-start gap-2 rounded-xl bg-muted px-3 py-3">
-              <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-foreground" />
+              <ArrowUpRight
+                aria-hidden="true"
+                className="mt-0.5 size-4 shrink-0 text-foreground"
+              />
               <p>{notes}</p>
             </div>
             <div className="flex items-start gap-2 rounded-xl bg-muted px-3 py-3">
-              <Sparkles className="mt-0.5 size-4 shrink-0 text-foreground" />
+              <Sparkles
+                aria-hidden="true"
+                className="mt-0.5 size-4 shrink-0 text-foreground"
+              />
               <p>
                 Modulo en construccion. Esta pantalla no consume API, no monta
                 formularios y no expone tablas reales en Sprint 3.
               </p>
             </div>
             <div className="flex items-start gap-2 rounded-xl bg-muted px-3 py-3">
-              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-foreground" />
+              <ShieldCheck
+                aria-hidden="true"
+                className="mt-0.5 size-4 shrink-0 text-foreground"
+              />
               <p>
                 El acceso visual sigue gobernado por el rol autenticado y no
                 reemplaza la autorizacion real del backend.

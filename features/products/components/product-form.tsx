@@ -100,8 +100,17 @@ export function ProductForm({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl">
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isPending && !nextOpen) {
+          return;
+        }
+
+        onOpenChange(nextOpen);
+      }}
+    >
+      <DialogContent className="sm:max-w-xl" showCloseButton={!isPending}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -113,6 +122,7 @@ export function ProductForm({
             <Input
               id="product-name"
               placeholder="Ej. Latte grande"
+              disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.name)}
               {...form.register("name")}
             />
@@ -127,10 +137,11 @@ export function ProductForm({
             <div className="space-y-2">
               <Label htmlFor="product-sku">SKU</Label>
               <Input
-                id="product-sku"
-                placeholder="SKU opcional"
-                aria-invalid={Boolean(form.formState.errors.sku)}
-                {...form.register("sku")}
+              id="product-sku"
+              placeholder="SKU opcional"
+              disabled={isPending}
+              aria-invalid={Boolean(form.formState.errors.sku)}
+              {...form.register("sku")}
               />
               {form.formState.errors.sku ? (
                 <p className="text-sm text-destructive">
@@ -152,7 +163,21 @@ export function ProductForm({
                     }
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue />
+                      <SelectValue placeholder="Selecciona una categoria">
+                        {(value) => {
+                          if (!value || value === "__none__") {
+                            return "Sin categoria";
+                          }
+
+                          const category = categories.find(
+                            (item) => item.id === value
+                          );
+
+                          return category
+                            ? `${category.name}${!category.active ? " (inactiva)" : ""}`
+                            : "Selecciona una categoria";
+                        }}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="__none__">Sin categoria</SelectItem>
@@ -186,7 +211,11 @@ export function ProductForm({
                     onValueChange={(value) => field.onChange(value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue />
+                      <SelectValue placeholder="Selecciona una unidad">
+                        {(value) =>
+                          value ? formatProductUnit(value) : "Selecciona una unidad"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {productUnits.map((unit) => (
@@ -216,7 +245,13 @@ export function ProductForm({
                     onValueChange={(value) => field.onChange(value)}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue />
+                      <SelectValue placeholder="Selecciona un tipo">
+                        {(value) =>
+                          value
+                            ? formatStockManagementType(value)
+                            : "Selecciona un tipo"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {stockManagementTypes.map((stockManagementType) => (
@@ -244,6 +279,7 @@ export function ProductForm({
             <Textarea
               id="product-description"
               placeholder="Descripcion operativa del producto"
+              disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.description)}
               {...form.register("description")}
             />

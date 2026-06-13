@@ -11,12 +11,12 @@
 
 | Metodo | Ruta | Modulo frontend | Pantalla que lo consume | Roles esperados | Tipo | Datos principales enviados | Datos principales recibidos | Observaciones de UI |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `GET` | `/api/users` | Users | `/users` | `ADMIN` | `query` | filtros si existen en backend | lista de usuarios | Pantalla administrativa exclusiva. |
-| `POST` | `/api/users` | Users | `/users` alta | `ADMIN` | `mutation` | datos de usuario nuevo | usuario creado | Invalidar lista tras alta. |
-| `GET` | `/api/users/:id` | Users | `/users/[id]` | `ADMIN` | `query` | `id` en ruta | detalle de usuario | Cargar antes de editar o ver estado. |
-| `PATCH` | `/api/users/:id` | Users | `/users/[id]` edicion | `ADMIN` | `mutation` | campos editables del usuario | usuario actualizado | Refrescar detalle y lista. |
-| `PATCH` | `/api/users/:id/deactivate` | Users | `/users/[id]` accion | `ADMIN` | `mutation` | sin payload o motivo si el backend lo exige a futuro | usuario desactivado | Mostrar cambio de estado sin borrar historial. |
-| `PATCH` | `/api/users/:id/reactivate` | Users | `/users/[id]` accion | `ADMIN` | `mutation` | sin payload | usuario reactivado | Rehabilita operacion futura del usuario. |
+| `GET` | `/api/users` | Users | `/users` | `ADMIN` | `query` | sin filtros backend reales | array simple de `UserResponseDto` | Los filtros de UI son locales; no asumir `search`, `role` ni `active` server-side. |
+| `POST` | `/api/users` | Users | `/users` alta | `ADMIN` | `mutation` | `email`, `password`, `firstName`, `lastName`, `role` | `UserResponseDto` | Invalidar lista tras alta y nunca persistir la contrasena en UI. |
+| `GET` | `/api/users/:id` | Users | `/users/[id]` | `ADMIN` | `query` | `id` en ruta | `UserResponseDto` | Cargar antes de editar o ver estado. |
+| `PATCH` | `/api/users/:id` | Users | `/users/[id]` edicion | `ADMIN` | `mutation` | `email?`, `firstName?`, `lastName?`, `role?` | `UserResponseDto` | No incluir `active`, `password`, `id` ni timestamps. |
+| `PATCH` | `/api/users/:id/deactivate` | Users | `/users/[id]` accion | `ADMIN` | `mutation` | sin payload | `UserResponseDto` | Puede devolver `409` al intentar desactivar el ultimo `ADMIN` activo. |
+| `PATCH` | `/api/users/:id/reactivate` | Users | `/users/[id]` accion | `ADMIN` | `mutation` | sin payload | `UserResponseDto` | Rehabilita operacion futura del usuario. |
 
 ## Categories
 
@@ -100,8 +100,8 @@
 
 | Metodo | Ruta | Modulo frontend | Pantalla que lo consume | Roles esperados | Tipo | Datos principales enviados | Datos principales recibidos | Observaciones de UI |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `GET` | `/api/audit-logs` | Audit Logs | `/audit-logs` | `ADMIN`, `AUDITOR` | `query` | `userId`, `action`, `entityType`, `entityId`, `from`, `to`, `limit`, `offset` | lista de eventos de auditoria | Filtros sensibles; no auto-refrescar agresivamente al inicio. |
-| `GET` | `/api/audit-logs/:id` | Audit Logs | `/audit-logs/[id]` | `ADMIN`, `AUDITOR` | `query` | `id` | detalle con `beforeData`, `afterData`, `metadata` | Disenar lectura y trazabilidad, no accion. |
+| `GET` | `/api/audit-logs` | Audit Logs | `/audit-logs` | `ADMIN`, `AUDITOR` | `query` | `userId`, `action`, `entityType`, `entityId`, `from`, `to`, `limit`, `offset` | array simple de `AuditLogResponseDto` | No existe `total`; ordenar por `createdAt desc` y paginar con `offset/limit` reales. |
+| `GET` | `/api/audit-logs/:id` | Audit Logs | `/audit-logs/[id]` | `ADMIN`, `AUDITOR` | `query` | `id` | `AuditLogResponseDto` con `beforeData`, `afterData`, `metadata` | El actor viene como `userId`; no existe objeto `actor` embebido. |
 
 ## Reports
 

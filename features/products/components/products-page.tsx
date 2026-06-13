@@ -158,7 +158,7 @@ export function ProductsPage() {
       <PageHeader
         eyebrow="Catalogo"
         title="Productos"
-        description="Administra productos, su categoria operativa y su tipo de gestion sin crear stock, costos ni precios en Sprint 4."
+        description="Administra el catalogo de productos, su categoria, unidad de venta y modalidad de control de stock."
         actions={
           canMutate ? (
             <Button type="button" onClick={() => setIsCreateOpen(true)}>
@@ -232,7 +232,7 @@ export function ProductsPage() {
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         title="Nuevo producto"
-        description="Crea un producto basico del catalogo. Esta accion no crea stock, costo ni precio."
+        description="Registra un producto del catalogo. Luego podras gestionar sus costos, precios e inventario cuando corresponda."
         submitLabel="Crear producto"
         categories={categoriesQuery.data ?? []}
         isPending={createProductMutation.isPending}
@@ -248,7 +248,7 @@ export function ProductsPage() {
           }
         }}
         title="Editar producto"
-        description="Actualiza los datos visibles del producto sin afectar inventario, costos ni precios."
+        description="Actualiza la informacion comercial y operativa del producto."
         submitLabel="Guardar cambios"
         categories={categoriesQuery.data ?? []}
         initialValues={

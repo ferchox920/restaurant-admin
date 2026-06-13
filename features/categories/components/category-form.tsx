@@ -88,8 +88,17 @@ export function CategoryForm({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isPending && !nextOpen) {
+          return;
+        }
+
+        onOpenChange(nextOpen);
+      }}
+    >
+      <DialogContent showCloseButton={!isPending}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -101,6 +110,7 @@ export function CategoryForm({
             <Input
               id="category-name"
               placeholder="Ej. Cafeteria"
+              disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.name)}
               {...form.register("name")}
             />
@@ -116,6 +126,7 @@ export function CategoryForm({
             <Textarea
               id="category-description"
               placeholder="Descripcion operativa de la categoria"
+              disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.description)}
               {...form.register("description")}
             />

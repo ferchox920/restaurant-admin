@@ -17,6 +17,7 @@ export function NavItem({ item, isActive, onNavigate }: NavItemProps) {
     <Link
       href={item.href}
       onClick={onNavigate}
+      aria-current={isActive ? "page" : undefined}
       className={cn(
         "group flex items-start gap-3 rounded-xl border px-3 py-3 text-sm transition-colors",
         isActive
@@ -32,7 +33,7 @@ export function NavItem({ item, isActive, onNavigate }: NavItemProps) {
             : "bg-sidebar-accent text-sidebar-accent-foreground"
         )}
       >
-        <Icon className="size-4" />
+        <Icon aria-hidden="true" className="size-4" />
       </span>
       <span className="min-w-0">
         <span className="block font-medium">{item.label}</span>

@@ -17,11 +17,12 @@ export default function Home() {
       <section className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-3xl">{appName}</CardTitle>
+            <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground">
+              {appName}
+            </h1>
             <CardDescription>
-              Base tecnica inicial del panel administrativo. En este sprint la
-              aplicacion expone rutas placeholder, providers globales y una base
-              reusable de componentes UI.
+              Panel administrativo del MVP con catalogo, inventario, ventas,
+              reportes, usuarios y auditoria listos para demo operativa.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
@@ -29,17 +30,17 @@ export default function Home() {
               <CardHeader>
                 <CardTitle className="text-lg">Estado actual</CardTitle>
                 <CardDescription>
-                  Front Sprint 2 ya incorpora cliente API centralizado, login
-                  real, recuperacion de sesion y proteccion de rutas privadas.
+                  Front Sprint 10 cierra el MVP con UX homogenea, validaciones,
+                  estados de feedback consistentes y readiness de despliegue.
                 </CardDescription>
               </CardHeader>
             </Card>
             <Card className="bg-background">
               <CardHeader>
-                <CardTitle className="text-lg">Rutas iniciales</CardTitle>
+                <CardTitle className="text-lg">Flujo de demo</CardTitle>
                 <CardDescription>
-                  Usa `/login` para autenticarte y `/dashboard` para validar el
-                  guard privado antes de seguir con los modulos del negocio.
+                  Usa `/login` para autenticarte y continua en `/dashboard` para
+                  recorrer modulos segun rol sin depender de Swagger.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -47,19 +48,21 @@ export default function Home() {
           <CardFooter className="flex flex-col items-stretch gap-3 sm:flex-row sm:justify-end">
             <Button
               render={<Link href="/login" />}
+              nativeButton={false}
               className="w-full sm:w-auto"
             >
-              <LogIn data-icon="inline-start" />
+              <LogIn aria-hidden="true" data-icon="inline-start" />
               Ir a login
             </Button>
             <Button
               render={<Link href="/dashboard" />}
+              nativeButton={false}
               variant="outline"
               className="w-full sm:w-auto"
             >
-              <LayoutDashboard data-icon="inline-start" />
+              <LayoutDashboard aria-hidden="true" data-icon="inline-start" />
               Ver dashboard
-              <ArrowRight data-icon="inline-end" />
+              <ArrowRight aria-hidden="true" data-icon="inline-end" />
             </Button>
           </CardFooter>
         </Card>

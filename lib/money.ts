@@ -19,6 +19,17 @@ export function normalizeDecimalInput(value: string) {
   return `${normalizedInteger}.${decimalPart}`;
 }
 
+export function toApiDecimalNumber(value: string) {
+  const normalizedValue = normalizeDecimalInput(value.trim());
+  const numericValue = Number(normalizedValue);
+
+  if (!Number.isFinite(numericValue)) {
+    throw new Error("Invalid decimal value.");
+  }
+
+  return numericValue;
+}
+
 export function formatMoney(value: string | number, currency = "$") {
   const normalizedValue =
     typeof value === "number"

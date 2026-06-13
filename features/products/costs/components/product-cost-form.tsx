@@ -64,7 +64,7 @@ export function ProductCostForm({
           </p>
         ) : (
           <p className="text-sm text-muted-foreground">
-            El backend controla la vigencia y cierra la version anterior si existe.
+            El nuevo costo quedara vigente y reemplazara al costo anterior.
           </p>
         )}
       </div>

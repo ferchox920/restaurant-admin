@@ -13,10 +13,14 @@ export function LoadingState({
   className,
 }: LoadingStateProps) {
   return (
-    <Card className={className ?? "w-full max-w-md shadow-sm"}>
+    <Card
+      role="status"
+      aria-live="polite"
+      className={className ?? "w-full max-w-md shadow-sm"}
+    >
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-2xl">
-          <LoaderCircle className="size-5 animate-spin" />
+          <LoaderCircle aria-hidden="true" className="size-5 animate-spin" />
           {title}
         </CardTitle>
       </CardHeader>

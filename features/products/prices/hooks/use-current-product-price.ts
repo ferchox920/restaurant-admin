@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentProductPrice } from "@/features/products/prices/api/product-prices.api";
 import { productPricesQueryKeys } from "@/features/products/prices/query-keys";
-import { shouldRetryQuery } from "@/lib/api/query-utils";
+import { isNotFoundError, shouldRetryQuery } from "@/lib/api/query-utils";
 
 export function useCurrentProductPrice(
   productId: string | undefined,
@@ -11,7 +11,20 @@ export function useCurrentProductPrice(
 ) {
   return useQuery({
     queryKey: productPricesQueryKeys.current(productId ?? "", channelId ?? ""),
-    queryFn: () => getCurrentProductPrice(productId as string, channelId as string),
+    queryFn: async () => {
+      try {
+        return await getCurrentProductPrice(
+          productId as string,
+          channelId as string
+        );
+      } catch (error) {
+        if (isNotFoundError(error)) {
+          return null;
+        }
+
+        throw error;
+      }
+    },
     enabled: Boolean(productId) && Boolean(channelId),
     retry: shouldRetryQuery,
   });

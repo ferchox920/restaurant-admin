@@ -32,11 +32,12 @@ export function ProductActions({
       {showViewLink ? (
         <Button
           render={<Link href={`/products/${product.id}`} />}
+          nativeButton={false}
           type="button"
           variant="outline"
           size="sm"
         >
-          <Eye />
+          <Eye aria-hidden="true" />
           Ver
         </Button>
       ) : null}
@@ -49,7 +50,7 @@ export function ProductActions({
             size="sm"
             onClick={() => onEdit(product)}
           >
-            <Pencil />
+            <Pencil aria-hidden="true" />
             Editar
           </Button>
 
@@ -57,7 +58,7 @@ export function ProductActions({
             <ConfirmActionDialog
               trigger={
                 <Button type="button" variant="destructive" size="sm">
-                  <Power />
+                  <Power aria-hidden="true" />
                   Desactivar
                 </Button>
               }
@@ -72,7 +73,7 @@ export function ProductActions({
             <ConfirmActionDialog
               trigger={
                 <Button type="button" variant="secondary" size="sm">
-                  <RotateCcw />
+                  <RotateCcw aria-hidden="true" />
                   Reactivar
                 </Button>
               }

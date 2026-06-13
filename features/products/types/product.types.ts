@@ -81,6 +81,6 @@ export function getProductCatalogHint(
 
   return {
     status: "future",
-    label: "Inventariable futuro",
+    label: "Inventariable",
   };
 }

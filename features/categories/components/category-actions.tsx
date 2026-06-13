@@ -36,7 +36,7 @@ export function CategoryActions({
         size="sm"
         onClick={() => onEdit(category)}
       >
-        <Pencil />
+        <Pencil aria-hidden="true" />
         Editar
       </Button>
 
@@ -44,7 +44,7 @@ export function CategoryActions({
         <ConfirmActionDialog
           trigger={
             <Button type="button" variant="destructive" size="sm">
-              <Power />
+              <Power aria-hidden="true" />
               Desactivar
             </Button>
           }
@@ -59,7 +59,7 @@ export function CategoryActions({
         <ConfirmActionDialog
           trigger={
             <Button type="button" variant="secondary" size="sm">
-              <RotateCcw />
+              <RotateCcw aria-hidden="true" />
               Reactivar
             </Button>
           }

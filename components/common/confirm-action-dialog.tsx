@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import type { ReactElement } from "react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -34,24 +34,49 @@ export function ConfirmActionDialog({
   confirmVariant = "default",
   isPending = false,
 }: ConfirmActionDialogProps) {
+  const [open, setOpen] = useState(false);
+
+  async function handleConfirm() {
+    try {
+      await onConfirm?.();
+      setOpen(false);
+    } catch {
+      return;
+    }
+  }
+
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isPending && !nextOpen) {
+          return;
+        }
+
+        setOpen(nextOpen);
+      }}
+    >
       <DialogTrigger render={trigger} />
-      <DialogContent>
+      <DialogContent showCloseButton={!isPending}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <DialogClose render={<Button type="button" variant="outline" />}>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isPending}
+            onClick={() => setOpen(false)}
+          >
             {cancelLabel}
-          </DialogClose>
+          </Button>
           <Button
             type="button"
             variant={confirmVariant}
             disabled={isPending}
             onClick={() => {
-              void onConfirm?.();
+              void handleConfirm();
             }}
             render={<button />}
           >

@@ -39,7 +39,10 @@ export function ProductFilters({
       <div className="space-y-2">
         <Label htmlFor="products-search">Buscar producto</Label>
         <div className="relative">
-          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          />
           <Input
             id="products-search"
             value={search}
@@ -61,7 +64,19 @@ export function ProductFilters({
           }
         >
           <SelectTrigger className="w-full">
-            <SelectValue />
+            <SelectValue placeholder="Todas las categorias">
+              {(value) => {
+                if (!value || value === "__all__") {
+                  return "Todas las categorias";
+                }
+
+                const category = categories.find((item) => item.id === value);
+
+                return category
+                  ? `${category.name}${!category.active ? " (inactiva)" : ""}`
+                  : "Todas las categorias";
+              }}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">Todas las categorias</SelectItem>

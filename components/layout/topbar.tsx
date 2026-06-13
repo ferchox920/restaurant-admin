@@ -22,9 +22,9 @@ export function Topbar({ user, currentItem }: TopbarProps) {
               {appName}
             </p>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-lg font-semibold text-foreground">
+              <p className="text-lg font-semibold text-foreground">
                 {currentItem?.label ?? "Panel privado"}
-              </h1>
+              </p>
               <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
                 {user.role}
               </span>

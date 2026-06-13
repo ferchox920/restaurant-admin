@@ -19,6 +19,8 @@ export function ErrorMessage({
 
   return (
     <div
+      role="alert"
+      aria-live="assertive"
       className={cn(
         "rounded-xl border px-4 py-3 text-sm",
         variant === "forbidden"
@@ -28,7 +30,7 @@ export function ErrorMessage({
       )}
     >
       <div className="flex items-start gap-3">
-        <Icon className="mt-0.5 size-4 shrink-0" />
+        <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
         <div className="space-y-2">
           {title ? <p className="font-medium">{title}</p> : null}
           {normalizedMessages.length === 1 ? (

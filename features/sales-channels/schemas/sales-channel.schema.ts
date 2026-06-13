@@ -17,15 +17,25 @@ export const salesChannelSchema = z
     commissionValue: z
       .number({
         error: "La comision debe ser un numero valido.",
-      })
-      .min(0, "La comision no puede ser negativa."),
+      }),
   })
   .superRefine((value, context) => {
-    if (value.commissionType === "PERCENTAGE" && value.commissionValue > 100) {
+    if (
+      value.commissionType === "PERCENTAGE" &&
+      (value.commissionValue < -100 || value.commissionValue > 100)
+    ) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["commissionValue"],
-        message: "La comision porcentual no puede superar 100.",
+        message: "La comision porcentual debe estar entre -100 y 100.",
+      });
+    }
+
+    if (value.commissionType === "FIXED" && value.commissionValue < 0) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["commissionValue"],
+        message: "La comision fija no puede ser negativa.",
       });
     }
   })

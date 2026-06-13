@@ -65,14 +65,14 @@ function DialogContent({
             render={
               <Button
                 variant="ghost"
+                aria-label="Cerrar dialogo"
                 className="absolute top-2 right-2"
                 size="icon-sm"
               />
             }
           >
-            <XIcon
-            />
-            <span className="sr-only">Close</span>
+            <XIcon aria-hidden="true" />
+            <span className="sr-only">Cerrar dialogo</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>
@@ -110,7 +110,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close render={<Button variant="outline" />}>
-          Close
+          Cerrar
         </DialogPrimitive.Close>
       )}
     </div>

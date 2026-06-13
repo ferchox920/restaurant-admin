@@ -5,12 +5,13 @@ import type {
   CurrentProductCost,
   ProductCostHistoryItem,
 } from "@/features/products/costs/types/product-cost.types";
+import { toApiDecimalNumber } from "@/lib/money";
 
 function toCreateProductCostRequest(
   payload: CreateProductCostInput
 ): CreateProductCostRequest {
   return {
-    cost: Number(payload.cost),
+    cost: toApiDecimalNumber(payload.cost),
   };
 }
 
@@ -19,7 +20,7 @@ export function getProductCosts(productId: string) {
 }
 
 export function getCurrentProductCost(productId: string) {
-  return apiClient.get<CurrentProductCost>(
+  return apiClient.getOrNullOnNotFound<CurrentProductCost>(
     `/api/products/${productId}/costs/current`
   );
 }

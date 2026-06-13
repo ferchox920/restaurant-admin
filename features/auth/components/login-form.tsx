@@ -13,7 +13,6 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,6 +49,12 @@ export function LoginForm({ nextPath }: LoginFormProps) {
   }, [isAuthenticated, nextPath, router]);
 
   const rootError = form.formState.errors.root?.message;
+  const emailErrorId = form.formState.errors.email
+    ? "login-email-error"
+    : undefined;
+  const passwordErrorId = form.formState.errors.password
+    ? "login-password-error"
+    : undefined;
 
   async function onSubmit(values: LoginSchema) {
     try {
@@ -68,7 +73,9 @@ export function LoginForm({ nextPath }: LoginFormProps) {
     <main className="flex min-h-screen items-center justify-center bg-muted/30 px-6 py-16">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">{appName}</CardTitle>
+          <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground">
+            {appName}
+          </h1>
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="space-y-1 text-sm text-muted-foreground">
@@ -84,11 +91,13 @@ export function LoginForm({ nextPath }: LoginFormProps) {
                 type="email"
                 autoComplete="email"
                 placeholder="admin@restaurant.local"
+                required
                 aria-invalid={Boolean(form.formState.errors.email)}
+                aria-describedby={emailErrorId}
                 {...form.register("email")}
               />
               {form.formState.errors.email ? (
-                <p className="text-sm text-destructive">
+                <p id={emailErrorId} className="text-sm text-destructive">
                   {form.formState.errors.email.message}
                 </p>
               ) : null}
@@ -101,11 +110,13 @@ export function LoginForm({ nextPath }: LoginFormProps) {
                 type="password"
                 autoComplete="current-password"
                 placeholder="Tu password"
+                required
                 aria-invalid={Boolean(form.formState.errors.password)}
+                aria-describedby={passwordErrorId}
                 {...form.register("password")}
               />
               {form.formState.errors.password ? (
-                <p className="text-sm text-destructive">
+                <p id={passwordErrorId} className="text-sm text-destructive">
                   {form.formState.errors.password.message}
                 </p>
               ) : null}
@@ -120,15 +131,20 @@ export function LoginForm({ nextPath }: LoginFormProps) {
               disabled={loginMutation.isPending || isLoading}
               className="w-full"
             >
-              <Lock data-icon="inline-start" />
+              <Lock aria-hidden="true" data-icon="inline-start" />
               {loginMutation.isPending ? "Ingresando..." : "Iniciar sesion"}
             </Button>
           </form>
         </CardContent>
         <CardFooter>
-          <Button render={<Link href="/" />} variant="outline" className="w-full">
+          <Button
+            render={<Link href="/" />}
+            nativeButton={false}
+            variant="outline"
+            className="w-full"
+          >
             Volver al inicio
-            <ArrowRight data-icon="inline-end" />
+            <ArrowRight aria-hidden="true" data-icon="inline-end" />
           </Button>
         </CardFooter>
       </Card>

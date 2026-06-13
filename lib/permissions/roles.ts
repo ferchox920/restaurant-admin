@@ -29,6 +29,7 @@ export const INVENTORY_ALLOWED_ROLES: UserRole[] = [
   "ADMIN",
   "MANAGER",
   "CASHIER",
+  "AUDITOR",
 ];
 
 export const SALES_ALLOWED_ROLES: UserRole[] = [

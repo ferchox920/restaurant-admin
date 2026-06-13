@@ -39,7 +39,11 @@ export function ForbiddenState({
         />
       </CardContent>
       <CardFooter>
-        <Button render={<Link href={actionHref} />} className="w-full">
+        <Button
+          render={<Link href={actionHref} />}
+          nativeButton={false}
+          className="w-full"
+        >
           {actionLabel}
         </Button>
       </CardFooter>

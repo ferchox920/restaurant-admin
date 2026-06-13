@@ -29,7 +29,23 @@ async function parseResponse(response: Response) {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+type RequestOptions = {
+  notFoundAsNull?: boolean;
+};
+
+function shouldReturnNullOnNotFound(path: string, options?: RequestOptions) {
+  return (
+    options?.notFoundAsNull ||
+    /\/api\/products\/[^/]+\/costs\/current(?:\?|$)/.test(path) ||
+    /\/api\/products\/[^/]+\/prices\/current(?:\?|$)/.test(path)
+  );
+}
+
+async function request<T>(
+  path: string,
+  init?: RequestInit,
+  options?: RequestOptions
+): Promise<T> {
   const token = getAccessToken();
   const headers = new Headers(init?.headers);
 
@@ -51,6 +67,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
 
   const payload = await parseResponse(response);
+
+  if (
+    !response.ok &&
+    response.status === HTTP_STATUS.notFound &&
+    shouldReturnNullOnNotFound(path, options)
+  ) {
+    return null as T;
+  }
 
   if (!response.ok) {
     const errorPayload =
@@ -75,6 +99,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const apiClient = {
   get<T>(path: string) {
     return request<T>(path, { method: "GET" });
+  },
+  getOrNullOnNotFound<T>(path: string) {
+    return request<T | null>(path, { method: "GET" }, { notFoundAsNull: true });
   },
   post<T>(path: string, body?: unknown) {
     return request<T>(path, {

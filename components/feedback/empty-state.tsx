@@ -12,7 +12,7 @@ export function EmptyState({ title, message, className }: EmptyStateProps) {
     <Card className={className ?? "w-full max-w-md shadow-sm"}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-2xl">
-          <Inbox className="size-5" />
+          <Inbox aria-hidden="true" className="size-5" />
           {title}
         </CardTitle>
       </CardHeader>

@@ -125,8 +125,17 @@ export function SalesChannelForm({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (isPending && !nextOpen) {
+          return;
+        }
+
+        onOpenChange(nextOpen);
+      }}
+    >
+      <DialogContent className="sm:max-w-lg" showCloseButton={!isPending}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -138,6 +147,7 @@ export function SalesChannelForm({
             <Input
               id="sales-channel-name"
               placeholder="Ej. Pedidos Ya"
+              disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.name)}
               {...form.register("name")}
             />
@@ -153,6 +163,7 @@ export function SalesChannelForm({
             <Input
               id="sales-channel-code"
               placeholder="PEDIDOSYA"
+              disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.code)}
               {...form.register("code")}
             />
@@ -168,6 +179,7 @@ export function SalesChannelForm({
             <Textarea
               id="sales-channel-description"
               placeholder="Descripcion operativa del canal"
+              disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.description)}
               {...form.register("description")}
             />
@@ -192,7 +204,13 @@ export function SalesChannelForm({
                     }
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue />
+                      <SelectValue placeholder="Selecciona un tipo">
+                        {(value) =>
+                          value
+                            ? formatCommissionType(value as CommissionType)
+                            : "Selecciona un tipo"
+                        }
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {commissionTypes.map((type) => (
@@ -218,9 +236,10 @@ export function SalesChannelForm({
               <Input
                 id="sales-channel-commission-value"
                 type="number"
-                min={0}
+                min={commissionType === "PERCENTAGE" ? -100 : 0}
+                max={commissionType === "PERCENTAGE" ? 100 : undefined}
                 step="0.01"
-                disabled={commissionType === "NONE"}
+                disabled={isPending || commissionType === "NONE"}
                 aria-invalid={Boolean(form.formState.errors.commissionValue)}
                 {...form.register("commissionValue")}
               />

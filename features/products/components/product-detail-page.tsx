@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { PageHeader } from "@/components/common/page-header";
@@ -11,7 +12,9 @@ import { ProductForm } from "@/features/products/components/product-form";
 import { ProductActions } from "@/features/products/components/product-actions";
 import { ProductStatusBadges } from "@/features/products/components/product-status-badges";
 import { useCurrentProductCost } from "@/features/products/costs/hooks/use-current-product-cost";
-import { useCurrentProductPrice } from "@/features/products/prices/hooks/use-current-product-price";
+import { StockStatusBadge } from "@/features/inventory/components/stock-status-badge";
+import { useProductInventory } from "@/features/inventory/hooks/use-product-inventory";
+import { useProductPrices } from "@/features/products/prices/hooks/use-product-prices";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useCategories } from "@/features/categories/hooks/use-categories";
 import { useDeactivateProduct } from "@/features/products/hooks/use-deactivate-product";
@@ -39,14 +42,10 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
   const categoriesQuery = useCategories();
   const salesChannelsQuery = useSalesChannels();
   const currentCostQuery = useCurrentProductCost(productId);
+  const productPricesQuery = useProductPrices(productId);
   const updateProductMutation = useUpdateProduct();
   const deactivateProductMutation = useDeactivateProduct();
   const reactivateProductMutation = useReactivateProduct();
-  const firstActiveChannelId = useMemo(
-    () => salesChannelsQuery.data?.find((channel) => channel.active)?.id,
-    [salesChannelsQuery.data]
-  );
-  const currentPriceQuery = useCurrentProductPrice(productId, firstActiveChannelId);
 
   const categoryName = useMemo(() => {
     const product = productQuery.data;
@@ -71,8 +70,35 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
     productQuery.error &&
     isApiError(productQuery.error) &&
     productQuery.error.statusCode === HTTP_STATUS.notFound;
-  const isCurrentCostMissing = isNotFoundError(currentCostQuery.error);
-  const isCurrentPriceMissing = isNotFoundError(currentPriceQuery.error);
+  const isCurrentCostMissing =
+    currentCostQuery.data === null || isNotFoundError(currentCostQuery.error);
+  const inventoryQuery = useProductInventory(
+    productQuery.data?.stockManagementType === "FINISHED_PRODUCT"
+      ? productId
+      : undefined
+  );
+  const currentPricesByActiveChannel = useMemo(() => {
+    const activeChannels = salesChannelsQuery.data?.filter((channel) => channel.active) ?? [];
+    const prices = productPricesQuery.data ?? [];
+
+    return activeChannels
+      .map((channel) => {
+        const currentPrice = prices.find(
+          (price) => price.salesChannelId === channel.id && price.isCurrent
+        );
+
+        if (!currentPrice) {
+          return null;
+        }
+
+        return {
+          channelId: channel.id,
+          channelName: channel.name,
+          price: currentPrice.price,
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+  }, [productPricesQuery.data, salesChannelsQuery.data]);
 
   async function handleUpdateProduct(values: {
     name: string;
@@ -117,7 +143,7 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
         <PageHeader
           eyebrow="Catalogo"
           title="Detalle de producto"
-          description="Vista basica del producto dentro del catalogo administrativo."
+          description="Consulta la informacion del producto dentro del catalogo administrativo."
         />
         <ErrorMessage
           variant={isForbidden ? "forbidden" : "general"}
@@ -144,12 +170,27 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
     return null;
   }
 
+  const hasCurrentCost = Boolean(currentCostQuery.data);
+  const hasCurrentPrice = currentPricesByActiveChannel.length > 0;
+  const isOutOfStock = inventoryQuery.data?.stockStatus === "OUT_OF_STOCK";
+  const isNotSaleEligible =
+    !hasCurrentCost ||
+    !hasCurrentPrice ||
+    (product.stockManagementType === "FINISHED_PRODUCT" && isOutOfStock);
+  const saleEligibilityMessages = [
+    !hasCurrentCost ? "Falta definir costo vigente." : null,
+    !hasCurrentPrice ? "Falta definir precio final en al menos un canal." : null,
+    product.stockManagementType === "FINISHED_PRODUCT" && isOutOfStock
+      ? "Producto sin stock disponible."
+      : null,
+  ].filter((message): message is string => Boolean(message));
+
   return (
     <section className="mx-auto flex w-full max-w-5xl flex-col gap-6">
       <PageHeader
         eyebrow="Catalogo"
         title={product.name}
-        description="Detalle del producto con resumen de costos y precios versionados. Inventario sigue previsto para Sprint 6."
+        description="Consulta datos comerciales, costos, precios vigentes e inventario asociado."
       />
 
       <Card>
@@ -213,6 +254,15 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
               isReactivatePending={reactivateProductMutation.isPending}
               showViewLink={false}
             />
+            <Button
+              render={<Link href={`/products/${productId}/prices`} />}
+              nativeButton={false}
+              type="button"
+              variant="outline"
+              size="sm"
+            >
+              Editar costos y precios
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -220,9 +270,25 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Costos y precios</CardTitle>
+            <CardTitle className="flex flex-wrap items-center gap-2">
+              <span>Costos y precios</span>
+              {isNotSaleEligible ? (
+                <Badge
+                  variant="outline"
+                  className="border-rose-200 bg-rose-50 text-rose-700"
+                >
+                  No elegible para venta
+                </Badge>
+              ) : null}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {saleEligibilityMessages.length > 0 ? (
+              <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
+                {saleEligibilityMessages.join(" ")}
+              </div>
+            ) : null}
+
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Costo vigente
@@ -236,50 +302,51 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
               ) : isCurrentCostMissing ? (
                 <p className="text-sm text-muted-foreground">Sin costo vigente.</p>
               ) : currentCostQuery.data ? (
-                <p>{formatMoney(currentCostQuery.data.cost)}</p>
+                <div className="space-y-1">
+                  <p>{formatMoney(currentCostQuery.data.cost)}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Vigente desde {formatDateTime(currentCostQuery.data.validFrom)}
+                  </p>
+                </div>
               ) : null}
             </div>
 
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
-                Precio vigente resumido
+                Precios vigentes por canal
               </p>
               {salesChannelsQuery.isLoading ? (
                 <p className="text-sm text-muted-foreground">Cargando canales...</p>
-              ) : !firstActiveChannelId ? (
+              ) : productPricesQuery.isLoading ? (
                 <p className="text-sm text-muted-foreground">
-                  Sin canales activos para resumir precios.
+                  Cargando resumen de precios...
                 </p>
-              ) : currentPriceQuery.isLoading ? (
-                <p className="text-sm text-muted-foreground">Cargando precio vigente...</p>
-              ) : currentPriceQuery.error && !isCurrentPriceMissing ? (
+              ) : productPricesQuery.error ? (
                 <p className="text-sm text-destructive">
-                  No se pudo cargar el precio vigente.
+                  No se pudo cargar el resumen de precios.
                 </p>
-              ) : isCurrentPriceMissing ? (
+              ) : currentPricesByActiveChannel.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  Sin precio vigente para el primer canal activo.
+                  Sin precios vigentes para los canales activos.
                 </p>
-              ) : currentPriceQuery.data ? (
-                <p>
-                  {currentPriceQuery.data.salesChannelName ?? "Canal"}:{" "}
-                  {formatMoney(currentPriceQuery.data.price)}
-                </p>
-              ) : null}
+              ) : (
+                <div className="space-y-1">
+                  {currentPricesByActiveChannel.map((item) => (
+                    <p key={item.channelId} className="text-sm">
+                      <span className="text-muted-foreground">{item.channelName}:</span>{" "}
+                      {formatMoney(item.price)}
+                    </p>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-2">
               <Link
-                href={`/products/${productId}/costs`}
-                className={buttonVariants({ variant: "outline" })}
-              >
-                Ver costos
-              </Link>
-              <Link
                 href={`/products/${productId}/prices`}
                 className={buttonVariants({ variant: "outline" })}
               >
-                Ver precios
+                Editar costos y precios
               </Link>
             </div>
           </CardContent>
@@ -289,9 +356,71 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
           <CardHeader>
             <CardTitle>Inventario</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <p>La gestion de inventario se implementara en Front Sprint 6.</p>
-            <p>Esta pantalla no muestra stock ni movimientos reales en Sprint 4.</p>
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
+            {product.stockManagementType === "FINISHED_PRODUCT" ? (
+              <>
+                {inventoryQuery.isLoading ? (
+                  <p>Cargando resumen de inventario...</p>
+                ) : inventoryQuery.error ? (
+                  <p className="text-destructive">
+                    No se pudo cargar el resumen operativo de inventario.
+                  </p>
+                ) : inventoryQuery.data ? (
+                  <div className="space-y-3">
+                    {inventoryQuery.data.stockStatus === "OUT_OF_STOCK" ? (
+                      <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
+                        No elegible para venta: producto sin stock disponible.
+                      </div>
+                    ) : null}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <StockStatusBadge status={inventoryQuery.data.stockStatus} />
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Stock actual
+                        </p>
+                        <p className="text-foreground">
+                          {inventoryQuery.data.currentStock}
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Stock minimo
+                        </p>
+                        <p className="text-foreground">
+                          {inventoryQuery.data.minimumStock}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p>Sin resumen operativo disponible.</p>
+                )}
+                <Link
+                  href={`/inventory/${productId}`}
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  Ver inventario
+                </Link>
+              </>
+            ) : product.stockManagementType === "NON_STOCKED" ? (
+              <>
+                <p>Inventario no controlado.</p>
+                <p>
+                  Este producto no requiere seguimiento de stock ni movimientos
+                  de inventario.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>Producto gestionado por receta.</p>
+                <p>
+                  El consumo de insumos se controla desde la gestion operativa
+                  correspondiente.
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -300,7 +429,7 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
         open={isEditOpen}
         onOpenChange={setIsEditOpen}
         title="Editar producto"
-        description="Actualiza los datos basicos del producto sin crear stock, costos ni precios."
+        description="Actualiza la informacion comercial y operativa del producto."
         submitLabel="Guardar cambios"
         categories={categoriesQuery.data ?? []}
         initialValues={{

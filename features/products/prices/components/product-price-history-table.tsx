@@ -12,10 +12,12 @@ import { formatMoney } from "@/lib/money";
 
 type ProductPriceHistoryTableProps = {
   items: ProductPriceHistoryItem[];
+  getCreatedByName?: (userId: string | null) => string;
 };
 
 export function ProductPriceHistoryTable({
   items,
+  getCreatedByName,
 }: ProductPriceHistoryTableProps) {
   return (
     <Table>
@@ -36,9 +38,15 @@ export function ProductPriceHistoryTable({
             <TableCell>{item.salesChannelName ?? item.salesChannelId}</TableCell>
             <TableCell className="font-medium">{formatMoney(item.price)}</TableCell>
             <TableCell>{formatDateTime(item.validFrom)}</TableCell>
-            <TableCell>{formatDateTime(item.validTo)}</TableCell>
+            <TableCell>{item.validTo ? formatDateTime(item.validTo) : "Vigente"}</TableCell>
             <TableCell>{formatDateTime(item.createdAt)}</TableCell>
-            <TableCell>{item.createdById ?? "-"}</TableCell>
+            <TableCell>
+              {getCreatedByName
+                ? getCreatedByName(item.createdById)
+                : item.createdById
+                  ? "Usuario registrado"
+                  : "-"}
+            </TableCell>
             <TableCell>{item.isCurrent ? "Vigente" : "Historico"}</TableCell>
           </TableRow>
         ))}

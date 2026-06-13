@@ -13,16 +13,20 @@ type SidebarProps = {
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const navigation = getNavigationForRole(role);
+  const navigationHeadingId = "sidebar-navigation-heading";
 
   return (
     <aside className="hidden w-80 shrink-0 border-r border-sidebar-border bg-sidebar lg:flex lg:min-h-screen">
       <div className="flex w-full flex-col gap-6 px-5 py-6">
         <AppLogo />
         <div className="space-y-2">
-          <p className="px-2 text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+          <p
+            id={navigationHeadingId}
+            className="px-2 text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase"
+          >
             Navegacion
           </p>
-          <nav className="space-y-2">
+          <nav aria-labelledby={navigationHeadingId} className="space-y-2">
             {navigation.map((item) => (
               <NavItem
                 key={item.href}

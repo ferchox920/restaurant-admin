@@ -14,6 +14,26 @@ La UI consume la API real del backend para:
 - consultar historial de precios;
 - crear nueva version de precio por canal.
 
+## Rutas implementadas
+
+- `/products/[id]`
+- `/products/[id]/costs`
+- `/products/[id]/prices`
+
+## Endpoints consumidos
+
+### Costos
+
+- `GET /api/products/:id/costs`
+- `GET /api/products/:id/costs/current`
+- `POST /api/products/:id/costs`
+
+### Precios
+
+- `GET /api/products/:id/prices`
+- `GET /api/products/:id/prices/current?channelId=...`
+- `POST /api/products/:id/prices`
+
 ## Politica historica
 
 Las pantallas de Sprint 5 siguen estas reglas funcionales:
@@ -38,6 +58,7 @@ Detalles adicionales del contrato real:
   vigente.
 - `GET /api/products/:id/prices/current?channelId=<uuid>` devuelve `404` si no
   existe precio vigente para ese canal.
+- `GET /api/products/:id/prices?channelId=<uuid>` filtra historial por canal.
 - Los valores monetarios de respuesta llegan serializados como `string`.
 - La respuesta expone `createdById`, no un objeto `createdBy`.
 - La respuesta de precios expone `salesChannelName`, no un objeto
@@ -49,7 +70,7 @@ Detalles adicionales del contrato real:
 
 - resumen del producto;
 - costo vigente resumido;
-- precios vigentes resumidos para navegacion administrativa;
+- precios vigentes resumidos por canal activo;
 - enlaces a historiales de costos y precios.
 
 ### `/products/[id]/costs`
@@ -64,6 +85,17 @@ Detalles adicionales del contrato real:
 - precio vigente;
 - formulario de nueva version;
 - historial de precios.
+
+## Funcionalidades implementadas
+
+- costo vigente;
+- historial de costos;
+- nueva version de costo;
+- selector de canal;
+- precio vigente por canal;
+- historial de precios;
+- nueva version de precio;
+- resumen real en detalle de producto.
 
 ## Roles
 
@@ -82,8 +114,28 @@ Detalles adicionales del contrato real:
 
 - no accede a costos;
 - no accede a administracion de precios;
-- los precios operativos futuros se consumiran desde flujo de venta y no desde
-  estas pantallas administrativas.
+- si intenta entrar manualmente a `/products/[id]`, `/products/[id]/costs` o
+  `/products/[id]/prices`, termina en `/forbidden`.
+
+## Reglas respetadas
+
+- no editar historia;
+- no borrar versiones;
+- no enviar fechas;
+- decimales preservados en tipos y formularios;
+- tickets historicos no se recalculan;
+- producto puede no tener costo o precio vigente.
+
+## No implementado todavia
+
+- inventario UI;
+- ventas UI;
+- reportes reales;
+- auditoria UI;
+- usuarios UI;
+- pagos;
+- caja;
+- `/settings`.
 
 ## Criterios de aceptacion
 
@@ -97,3 +149,20 @@ Detalles adicionales del contrato real:
 - estados sin costo o precio vigentes;
 - permisos visuales correctos;
 - build y lint pasando.
+
+## Validacion manual
+
+Si hay backend y credenciales disponibles, validar:
+
+1. Abrir producto sin costo vigente.
+2. Crear costo.
+3. Crear segundo costo y verificar cierre visual del anterior.
+4. Seleccionar canal sin precio.
+5. Crear precio.
+6. Crear segundo precio para el mismo canal.
+7. Verificar que otros canales no cambien.
+8. Verificar lectura con `AUDITOR`.
+9. Verificar `/forbidden` con `CASHIER`.
+
+Si el backend o las credenciales no estan disponibles, esta validacion queda
+pendiente y no bloquea el cierre tecnico del sprint.

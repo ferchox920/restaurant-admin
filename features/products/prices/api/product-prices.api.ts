@@ -6,13 +6,14 @@ import type {
   CurrentProductPrice,
   ProductPriceHistoryItem,
 } from "@/features/products/prices/types/product-price.types";
+import { toApiDecimalNumber } from "@/lib/money";
 
 function toCreateProductPriceRequest(
   payload: CreateProductPriceInput
 ): CreateProductPriceRequest {
   return {
     salesChannelId: payload.salesChannelId,
-    price: Number(payload.price),
+    price: toApiDecimalNumber(payload.price),
   };
 }
 
@@ -27,7 +28,7 @@ export function getProductPrices(productId: string, channelId?: string) {
 export function getCurrentProductPrice(productId: string, channelId: string) {
   const queryString = buildQueryString({ channelId });
 
-  return apiClient.get<CurrentProductPrice>(
+  return apiClient.getOrNullOnNotFound<CurrentProductPrice>(
     `/api/products/${productId}/prices/current${queryString}`
   );
 }

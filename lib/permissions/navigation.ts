@@ -39,8 +39,8 @@ export const navigationItems: NavigationItem[] = [
     icon: Tags,
     roles: CATEGORIES_ALLOWED_ROLES,
     module: "categories",
-    description: "Placeholder del modulo de categorias.",
-    sprint: "Sprint 4 o posterior",
+    description: "Gestion de categorias del catalogo administrativo.",
+    sprint: "Sprint 4",
   },
   {
     label: "Canales",
@@ -48,8 +48,8 @@ export const navigationItems: NavigationItem[] = [
     icon: ShoppingCart,
     roles: SALES_CHANNELS_ALLOWED_ROLES,
     module: "sales-channels",
-    description: "Placeholder del modulo de canales de venta.",
-    sprint: "Sprint 4 o posterior",
+    description: "Gestion de canales de venta y sus datos operativos.",
+    sprint: "Sprint 4",
   },
   {
     label: "Productos",
@@ -57,8 +57,8 @@ export const navigationItems: NavigationItem[] = [
     icon: Package,
     roles: PRODUCTS_ALLOWED_ROLES,
     module: "products",
-    description: "Placeholder del modulo de productos.",
-    sprint: "Sprint 4 o posterior",
+    description: "Gestion de productos y acceso a costos, precios e inventario.",
+    sprint: "Sprint 4",
   },
   {
     label: "Inventario",
@@ -66,8 +66,8 @@ export const navigationItems: NavigationItem[] = [
     icon: Boxes,
     roles: INVENTORY_ALLOWED_ROLES,
     module: "inventory",
-    description: "Placeholder del modulo de inventario.",
-    sprint: "Sprint 4 o posterior",
+    description: "Stock general, detalle por producto y movimientos operativos.",
+    sprint: "Sprint 6",
   },
   {
     label: "Ventas",
@@ -75,8 +75,8 @@ export const navigationItems: NavigationItem[] = [
     icon: ReceiptText,
     roles: SALES_ALLOWED_ROLES,
     module: "sales",
-    description: "Placeholder del modulo de ventas.",
-    sprint: "Sprint 4 o posterior",
+    description: "Tickets de venta, confirmacion y anulacion segun permisos.",
+    sprint: "Sprint 7",
   },
   {
     label: "Reportes",
@@ -84,8 +84,8 @@ export const navigationItems: NavigationItem[] = [
     icon: BarChart3,
     roles: REPORTS_ALLOWED_ROLES,
     module: "reports",
-    description: "Placeholder del modulo de reportes.",
-    sprint: "Sprint 5 o posterior",
+    description: "Reportes operativos con filtros reales del backend.",
+    sprint: "Sprint 8",
   },
   {
     label: "Auditoria",
@@ -93,8 +93,8 @@ export const navigationItems: NavigationItem[] = [
     icon: ShieldCheck,
     roles: AUDIT_LOGS_ALLOWED_ROLES,
     module: "audit-logs",
-    description: "Placeholder del modulo de auditoria.",
-    sprint: "Sprint 5 o posterior",
+    description: "Consulta de registros de auditoria en solo lectura.",
+    sprint: "Sprint 9",
   },
   {
     label: "Usuarios",
@@ -102,8 +102,8 @@ export const navigationItems: NavigationItem[] = [
     icon: ClipboardList,
     roles: USERS_ALLOWED_ROLES,
     module: "users",
-    description: "Placeholder del modulo de usuarios.",
-    sprint: "Sprint 5 o posterior",
+    description: "Gestion administrativa de usuarios internos.",
+    sprint: "Sprint 9",
   },
 ];
 

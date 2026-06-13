@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { ProductCostForm } from "@/features/products/costs/components/product-cost-form";
+import { CreateCostVersionForm } from "@/features/products/costs/components/create-cost-version-form";
+import { CurrentCostCard } from "@/features/products/costs/components/current-cost-card";
 import { ProductCostHistoryTable } from "@/features/products/costs/components/product-cost-history-table";
 import { useCreateProductCost } from "@/features/products/costs/hooks/use-create-product-cost";
 import { useCurrentProductCost } from "@/features/products/costs/hooks/use-current-product-cost";
@@ -15,8 +16,7 @@ import { useProductCosts } from "@/features/products/costs/hooks/use-product-cos
 import { useProduct } from "@/features/products/hooks/use-product";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isNotFoundError } from "@/lib/api/query-utils";
-import { formatDateTime } from "@/lib/formatters";
-import { formatMoney } from "@/lib/money";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type ProductCostsPageProps = {
   productId: string;
@@ -25,13 +25,15 @@ type ProductCostsPageProps = {
 export function ProductCostsPage({ productId }: ProductCostsPageProps) {
   const { user } = useAuth();
   const canMutate = user?.role === "ADMIN" || user?.role === "MANAGER";
+  const [successMessage, setSuccessMessage] = useState<string | undefined>();
 
   const productQuery = useProduct(productId);
   const currentCostQuery = useCurrentProductCost(productId);
   const costsQuery = useProductCosts(productId);
   const createCostMutation = useCreateProductCost(productId);
 
-  const isCurrentCostMissing = isNotFoundError(currentCostQuery.error);
+  const isCurrentCostMissing =
+    currentCostQuery.data === null || isNotFoundError(currentCostQuery.error);
 
   if (productQuery.isLoading) {
     return (
@@ -68,80 +70,36 @@ export function ProductCostsPage({ productId }: ProductCostsPageProps) {
       <PageHeader
         eyebrow="Catalogo"
         title={`Costos de ${product.name}`}
-        description="Consulta el costo vigente, crea nuevas versiones y revisa el historial sin editar registros anteriores."
+        description={`SKU ${product.sku || "-"} - Consulta el costo vigente, crea nuevas versiones y revisa el historial sin editar registros anteriores.`}
         actions={
-          <Link href={`/products/${productId}`} className="text-sm underline-offset-4 hover:underline">
+          <Link
+            href={`/products/${productId}`}
+            className="text-sm underline-offset-4 hover:underline"
+          >
             Volver al detalle
           </Link>
         }
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Costo vigente</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {currentCostQuery.isLoading ? (
-            <LoadingState
-              title="Cargando costo vigente"
-              message="Estamos consultando la version vigente."
-              className="w-full max-w-none shadow-none"
-            />
-          ) : currentCostQuery.error && !isCurrentCostMissing ? (
-            <ErrorMessage
-              title="No se pudo cargar el costo vigente"
-              messages={getApiErrorMessages(currentCostQuery.error)}
-            />
-          ) : isCurrentCostMissing ? (
-            <EmptyState
-              title="Sin costo vigente"
-              message="Este producto todavia no tiene una version vigente de costo."
-              className="w-full max-w-none shadow-none"
-            />
-          ) : currentCostQuery.data ? (
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Costo</p>
-                <p className="text-lg font-medium">
-                  {formatMoney(currentCostQuery.data.cost)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Vigente desde</p>
-                <p>{formatDateTime(currentCostQuery.data.validFrom)}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Creado por</p>
-                <p>{currentCostQuery.data.createdById ?? "-"}</p>
-              </div>
-            </div>
-          ) : null}
-        </CardContent>
-      </Card>
+      <CurrentCostCard
+        cost={currentCostQuery.data ?? undefined}
+        isLoading={currentCostQuery.isLoading}
+        isMissing={isCurrentCostMissing}
+        error={currentCostQuery.error}
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Nueva version</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {canMutate ? (
-            <ProductCostForm
-              canSubmit={canMutate}
-              isPending={createCostMutation.isPending}
-              error={createCostMutation.error}
-              onSubmit={async (values) => {
-                await createCostMutation.mutateAsync(values);
-              }}
-            />
-          ) : (
-            <EmptyState
-              title="Solo lectura"
-              message="Tu rol puede consultar costos vigentes e historiales, pero no crear nuevas versiones."
-              className="w-full max-w-none shadow-none"
-            />
-          )}
-        </CardContent>
-      </Card>
+      <CreateCostVersionForm
+        currentCost={currentCostQuery.data ?? undefined}
+        canSubmit={canMutate}
+        isPending={createCostMutation.isPending}
+        error={createCostMutation.error}
+        successMessage={successMessage}
+        onSubmit={async (values) => {
+          setSuccessMessage(undefined);
+          await createCostMutation.mutateAsync(values);
+          setSuccessMessage("El costo vigente se actualizo y el historial se refresco.");
+        }}
+      />
 
       <Card>
         <CardHeader>

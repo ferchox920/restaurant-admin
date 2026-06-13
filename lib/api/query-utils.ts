@@ -1,15 +1,29 @@
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
 
-export function shouldRetryQuery(failureCount: number, error: unknown) {
+function getErrorStatusCode(error: unknown) {
   if (
-    isApiError(error) &&
-    [
-      HTTP_STATUS.unauthorized,
-      HTTP_STATUS.forbidden,
-      HTTP_STATUS.notFound,
-    ].includes(error.statusCode)
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    typeof error.statusCode === "number"
   ) {
+    return error.statusCode;
+  }
+
+  return undefined;
+}
+
+export function shouldRetryQuery(failureCount: number, error: unknown) {
+  const nonRetryableStatuses = new Set<number>([
+    HTTP_STATUS.unauthorized,
+    HTTP_STATUS.forbidden,
+    HTTP_STATUS.notFound,
+  ]);
+
+  const statusCode = getErrorStatusCode(error);
+
+  if (statusCode && nonRetryableStatuses.has(statusCode)) {
     return false;
   }
 
@@ -17,5 +31,8 @@ export function shouldRetryQuery(failureCount: number, error: unknown) {
 }
 
 export function isNotFoundError(error: unknown) {
-  return isApiError(error) && error.statusCode === HTTP_STATUS.notFound;
+  return (
+    (isApiError(error) || getErrorStatusCode(error) !== undefined) &&
+    getErrorStatusCode(error) === HTTP_STATUS.notFound
+  );
 }

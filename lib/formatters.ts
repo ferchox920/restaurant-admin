@@ -5,9 +5,10 @@ import type {
 import type { Category } from "@/features/categories/types/category.types";
 import type { CommissionType } from "@/features/sales-channels/types/sales-channel.types";
 import type { SalesChannel } from "@/features/sales-channels/types/sales-channel.types";
+import type { UserRole } from "@/features/users/types/user.types";
 
 const stockManagementLabels: Record<StockManagementType, string> = {
-  FINISHED_PRODUCT: "Inventariable futuro",
+  FINISHED_PRODUCT: "Inventariable",
   RECIPE_BASED: "Reservado / no operativo",
   NON_STOCKED: "No inventariable",
 };
@@ -22,6 +23,13 @@ const commissionTypeLabels: Record<CommissionType, string> = {
   NONE: "Sin comision",
   PERCENTAGE: "Porcentaje",
   FIXED: "Monto fijo",
+};
+
+const userRoleLabels: Record<UserRole, string> = {
+  ADMIN: "Administrador",
+  MANAGER: "Encargado",
+  CASHIER: "Cajero",
+  AUDITOR: "Auditor",
 };
 
 export function formatDateTime(
@@ -54,6 +62,10 @@ export function formatStockManagementType(value: StockManagementType) {
 
 export function formatCommissionType(value: CommissionType) {
   return commissionTypeLabels[value];
+}
+
+export function formatUserRole(value: UserRole) {
+  return userRoleLabels[value];
 }
 
 export function formatCategoryName(category?: Pick<Category, "name"> | null) {
