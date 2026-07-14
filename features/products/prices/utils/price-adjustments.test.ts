@@ -2,45 +2,36 @@ import { describe, expect, it } from "vitest";
 import { calculateChannelPrice } from "@/features/products/prices/utils/price-adjustments";
 
 describe("calculateChannelPrice", () => {
-  it("keeps base price for channels without commission", () => {
+  it("keeps base price for channels without taxes or commissions", () => {
     expect(
       calculateChannelPrice("1000", {
         id: "channel-1",
         name: "Mostrador",
-        commissionType: "NONE",
-        commissionValue: 0,
-      })
+        subTaxes: [],
+      }),
     ).toBe("1000");
   });
 
-  it("applies positive and negative percentage adjustments from base price", () => {
+  it("applies channel taxes and commissions from base price", () => {
     expect(
       calculateChannelPrice("1000", {
         id: "channel-1",
         name: "Pedidos Ya",
-        commissionType: "PERCENTAGE",
-        commissionValue: 15,
-      })
-    ).toBe("1150");
+        subTaxes: [
+          { id: "tax-1", name: "IVA", percentage: 21 },
+          { id: "tax-2", name: "Comision marketplace", percentage: 15 },
+        ],
+      }),
+    ).toBe("1360");
+  });
 
+  it("rounds prices with decimal tax percentages", () => {
     expect(
       calculateChannelPrice("1000", {
         id: "channel-2",
-        name: "Mayorista",
-        commissionType: "PERCENTAGE",
-        commissionValue: -10,
-      })
-    ).toBe("900");
-  });
-
-  it("applies fixed adjustments from base price", () => {
-    expect(
-      calculateChannelPrice("1000", {
-        id: "channel-1",
-        name: "Delivery",
-        commissionType: "FIXED",
-        commissionValue: 250,
-      })
-    ).toBe("1250");
+        name: "Salon",
+        subTaxes: [{ id: "tax-1", name: "Ingresos Brutos", percentage: 3.5 }],
+      }),
+    ).toBe("1035");
   });
 });

@@ -70,7 +70,28 @@ La aplicacion de desarrollo corre por defecto en
 - Sprint 9 dejo usuarios y auditoria funcionales desde UI.
 - Sprint 10 cerro consistencia UX, accesibilidad basica, tests minimos y
   readiness documental para deploy.
+- Sprint 11 agrego capa de mesas y salon para operar ordenes de consumo.
 - `shadcn/ui` y TanStack Query ya estan integrados a nivel global.
+
+## Capa de mesas y salon
+
+Sprint 11 implementa:
+
+- `/tables`;
+- `/floor`;
+- `/table-orders`;
+- `/table-orders/[id]`;
+- administracion de mesas para `ADMIN` y `MANAGER`;
+- vista operativa de salon para `ADMIN`, `MANAGER`, `CASHIER` y `AUDITOR`;
+- apertura de orden en mesa disponible;
+- consumos progresivos sin descuento de stock hasta cierre;
+- modificacion y quita de consumos;
+- cancelacion de orden abierta sin afectar stock;
+- cierre de orden con `CASH` o `TRANSFER`;
+- invalidacion de mesas, ordenes, tickets, inventario y reportes cuando aplica.
+
+No implementa pagos completos, caja, facturacion fiscal, impresion, propinas,
+division de cuenta, reservas, cambio de mesa ni realtime.
 
 ## Front Sprint 10 - Cierre MVP
 

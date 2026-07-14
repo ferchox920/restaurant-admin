@@ -9,8 +9,11 @@ const mockReplace = vi.fn();
 const mockClearAccessToken = vi.fn();
 const mockGetAccessToken = vi.fn();
 const mockSetAccessToken = vi.fn();
-const mockSubscribeToAccessToken = vi.fn(() => () => undefined);
-const mockUseCurrentUser = vi.fn();
+const mockSubscribeToAccessToken = vi.fn((onStoreChange?: () => void) => {
+  void onStoreChange;
+  return () => undefined;
+});
+const mockUseCurrentUser = vi.fn<(options?: unknown) => unknown>();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({

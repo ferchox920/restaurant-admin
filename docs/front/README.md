@@ -9,6 +9,7 @@ sesion y cliente API, Sprint 3 agrego layout administrativo y Sprint 4 dejo el
 catalogo funcional. Sprint 5 agrego costos historicos y precios por canal
 desde UI. Sprint 6 agrego inventario de producto finalizado desde UI. Sprint 7
 agrego tickets y ventas desde UI. Sprint 8 agrego reportes operativos desde UI.
+Sprint 11 agrego capa de mesas y salon desde UI.
 
 La documentacion frontend no reemplaza la especificacion del backend. La API
 `restaurant-admin-api` es la fuente de verdad funcional, de autorizacion y de
@@ -59,6 +60,7 @@ Si existe discrepancia entre esta documentacion y la API, prevalece la API.
 - [17-frontend-demo-flow.md](17-frontend-demo-flow.md)
 - [18-frontend-deploy-readiness.md](18-frontend-deploy-readiness.md)
 - [19-frontend-known-limitations.md](19-frontend-known-limitations.md)
+- [20-front-tables-and-floor.md](20-front-tables-and-floor.md)
 
 Con `09-front-sprint-4-catalog.md`, el Front Sprint 4 queda documentado para
 catalogo funcional, detalle basico de producto, permisos visuales y estados de
@@ -89,6 +91,8 @@ Con `18-frontend-deploy-readiness.md`, el cierre deja documentada la estrategia
 inicial de deploy sobre `Vercel`, sus requisitos y su checklist post-deploy.
 Con `19-frontend-known-limitations.md`, el cierre deja explicitos los riesgos
 aceptados y los limites conocidos del MVP frontend.
+Con `20-front-tables-and-floor.md`, el Front Sprint 11 queda documentado para
+mesas, salon, ordenes de consumo, consumos progresivos, cancelacion y cierre.
 
 ## Alcance del frontend MVP
 
@@ -102,6 +106,7 @@ El frontend MVP administrativo debe cubrir:
 - precios historicos por producto y canal;
 - inventario de producto finalizado;
 - tickets y ventas;
+- mesas y salon;
 - reportes operativos;
 - auditoria;
 - gestion de usuarios.
@@ -144,5 +149,6 @@ desde UI. Sprint 6 agrego inventario de producto finalizado. Sprint 7 agrego
 ventas y tickets operativos. Sprint 8 agrego reportes operativos. Sprint 9
 agrego usuarios y auditoria desde UI. Sprint 10 cerro el MVP frontend con
 consistencia UX, accesibilidad basica, suite minima de tests, flujo demo
-documentado y deploy readiness inicial. La carpeta sigue siendo la fuente de
+documentado y deploy readiness inicial. Sprint 11 agrego mesas, salon y ordenes
+de consumo. La carpeta sigue siendo la fuente de
 referencia documental del frontend.

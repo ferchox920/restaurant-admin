@@ -64,6 +64,6 @@ describe("report formatters", () => {
     expect(formatNullableUserName(null, "ada@example.com")).toBe(
       "ada@example.com"
     );
-    expect(formatNullableUserName(null, null)).toBe("Sin usuario confirmador");
+    expect(formatNullableUserName(null, null)).toBe("Usuario desconocido");
   });
 });

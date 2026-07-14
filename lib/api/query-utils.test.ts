@@ -4,25 +4,19 @@ import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isNotFoundError, shouldRetryQuery } from "@/lib/api/query-utils";
 
 describe("query utils", () => {
-  it("does not retry unauthorized, forbidden or not found errors", () => {
-    expect(
-      shouldRetryQuery(
-        0,
-        new ApiError({ statusCode: HTTP_STATUS.unauthorized, message: "401" })
-      )
-    ).toBe(false);
-    expect(
-      shouldRetryQuery(
-        0,
-        new ApiError({ statusCode: HTTP_STATUS.forbidden, message: "403" })
-      )
-    ).toBe(false);
-    expect(
-      shouldRetryQuery(
-        0,
-        new ApiError({ statusCode: HTTP_STATUS.notFound, message: "404" })
-      )
-    ).toBe(false);
+  it("does not retry client, conflict or rate-limit errors", () => {
+    for (const statusCode of [
+      HTTP_STATUS.badRequest,
+      HTTP_STATUS.unauthorized,
+      HTTP_STATUS.forbidden,
+      HTTP_STATUS.notFound,
+      HTTP_STATUS.conflict,
+      HTTP_STATUS.tooManyRequests,
+    ]) {
+      expect(
+        shouldRetryQuery(0, new ApiError({ statusCode, message: String(statusCode) }))
+      ).toBe(false);
+    }
   });
 
   it("retries generic failures up to the configured limit", () => {

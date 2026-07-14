@@ -55,4 +55,17 @@ describe("getApiErrorMessages", () => {
       "No se pudo conectar con la API. Verifica tu red o el backend.",
     ]);
   });
+
+  it("hides server details and uses the rate-limit message", () => {
+    expect(
+      getApiErrorMessages(
+        new ApiError({ statusCode: HTTP_STATUS.internalServerError, message: "database detail" })
+      )
+    ).toEqual(["Ocurrio un error inesperado. Intenta nuevamente."]);
+    expect(
+      getApiErrorMessages(
+        new ApiError({ statusCode: HTTP_STATUS.tooManyRequests, message: "throttled" })
+      )
+    ).toEqual(["Demasiadas solicitudes. Espera unos segundos e intenta nuevamente."]);
+  });
 });
