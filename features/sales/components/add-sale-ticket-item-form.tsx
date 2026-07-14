@@ -21,6 +21,7 @@ import type {
 } from "@/features/sales/types/sale-ticket.types";
 import { formatProductUnit, formatStockManagementType } from "@/lib/formatters";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
+import { toApiQuantityNumber } from "@/lib/quantity";
 
 type AddSaleTicketItemFormProps = {
   products: SaleProductOption[];
@@ -51,11 +52,54 @@ export function AddSaleTicketItemForm({
   const selectedProduct = products.find(
     (product) => product.id === selectedProductId
   );
+  const selectedProductRequiresStock =
+    selectedProduct?.stockManagementType === "FINISHED_PRODUCT";
+  const availableStock =
+    !selectedProductRequiresStock || selectedProduct?.currentStock == null
+      ? null
+      : Number(selectedProduct.currentStock);
+  const hasAvailableStock =
+    !selectedProductRequiresStock ||
+    (availableStock != null &&
+      Number.isFinite(availableStock) &&
+      availableStock > 0);
+  const selectedStockLabel =
+    !selectedProductRequiresStock
+      ? "Sin control de stock"
+      : selectedProduct?.currentStock == null
+      ? "Stock no disponible"
+      : `Stock disponible: ${selectedProduct.currentStock}`;
 
   return (
     <form
       className="space-y-4"
       onSubmit={form.handleSubmit(async (values) => {
+        if (
+          !selectedProduct ||
+          (selectedProductRequiresStock &&
+            (availableStock == null ||
+              !Number.isFinite(availableStock) ||
+              availableStock <= 0))
+        ) {
+          form.setError("quantity", {
+            message: "El producto no tiene stock disponible para vender.",
+          });
+          return;
+        }
+
+        const requestedQuantity = toApiQuantityNumber(values.quantity);
+
+        if (
+          selectedProductRequiresStock &&
+          availableStock != null &&
+          requestedQuantity > availableStock
+        ) {
+          form.setError("quantity", {
+            message: `Solo puedes agregar hasta ${selectedProduct.currentStock} unidades disponibles.`,
+          });
+          return;
+        }
+
         await onSubmit(values);
         form.reset({
           productId: "",
@@ -106,6 +150,11 @@ export function AddSaleTicketItemForm({
             {formatStockManagementType(selectedProduct.stockManagementType)}
           </p>
         ) : null}
+        {selectedProduct ? (
+          <p className="text-sm font-medium text-muted-foreground">
+            {selectedStockLabel}
+          </p>
+        ) : null}
       </div>
 
       <div className="space-y-2">
@@ -114,6 +163,11 @@ export function AddSaleTicketItemForm({
           id="sale-ticket-item-quantity"
           inputMode="decimal"
           placeholder="1"
+          max={
+            selectedProductRequiresStock
+              ? selectedProduct?.currentStock ?? undefined
+              : undefined
+          }
           aria-invalid={Boolean(form.formState.errors.quantity)}
           {...form.register("quantity")}
         />
@@ -131,7 +185,14 @@ export function AddSaleTicketItemForm({
         />
       ) : null}
 
-      <Button type="submit" disabled={isPending || products.length === 0}>
+      <Button
+        type="submit"
+        disabled={
+          isPending ||
+          products.length === 0 ||
+          Boolean(selectedProduct && !hasAvailableStock)
+        }
+      >
         {isPending ? "Agregando..." : "Agregar item"}
       </Button>
     </form>

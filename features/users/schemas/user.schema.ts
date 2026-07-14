@@ -2,7 +2,7 @@ import { z } from "zod";
 import { userRoles } from "@/features/users/types/user.types";
 
 export const createUserSchema = z.object({
-  email: z.string().trim().email("Ingresa un email valido."),
+  email: z.string().trim().toLowerCase().email("Ingresa un email valido."),
   password: z
     .string()
     .min(8, "La contrasena debe tener al menos 8 caracteres."),
@@ -15,7 +15,7 @@ export const createUserSchema = z.object({
 
 export const updateUserSchema = z
   .object({
-    email: z.string().trim().email("Ingresa un email valido.").optional(),
+    email: z.string().trim().toLowerCase().email("Ingresa un email valido.").optional(),
     firstName: z.string().trim().min(1, "El nombre es obligatorio.").optional(),
     lastName: z.string().trim().min(1, "El apellido es obligatorio.").optional(),
     role: z

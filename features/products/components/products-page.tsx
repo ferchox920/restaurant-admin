@@ -1,7 +1,7 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Boxes, CircleCheck, CircleOff, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/feedback/empty-state";
@@ -9,7 +9,7 @@ import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { PageHeader } from "@/components/common/page-header";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useCategories } from "@/features/categories/hooks/use-categories";
+import { useAllCategories as useCategories } from "@/features/categories/hooks/use-all-categories";
 import { ProductFilters } from "@/features/products/components/product-filters";
 import { ProductForm } from "@/features/products/components/product-form";
 import { ProductTable } from "@/features/products/components/product-table";
@@ -22,14 +22,11 @@ import type { Product } from "@/features/products/types/product.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 
 type ProductFilterValue = "all" | "active" | "inactive";
-
-const filterToActiveMap: Record<ProductFilterValue, boolean | undefined> = {
-  all: undefined,
-  active: true,
-  inactive: false,
-};
 
 export function ProductsPage() {
   const { user } = useAuth();
@@ -38,6 +35,7 @@ export function ProductsPage() {
   const [filter, setFilter] = useState<ProductFilterValue>("all");
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState<string | undefined>();
+  const [offset, setOffset] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [pendingProductId, setPendingProductId] = useState<string | null>(null);
@@ -45,13 +43,15 @@ export function ProductsPage() {
     "deactivate" | "reactivate" | null
   >(null);
 
-  const deferredSearch = useDeferredValue(search.trim());
+  const deferredSearch = useDebouncedValue(search.trim(), 300);
 
   const categoriesQuery = useCategories();
   const productsQuery = useProducts({
-    active: filterToActiveMap[filter],
+    active: filter === "all" ? undefined : filter === "active",
     categoryId,
     search: deferredSearch || undefined,
+    limit: DEFAULT_PAGE_LIMIT,
+    offset,
   });
   const createProductMutation = useCreateProduct();
   const updateProductMutation = useUpdateProduct();
@@ -66,29 +66,17 @@ export function ProductsPage() {
     [categoriesQuery.data]
   );
 
-  const products = useMemo(() => {
-    let source = productsQuery.data ?? [];
+  const products = productsQuery.data ?? [];
+  const productCounts = useMemo(() => {
+    const items = productsQuery.data ?? [];
+    const active = items.filter((product) => product.active).length;
 
-    if (filter !== "all") {
-      source = source.filter((product) =>
-        filter === "active" ? product.active : !product.active
-      );
-    }
-
-    if (categoryId) {
-      source = source.filter((product) => product.categoryId === categoryId);
-    }
-
-    if (deferredSearch) {
-      const normalized = deferredSearch.toLowerCase();
-      source = source.filter((product) => {
-        const haystack = [product.name, product.sku ?? ""].join(" ").toLowerCase();
-        return haystack.includes(normalized);
-      });
-    }
-
-    return source;
-  }, [categoryId, deferredSearch, filter, productsQuery.data]);
+    return {
+      total: items.length,
+      active,
+      inactive: items.length - active,
+    };
+  }, [productsQuery.data]);
 
   const queryMessages = productsQuery.error
     ? getApiErrorMessages(productsQuery.error)
@@ -97,6 +85,8 @@ export function ProductsPage() {
     productsQuery.error &&
     isApiError(productsQuery.error) &&
     productsQuery.error.statusCode === HTTP_STATUS.forbidden;
+  const hasActiveFilters =
+    filter !== "all" || Boolean(categoryId || deferredSearch);
 
   async function handleCreateProduct(values: {
     name: string;
@@ -158,7 +148,7 @@ export function ProductsPage() {
       <PageHeader
         eyebrow="Catalogo"
         title="Productos"
-        description="Administra el catalogo de productos, su categoria, unidad de venta y modalidad de control de stock."
+        description="Organiza los productos, sus categorías, unidades de venta y modalidad de stock."
         actions={
           canMutate ? (
             <Button type="button" onClick={() => setIsCreateOpen(true)}>
@@ -169,16 +159,59 @@ export function ProductsPage() {
         }
       />
 
+      {!productsQuery.isLoading && !productsQuery.error ? (
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Card size="sm">
+            <CardContent className="flex items-center gap-3">
+              <span className="rounded-lg bg-primary/10 p-2 text-primary">
+                <Boxes aria-hidden="true" className="size-5" />
+              </span>
+              <div>
+                <p className="text-sm text-muted-foreground">Total</p>
+                <p className="text-2xl font-semibold">{productCounts.total}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent className="flex items-center gap-3">
+              <span className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600 dark:text-emerald-400">
+                <CircleCheck aria-hidden="true" className="size-5" />
+              </span>
+              <div>
+                <p className="text-sm text-muted-foreground">Activos</p>
+                <p className="text-2xl font-semibold">
+                  {productCounts.active}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent className="flex items-center gap-3">
+              <span className="rounded-lg bg-muted p-2 text-muted-foreground">
+                <CircleOff aria-hidden="true" className="size-5" />
+              </span>
+              <div>
+                <p className="text-sm text-muted-foreground">Inactivos</p>
+                <p className="text-2xl font-semibold">
+                  {productCounts.inactive}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
+
       <Card>
         <CardContent className="space-y-4 pt-5">
           <ProductFilters
             filter={filter}
-            onFilterChange={setFilter}
+            onFilterChange={(value) => { setFilter(value); setOffset(0); }}
             search={search}
-            onSearchChange={setSearch}
+            onSearchChange={(value) => { setSearch(value); setOffset(0); }}
             categoryId={categoryId}
-            onCategoryChange={setCategoryId}
+            onCategoryChange={(value) => { setCategoryId(value); setOffset(0); }}
             categories={categoriesQuery.data ?? []}
+            counts={productCounts}
           />
 
           {productsQuery.isLoading ? (
@@ -201,12 +234,32 @@ export function ProductsPage() {
             />
           ) : null}
 
+          {categoriesQuery.error ? (
+            <ErrorMessage
+              title="No se pudieron cargar las categorías"
+              messages={getApiErrorMessages(categoriesQuery.error)}
+            />
+          ) : null}
+
+          {!productsQuery.isLoading && !productsQuery.error ? (
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {products.length}{" "}
+              {products.length === 1
+                ? "producto encontrado"
+                : "productos encontrados"}
+            </p>
+          ) : null}
+
           {!productsQuery.isLoading &&
           !productsQuery.error &&
           products.length === 0 ? (
             <EmptyState
-              title="Sin productos"
-              message="Todavia no hay productos para mostrar con los filtros seleccionados."
+              title={hasActiveFilters ? "Sin coincidencias" : "Sin productos"}
+              message={
+                hasActiveFilters
+                  ? "No encontramos productos con los filtros seleccionados."
+                  : "Crea el primer producto para comenzar a organizar el catálogo."
+              }
               className="w-full max-w-none shadow-none"
             />
           ) : null}
@@ -224,6 +277,9 @@ export function ProductsPage() {
               pendingProductId={pendingProductId}
               pendingAction={pendingAction}
             />
+          ) : null}
+          {!productsQuery.error ? (
+            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={products.length} onOffsetChange={setOffset} disabled={productsQuery.isFetching} />
           ) : null}
         </CardContent>
       </Card>

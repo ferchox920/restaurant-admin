@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowLeft, PackageSearch } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -83,6 +84,7 @@ export function ProductInventoryPage({
               href="/inventory"
               className={buttonVariants({ variant: "outline" })}
             >
+              <ArrowLeft aria-hidden="true" />
               Volver al listado
             </Link>
           }
@@ -101,8 +103,8 @@ export function ProductInventoryPage({
                 .
               </p>
               <p>
-                `NON_STOCKED` se muestra como no controlado y `RECIPE_BASED` queda
-                reservado para una fase futura.
+                Para controlar existencias, cambia el tipo de stock del producto
+                a Inventariable.
               </p>
             </CardContent>
           </Card>
@@ -137,7 +139,7 @@ export function ProductInventoryPage({
       <PageHeader
         eyebrow="Inventario"
         title={inventory.productName}
-        description="Resumen del stock actual y trazabilidad del producto finalizado."
+        description="Consulta existencias, configura mínimos y registra movimientos manuales."
         actions={
           <div className="flex flex-wrap gap-2">
             <Button
@@ -146,6 +148,7 @@ export function ProductInventoryPage({
               type="button"
               variant="outline"
             >
+              <ArrowLeft aria-hidden="true" />
               Volver al listado
             </Button>
             <Button
@@ -154,35 +157,14 @@ export function ProductInventoryPage({
               type="button"
               variant="outline"
             >
+              <PackageSearch aria-hidden="true" />
               Ver producto
             </Button>
           </div>
         }
       />
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(18rem,1fr)]">
-        <CurrentStockCard product={product} inventory={inventory} />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Politica actual</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm text-muted-foreground">
-            <p>
-              Las mutaciones manuales de inventario quedan reservadas a `ADMIN` y
-              `MANAGER`.
-            </p>
-            <p>
-              `SALE_OUT` y `VOID_REVERSAL` son movimientos internos generados por
-              ventas y no exponen botones manuales.
-            </p>
-            <p>
-              El frontend preserva cantidades como texto decimal y delega el calculo
-              final al backend.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <CurrentStockCard product={product} inventory={inventory} />
 
       <InventoryOperationActions
         productId={productId}

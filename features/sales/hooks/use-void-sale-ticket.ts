@@ -11,11 +11,9 @@ export function useVoidSaleTicket(ticketId: string) {
 
   return useMutation({
     mutationFn: (payload: VoidSaleTicketFormValues) => voidSaleTicket(ticketId, payload),
-    onSuccess: () => {
+    onSuccess: (ticket) => {
+      queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
       void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: saleTicketsQueryKeys.detail(ticketId),
-      });
       void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.lists() });
       void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.details() });
       void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.movements() });

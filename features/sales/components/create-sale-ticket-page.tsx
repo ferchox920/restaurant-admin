@@ -10,7 +10,7 @@ import { LoadingState } from "@/components/feedback/loading-state";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { CreateSaleTicketForm } from "@/features/sales/components/create-sale-ticket-form";
 import { useCreateSaleTicket } from "@/features/sales/hooks/use-create-sale-ticket";
-import { useSalesChannels } from "@/features/sales-channels/hooks/use-sales-channels";
+import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";

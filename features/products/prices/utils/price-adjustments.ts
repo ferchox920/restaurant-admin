@@ -2,7 +2,7 @@ import type { SalesChannel } from "@/features/sales-channels/types/sales-channel
 
 export type PriceAdjustmentChannel = Pick<
   SalesChannel,
-  "id" | "name" | "commissionType" | "commissionValue"
+  "id" | "name" | "subTaxes"
 >;
 
 function roundToCents(value: number) {
@@ -11,7 +11,7 @@ function roundToCents(value: number) {
 
 export function calculateChannelPrice(
   basePrice: string | number,
-  channel: PriceAdjustmentChannel
+  channel: PriceAdjustmentChannel,
 ) {
   const numericBasePrice =
     typeof basePrice === "number" ? basePrice : Number(basePrice);
@@ -20,15 +20,12 @@ export function calculateChannelPrice(
     return "0";
   }
 
-  if (channel.commissionType === "PERCENTAGE") {
-    return String(
-      roundToCents(numericBasePrice * (1 + channel.commissionValue / 100))
-    );
-  }
+  const totalTaxPercentage = (channel.subTaxes ?? []).reduce(
+    (total, subTax) => total + subTax.percentage,
+    0,
+  );
 
-  if (channel.commissionType === "FIXED") {
-    return String(roundToCents(numericBasePrice + channel.commissionValue));
-  }
-
-  return String(roundToCents(numericBasePrice));
+  return String(
+    roundToCents(numericBasePrice * (1 + totalTaxPercentage / 100)),
+  );
 }

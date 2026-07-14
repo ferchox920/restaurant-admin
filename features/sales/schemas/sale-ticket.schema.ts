@@ -24,12 +24,44 @@ export const saleTicketStatusSchema = z.enum(saleTicketStatuses, {
   message: "Selecciona un estado valido.",
 });
 
+export const salePaymentMethodSchema = z.enum(["CASH", "TRANSFER"], {
+  message: "Selecciona un metodo de pago valido.",
+});
+
+export const saleTicketPaymentSchema = z
+  .object({
+    paymentMethod: salePaymentMethodSchema,
+    paymentBankId: z
+      .string()
+      .uuid("Selecciona un banco valido.")
+      .optional()
+      .or(z.literal(""))
+      .transform((value) => (value ? value : undefined)),
+  })
+  .superRefine((value, context) => {
+    if (value.paymentMethod === "TRANSFER" && !value.paymentBankId) {
+      context.addIssue({
+        code: "custom",
+        path: ["paymentBankId"],
+        message: "Selecciona un banco para la transferencia.",
+      });
+    }
+  })
+  .transform((value) => ({
+    paymentMethod: value.paymentMethod,
+    ...(value.paymentMethod === "TRANSFER"
+      ? { paymentBankId: value.paymentBankId }
+      : {}),
+  }));
+
 export const createSaleTicketSchema = z.object({
   salesChannelId: z.string().uuid("Selecciona un canal valido."),
   notes: z
     .string()
     .optional()
     .transform((value) => normalizeOptionalText(value)),
+  paymentMethod: salePaymentMethodSchema.optional(),
+  paymentBankId: z.string().uuid("Selecciona un banco valido.").optional(),
 });
 
 export const updateSaleTicketSchema = z.object({
@@ -43,6 +75,8 @@ export const updateSaleTicketSchema = z.object({
     .string()
     .optional()
     .transform((value) => normalizeOptionalText(value)),
+  paymentMethod: salePaymentMethodSchema.optional(),
+  paymentBankId: z.string().uuid("Selecciona un banco valido.").optional(),
 });
 
 export const addSaleTicketItemSchema = z.object({

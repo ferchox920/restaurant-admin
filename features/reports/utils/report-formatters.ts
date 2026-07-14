@@ -141,5 +141,5 @@ export function formatNullableUserName(
     return email;
   }
 
-  return "Sin usuario confirmador";
+  return "Usuario desconocido";
 }

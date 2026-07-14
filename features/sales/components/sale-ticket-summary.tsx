@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getSalePaymentMethodLabel } from "@/features/sales/components/sale-ticket-payment-section";
 import { SaleTicketStatusBadge } from "@/features/sales/components/sale-ticket-status-badge";
 import type { SaleTicketDetail } from "@/features/sales/types/sale-ticket.types";
 import { formatDateTime } from "@/lib/formatters";
@@ -52,6 +53,20 @@ export function SaleTicketSummary({
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Total</p>
             <p>{formatMoney(ticket.total)}</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-muted-foreground">
+              Metodo de pago
+            </p>
+            <p>{getSalePaymentMethodLabel(ticket.paymentMethod)}</p>
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-muted-foreground">Banco</p>
+            <p>
+              {ticket.paymentMethod === "TRANSFER"
+                ? ticket.paymentBankNameSnapshot ?? ticket.paymentBankName ?? "-"
+                : "-"}
+            </p>
           </div>
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Confirmado por</p>

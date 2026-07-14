@@ -16,12 +16,12 @@ import { StockStatusBadge } from "@/features/inventory/components/stock-status-b
 import { useProductInventory } from "@/features/inventory/hooks/use-product-inventory";
 import { useProductPrices } from "@/features/products/prices/hooks/use-product-prices";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useCategories } from "@/features/categories/hooks/use-categories";
+import { useAllCategories as useCategories } from "@/features/categories/hooks/use-all-categories";
 import { useDeactivateProduct } from "@/features/products/hooks/use-deactivate-product";
 import { useProduct } from "@/features/products/hooks/use-product";
 import { useReactivateProduct } from "@/features/products/hooks/use-reactivate-product";
 import { useUpdateProduct } from "@/features/products/hooks/use-update-product";
-import { useSalesChannels } from "@/features/sales-channels/hooks/use-sales-channels";
+import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { formatCategoryName, formatDateTime, formatProductUnit, formatStockManagementType } from "@/lib/formatters";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";

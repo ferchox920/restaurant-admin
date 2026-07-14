@@ -53,7 +53,6 @@ export function WasteForm({
           id="waste-quantity"
           inputMode="decimal"
           disabled={isPending}
-          placeholder="Ej. 2"
           {...form.register("quantity")}
         />
       </FieldError>
@@ -62,7 +61,6 @@ export function WasteForm({
         <Textarea
           id="waste-reason"
           disabled={isPending}
-          placeholder="Ej. Producto vencido o dañado."
           {...form.register("reason")}
         />
       </FieldError>

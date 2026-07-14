@@ -5,17 +5,26 @@ import type {
   CreateCategoryInput,
   UpdateCategoryInput,
 } from "@/features/categories/types/category.types";
+import type { PaginationParams } from "@/types/common";
+import { fetchAllPages, withDefaultPagination } from "@/lib/api/pagination";
 
-export type CategoriesFilters = {
+export type CategoriesFilters = PaginationParams & {
   active?: boolean;
 };
 
-export function getCategories(filters?: CategoriesFilters) {
+export function getCategories(filters?: CategoriesFilters, signal?: AbortSignal) {
+  const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     active: filters?.active,
+    limit: pagination.limit,
+    offset: pagination.offset,
   });
 
-  return apiClient.get<Category[]>(`/api/categories${queryString}`);
+  return apiClient.get<Category[]>(`/api/categories${queryString}`, signal);
+}
+
+export function getAllCategories(filters?: Omit<CategoriesFilters, "limit" | "offset">) {
+  return fetchAllPages((pagination) => getCategories({ ...filters, ...pagination }));
 }
 
 export function getCategory(categoryId: string) {

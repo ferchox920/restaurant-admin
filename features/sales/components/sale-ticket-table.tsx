@@ -18,38 +18,54 @@ import {
 
 export function SaleTicketTable({ tickets }: { tickets: SaleTicketListItem[] }) {
   return (
-    <Table>
+    <Table className="min-w-[720px]">
       <TableHeader>
         <TableRow>
           <TableHead>Ticket</TableHead>
-          <TableHead>Fecha</TableHead>
           <TableHead>Canal</TableHead>
           <TableHead>Estado</TableHead>
-          <TableHead>Total</TableHead>
-          <TableHead>Creado por</TableHead>
-          <TableHead>Confirmado por</TableHead>
+          <TableHead>Productos</TableHead>
+          <TableHead className="text-right">Total</TableHead>
+          <TableHead className="hidden xl:table-cell">Responsables</TableHead>
           <TableHead className="text-right">Acciones</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {tickets.map((ticket) => (
           <TableRow key={ticket.id}>
-            <TableCell className="font-medium text-foreground">
-              {formatTicketReadableId(ticket.id)}
+            <TableCell>
+              <p className="font-medium text-foreground">
+                {formatTicketReadableId(ticket.id)}
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {formatDateTime(ticket.createdAt)}
+              </p>
             </TableCell>
-            <TableCell>{formatDateTime(ticket.createdAt)}</TableCell>
             <TableCell>{ticket.salesChannel?.name ?? "Sin canal"}</TableCell>
             <TableCell>
               <SaleTicketStatusBadge status={ticket.status} />
             </TableCell>
-            <TableCell>{formatMoney(ticket.total)}</TableCell>
             <TableCell>
-              {formatSaleTicketActor(ticket.createdBy, ticket.createdById)}
+              {ticket.itemsCount ?? 0}{" "}
+              {(ticket.itemsCount ?? 0) === 1 ? "ítem" : "ítems"}
             </TableCell>
-            <TableCell>
-              {ticket.confirmedAt
-                ? formatSaleTicketActor(ticket.confirmedBy, ticket.confirmedById)
-                : "-"}
+            <TableCell className="text-right font-semibold text-foreground">
+              {formatMoney(ticket.total)}
+            </TableCell>
+            <TableCell className="hidden max-w-64 whitespace-normal xl:table-cell">
+              <p className="text-sm">
+                <span className="text-muted-foreground">Creó: </span>
+                {formatSaleTicketActor(ticket.createdBy, ticket.createdById)}
+              </p>
+              {ticket.confirmedAt ? (
+                <p className="mt-1 text-xs">
+                  <span className="text-muted-foreground">Confirmó: </span>
+                  {formatSaleTicketActor(
+                    ticket.confirmedBy,
+                    ticket.confirmedById,
+                  )}
+                </p>
+              ) : null}
             </TableCell>
             <TableCell>
               <SaleTicketActions ticketId={ticket.id} />

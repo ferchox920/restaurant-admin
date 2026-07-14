@@ -8,7 +8,7 @@ import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useProducts } from "@/features/products/hooks/use-products";
+import { useAllProducts as useProducts } from "@/features/products/hooks/use-all-products";
 import { InventoryMovementsReportFilters } from "@/features/reports/components/inventory-movements-report-filters";
 import { InventoryMovementsReportTable } from "@/features/reports/components/inventory-movements-report-table";
 import { ReportPagination } from "@/features/reports/components/report-pagination";

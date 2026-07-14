@@ -53,7 +53,6 @@ export function StockInForm({
           id="stock-in-quantity"
           inputMode="decimal"
           disabled={isPending}
-          placeholder="Ej. 12.5"
           {...form.register("quantity")}
         />
       </FieldError>
@@ -62,7 +61,6 @@ export function StockInForm({
         <Textarea
           id="stock-in-reason"
           disabled={isPending}
-          placeholder="Ej. Produccion terminada del turno."
           {...form.register("reason")}
         />
       </FieldError>

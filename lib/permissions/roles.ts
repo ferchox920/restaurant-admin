@@ -19,6 +19,12 @@ export const SALES_CHANNELS_ALLOWED_ROLES: UserRole[] = [
   "AUDITOR",
 ];
 
+export const PAYMENT_BANKS_ALLOWED_ROLES: UserRole[] = [
+  "ADMIN",
+  "MANAGER",
+  "AUDITOR",
+];
+
 export const PRODUCTS_ALLOWED_ROLES: UserRole[] = [
   "ADMIN",
   "MANAGER",
@@ -33,6 +39,22 @@ export const INVENTORY_ALLOWED_ROLES: UserRole[] = [
 ];
 
 export const SALES_ALLOWED_ROLES: UserRole[] = [
+  "ADMIN",
+  "MANAGER",
+  "CASHIER",
+  "AUDITOR",
+];
+
+export const TABLES_ALLOWED_ROLES: UserRole[] = ["ADMIN", "MANAGER"];
+
+export const FLOOR_ALLOWED_ROLES: UserRole[] = [
+  "ADMIN",
+  "MANAGER",
+  "CASHIER",
+  "AUDITOR",
+];
+
+export const TABLE_ORDERS_ALLOWED_ROLES: UserRole[] = [
   "ADMIN",
   "MANAGER",
   "CASHIER",

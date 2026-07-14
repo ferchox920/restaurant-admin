@@ -3,7 +3,7 @@ import type { InventoryReferenceType } from "@/features/inventory/types/inventor
 const referenceTypeLabels: Record<InventoryReferenceType, string> = {
   MANUAL: "Manual",
   SALE_TICKET: "Ticket de venta",
-  SALE_VOID: "Anulacion de venta",
+  SALE_VOID: "Anulación de venta",
   SYSTEM: "Sistema",
 };
 
@@ -18,7 +18,9 @@ export function MovementReference({
     <div className="space-y-1">
       <p>{referenceTypeLabels[referenceType]}</p>
       {referenceId ? (
-        <p className="text-xs text-muted-foreground">Ref. {referenceId}</p>
+        <p className="text-xs text-muted-foreground">
+          Ref. #{referenceId.slice(0, 8)}
+        </p>
       ) : null}
     </div>
   );

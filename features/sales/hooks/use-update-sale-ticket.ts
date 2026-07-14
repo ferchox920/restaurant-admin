@@ -3,11 +3,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateSaleTicket } from "@/features/sales/api/sales.api";
 import { saleTicketsQueryKeys } from "@/features/sales/query-keys";
-import type { UpdateSaleTicketFormValues } from "@/features/sales/types/sale-ticket.types";
+import type { UpdateSaleTicketInput } from "@/features/sales/types/sale-ticket.types";
 
 type UpdateSaleTicketPayload = {
   ticketId: string;
-  data: UpdateSaleTicketFormValues;
+  data: UpdateSaleTicketInput;
 };
 
 export function useUpdateSaleTicket() {
@@ -16,11 +16,12 @@ export function useUpdateSaleTicket() {
   return useMutation({
     mutationFn: ({ ticketId, data }: UpdateSaleTicketPayload) =>
       updateSaleTicket(ticketId, data),
-    onSuccess: (_, variables) => {
+    onSuccess: (ticket, variables) => {
+      queryClient.setQueryData(
+        saleTicketsQueryKeys.detail(variables.ticketId),
+        ticket
+      );
       void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: saleTicketsQueryKeys.detail(variables.ticketId),
-      });
     },
   });
 }

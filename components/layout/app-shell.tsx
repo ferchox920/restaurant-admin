@@ -34,7 +34,7 @@ export function AppShell({ children }: AppShellProps) {
   const currentItem = getNavigationItemForPath(pathname);
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,color-mix(in_oklch,var(--muted),white_35%)_0%,var(--background)_28rem)] lg:flex">
+    <div className="min-h-screen bg-[linear-gradient(180deg,color-mix(in_oklch,var(--muted),var(--background)_35%)_0%,var(--background)_28rem)] lg:flex">
       <Sidebar role={user.role} />
       <div className="flex min-h-screen min-w-0 flex-1 flex-col">
         <Topbar user={user} currentItem={currentItem} />

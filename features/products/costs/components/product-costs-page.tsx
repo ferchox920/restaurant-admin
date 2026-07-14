@@ -15,6 +15,8 @@ import { useCurrentProductCost } from "@/features/products/costs/hooks/use-curre
 import { useProductCosts } from "@/features/products/costs/hooks/use-product-costs";
 import { useProduct } from "@/features/products/hooks/use-product";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
 import { isNotFoundError } from "@/lib/api/query-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -23,13 +25,14 @@ type ProductCostsPageProps = {
 };
 
 export function ProductCostsPage({ productId }: ProductCostsPageProps) {
+  const [offset, setOffset] = useState(0);
   const { user } = useAuth();
   const canMutate = user?.role === "ADMIN" || user?.role === "MANAGER";
   const [successMessage, setSuccessMessage] = useState<string | undefined>();
 
   const productQuery = useProduct(productId);
   const currentCostQuery = useCurrentProductCost(productId);
-  const costsQuery = useProductCosts(productId);
+  const costsQuery = useProductCosts(productId, { limit: DEFAULT_PAGE_LIMIT, offset });
   const createCostMutation = useCreateProductCost(productId);
 
   const isCurrentCostMissing =
@@ -126,6 +129,9 @@ export function ProductCostsPage({ productId }: ProductCostsPageProps) {
           ) : (
             <ProductCostHistoryTable items={costsQuery.data ?? []} />
           )}
+          {!costsQuery.error ? (
+            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={costsQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={costsQuery.isFetching} />
+          ) : null}
         </CardContent>
       </Card>
     </section>

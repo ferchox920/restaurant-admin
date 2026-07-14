@@ -1,6 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import {
+  BellRing,
+  PackagePlus,
+  RefreshCw,
+  SlidersHorizontal,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InventoryOperationDialog } from "@/features/inventory/components/inventory-operation-dialog";
@@ -74,16 +81,18 @@ export function InventoryOperationActions({
     <Card>
       <CardHeader>
         <CardTitle>Operaciones manuales</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Selecciona qué cambio necesitas registrar en el stock.
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {!isActive ? (
-          <p className="text-sm text-muted-foreground">
-            El producto esta inactivo. El backend rechazara movimientos manuales,
-            pero todavia puedes actualizar el stock minimo.
+          <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+            El producto está inactivo. Solo puedes actualizar su stock mínimo.
           </p>
         ) : null}
 
-        <div className="flex flex-wrap gap-2">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
           <InventoryOperationDialog
             open={openDialog === "stock-in"}
             onOpenChange={(open) => setOpenDialog(open ? "stock-in" : null)}
@@ -91,7 +100,12 @@ export function InventoryOperationActions({
             title="Ingresar stock"
             description="Ingresa una cantidad para sumarla al stock actual."
             trigger={
-              <Button type="button" variant="outline" disabled={movementButtonsDisabled}>
+              <Button
+                type="button"
+                className="w-full"
+                disabled={movementButtonsDisabled}
+              >
+                <PackagePlus aria-hidden="true" />
                 Ingresar stock
               </Button>
             }
@@ -103,7 +117,7 @@ export function InventoryOperationActions({
               onSubmit={async (values) => {
                 setSuccessMessage(null);
                 await stockInMutation.mutateAsync(values);
-                setSuccessMessage("El movimiento STOCK_IN se registro correctamente.");
+                setSuccessMessage("El ingreso de stock se registró correctamente.");
                 setOpenDialog(null);
               }}
             />
@@ -118,7 +132,13 @@ export function InventoryOperationActions({
             title="Fijar stock actual"
             description="Define el nuevo valor absoluto del stock actual."
             trigger={
-              <Button type="button" variant="outline" disabled={movementButtonsDisabled}>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={movementButtonsDisabled}
+              >
+                <SlidersHorizontal aria-hidden="true" />
                 Fijar stock actual
               </Button>
             }
@@ -132,7 +152,7 @@ export function InventoryOperationActions({
                 setSuccessMessage(null);
                 await manualAdjustmentMutation.mutateAsync(values);
                 setSuccessMessage(
-                  "El movimiento MANUAL_ADJUSTMENT se registro correctamente."
+                  "El stock actual se ajustó correctamente."
                 );
                 setOpenDialog(null);
               }}
@@ -146,7 +166,13 @@ export function InventoryOperationActions({
             title="Registrar merma"
             description="Descuenta stock por perdida, daño o descarte."
             trigger={
-              <Button type="button" variant="outline" disabled={movementButtonsDisabled}>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={movementButtonsDisabled}
+              >
+                <Trash2 aria-hidden="true" />
                 Registrar merma
               </Button>
             }
@@ -158,7 +184,7 @@ export function InventoryOperationActions({
               onSubmit={async (values) => {
                 setSuccessMessage(null);
                 await wasteMutation.mutateAsync(values);
-                setSuccessMessage("La merma se registro correctamente.");
+                setSuccessMessage("La merma se registró correctamente.");
                 setOpenDialog(null);
               }}
             />
@@ -171,7 +197,13 @@ export function InventoryOperationActions({
             title="Registrar reingreso"
             description="Suma nuevamente stock devuelto o reingresado al producto."
             trigger={
-              <Button type="button" variant="outline" disabled={movementButtonsDisabled}>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={movementButtonsDisabled}
+              >
+                <RefreshCw aria-hidden="true" />
                 Registrar reingreso
               </Button>
             }
@@ -183,7 +215,7 @@ export function InventoryOperationActions({
               onSubmit={async (values) => {
                 setSuccessMessage(null);
                 await returnInMutation.mutateAsync(values);
-                setSuccessMessage("El reingreso se registro correctamente.");
+                setSuccessMessage("El reingreso se registró correctamente.");
                 setOpenDialog(null);
               }}
             />
@@ -196,8 +228,9 @@ export function InventoryOperationActions({
             title="Actualizar stock minimo"
             description="Configura el umbral minimo sin modificar el stock actual."
             trigger={
-              <Button type="button" variant="outline">
-                Actualizar stock minimo
+              <Button type="button" variant="outline" className="w-full">
+                <BellRing aria-hidden="true" />
+                Stock mínimo
               </Button>
             }
           >
@@ -209,7 +242,7 @@ export function InventoryOperationActions({
               onSubmit={async (values) => {
                 setSuccessMessage(null);
                 await minimumStockMutation.mutateAsync(values);
-                setSuccessMessage("El stock minimo se actualizo correctamente.");
+                setSuccessMessage("El stock mínimo se actualizó correctamente.");
                 setOpenDialog(null);
               }}
             />

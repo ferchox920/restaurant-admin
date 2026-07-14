@@ -9,6 +9,10 @@ type ProductStatusBadgesProps = {
 };
 
 export function ProductStatusBadges({ product }: ProductStatusBadgesProps) {
+  if (!product.active) {
+    return <StatusBadge status="inactive" />;
+  }
+
   const hint = getProductCatalogHint(
     product.stockManagementType,
     product.active
@@ -16,7 +20,7 @@ export function ProductStatusBadges({ product }: ProductStatusBadgesProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <StatusBadge status={product.active ? "active" : "inactive"} />
+      <StatusBadge status="active" />
       <StatusBadge status={hint.status} label={hint.label} />
     </div>
   );

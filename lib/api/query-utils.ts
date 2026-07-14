@@ -19,6 +19,9 @@ export function shouldRetryQuery(failureCount: number, error: unknown) {
     HTTP_STATUS.unauthorized,
     HTTP_STATUS.forbidden,
     HTTP_STATUS.notFound,
+    HTTP_STATUS.badRequest,
+    HTTP_STATUS.conflict,
+    HTTP_STATUS.tooManyRequests,
   ]);
 
   const statusCode = getErrorStatusCode(error);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,8 @@ import type { Category } from "@/features/categories/types/category.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
 
 type CategoryFilterValue = "all" | "active" | "inactive";
 
@@ -34,6 +36,7 @@ export function CategoriesPage() {
   const canMutate = user?.role === "ADMIN" || user?.role === "MANAGER";
 
   const [filter, setFilter] = useState<CategoryFilterValue>("all");
+  const [offset, setOffset] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [pendingCategoryId, setPendingCategoryId] = useState<string | null>(null);
@@ -43,23 +46,15 @@ export function CategoriesPage() {
 
   const categoriesQuery = useCategories({
     active: filterToActiveMap[filter],
+    limit: DEFAULT_PAGE_LIMIT,
+    offset,
   });
   const createCategoryMutation = useCreateCategory();
   const updateCategoryMutation = useUpdateCategory();
   const deactivateCategoryMutation = useDeactivateCategory();
   const reactivateCategoryMutation = useReactivateCategory();
 
-  const categories = useMemo(() => {
-    const source = categoriesQuery.data ?? [];
-
-    if (filter === "all") {
-      return source;
-    }
-
-    return source.filter((category) =>
-      filter === "active" ? category.active : !category.active
-    );
-  }, [categoriesQuery.data, filter]);
+  const categories = categoriesQuery.data ?? [];
 
   const queryMessages = categoriesQuery.error
     ? getApiErrorMessages(categoriesQuery.error)
@@ -138,21 +133,21 @@ export function CategoriesPage() {
             <Button
               type="button"
               variant={filter === "all" ? "default" : "outline"}
-              onClick={() => setFilter("all")}
+              onClick={() => { setFilter("all"); setOffset(0); }}
             >
               Todas
             </Button>
             <Button
               type="button"
               variant={filter === "active" ? "default" : "outline"}
-              onClick={() => setFilter("active")}
+              onClick={() => { setFilter("active"); setOffset(0); }}
             >
               Activas
             </Button>
             <Button
               type="button"
               variant={filter === "inactive" ? "default" : "outline"}
-              onClick={() => setFilter("inactive")}
+              onClick={() => { setFilter("inactive"); setOffset(0); }}
             >
               Inactivas
             </Button>
@@ -164,6 +159,9 @@ export function CategoriesPage() {
               message="Estamos consultando el catalogo disponible."
               className="w-full max-w-none shadow-none"
             />
+          ) : null}
+          {!categoriesQuery.error ? (
+            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={categories.length} onOffsetChange={setOffset} disabled={categoriesQuery.isFetching} />
           ) : null}
 
           {categoriesQuery.error ? (

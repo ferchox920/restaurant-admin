@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCategories } from "@/features/categories/hooks/use-categories";
+import { useAllCategories as useCategories } from "@/features/categories/hooks/use-all-categories";
 import { StockReportFilters } from "@/features/reports/components/stock-report-filters";
 import { useStockReport } from "@/features/reports/hooks/use-stock-report";
 import { StockReportSummary } from "@/features/reports/components/stock-report-summary";

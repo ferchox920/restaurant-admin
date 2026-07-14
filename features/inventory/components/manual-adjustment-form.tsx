@@ -59,7 +59,6 @@ export function ManualAdjustmentForm({
           id="manual-adjustment-stock"
           inputMode="decimal"
           disabled={isPending}
-          placeholder="Ej. 18"
           {...form.register("newStock")}
         />
       </FieldError>
@@ -68,7 +67,6 @@ export function ManualAdjustmentForm({
         <Textarea
           id="manual-adjustment-reason"
           disabled={isPending}
-          placeholder="Ej. Conteo fisico de cierre."
           {...form.register("reason")}
         />
       </FieldError>

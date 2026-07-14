@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
@@ -19,16 +21,19 @@ import {
 import { useCreateProductPrice } from "@/features/products/prices/hooks/use-create-product-price";
 import { useCurrentProductPrice } from "@/features/products/prices/hooks/use-current-product-price";
 import { useProductPrices } from "@/features/products/prices/hooks/use-product-prices";
+import { useAllProductPrices } from "@/features/products/prices/hooks/use-all-product-prices";
 import { useCurrentProductCost } from "@/features/products/costs/hooks/use-current-product-cost";
 import { useCreateProductCost } from "@/features/products/costs/hooks/use-create-product-cost";
 import { useProductCosts } from "@/features/products/costs/hooks/use-product-costs";
 import { CreateCostVersionForm } from "@/features/products/costs/components/create-cost-version-form";
 import { ProductCostHistoryTable } from "@/features/products/costs/components/product-cost-history-table";
 import { useProduct } from "@/features/products/hooks/use-product";
-import { useSalesChannels } from "@/features/sales-channels/hooks/use-sales-channels";
+import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { useUsers } from "@/features/users/hooks/use-users";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isNotFoundError } from "@/lib/api/query-utils";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
 
 type ProductPricesPageProps = {
   productId: string;
@@ -42,11 +47,13 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
   const [selectedChannelId, setSelectedChannelId] = useState<string | undefined>();
   const [priceSuccessMessage, setPriceSuccessMessage] = useState<string | undefined>();
   const [costSuccessMessage, setCostSuccessMessage] = useState<string | undefined>();
+  const [costOffset, setCostOffset] = useState(0);
+  const [priceOffset, setPriceOffset] = useState(0);
   const productQuery = useProduct(productId);
   const channelsQuery = useSalesChannels();
-  const allPricesQuery = useProductPrices(productId);
+  const allPricesQuery = useAllProductPrices(productId);
   const currentCostQuery = useCurrentProductCost(productId);
-  const costsQuery = useProductCosts(productId);
+  const costsQuery = useProductCosts(productId, { limit: DEFAULT_PAGE_LIMIT, offset: costOffset });
   const usersQuery = useUsers(canReadUsers);
   const createPriceMutation = useCreateProductPrice(productId);
   const createCostMutation = useCreateProductCost(productId);
@@ -71,7 +78,7 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
   );
   const effectiveChannelId = selectedChannelId ?? initialChannelId;
   const currentPriceQuery = useCurrentProductPrice(productId, effectiveChannelId);
-  const pricesQuery = useProductPrices(productId, effectiveChannelId);
+  const pricesQuery = useProductPrices(productId, effectiveChannelId, { limit: DEFAULT_PAGE_LIMIT, offset: priceOffset });
   const selectedChannel = useMemo(
     () => selectableChannels.find((channel) => channel.id === effectiveChannelId),
     [effectiveChannelId, selectableChannels]
@@ -132,106 +139,107 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
         title={`Precios de ${product.name}`}
         description="Consulta precio de venta, costo vigente y margen para editar precio y costo desde un solo lugar."
         actions={
-          <Link href={`/products/${productId}`} className="text-sm underline-offset-4 hover:underline">
-            Volver al detalle
+          <Link
+            href={`/products/${productId}`}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            <ArrowLeft aria-hidden="true" data-icon="inline-start" />
+            Volver al producto
           </Link>
         }
       />
 
-      <ExpandableSection
-        title="Valores vigentes"
-        description="Precio de venta, costo actual y margen estimado."
-        defaultOpen
-      >
-        <CurrentPriceCard
-          currentPrice={currentPriceQuery.data ?? undefined}
-          isLoading={currentPriceQuery.isLoading}
-          isMissing={currentPriceMissing}
-          error={currentPriceQuery.error}
-          selectedChannelName={selectedChannel?.name ?? null}
-          channelSelector={
-            channelsQuery.isLoading ? (
-              <LoadingState
-                title="Cargando canales"
-                message="Estamos consultando los canales de venta."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : channelsQuery.error ? (
-              <ErrorMessage
-                title="No se pudieron cargar los canales"
-                messages={getApiErrorMessages(channelsQuery.error)}
-              />
-            ) : allPricesQuery.error ? (
-              <ErrorMessage
-                title="No se pudo preparar el selector"
-                messages={getApiErrorMessages(allPricesQuery.error)}
-              />
-            ) : selectableChannels.length === 0 ? (
-              <EmptyState
-                title="Sin canales disponibles"
-                message="No hay canales activos ni canales inactivos con historial para consultar precios."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : (
-              <SalesChannelSelector
-                channels={selectableChannels}
-                selectedChannelId={effectiveChannelId}
-                onChange={setSelectedChannelId}
-                description=""
-              />
-            )
-          }
-          createdByName={getCreatedByName(currentPriceQuery.data?.createdById ?? null)}
-          currentCost={currentCostQuery.data ?? undefined}
-          isCostLoading={currentCostQuery.isLoading}
-          isCostMissing={currentCostMissing}
-          costError={currentCostQuery.error}
-        />
-      </ExpandableSection>
+      <CurrentPriceCard
+        currentPrice={currentPriceQuery.data ?? undefined}
+        isLoading={currentPriceQuery.isLoading}
+        isMissing={currentPriceMissing}
+        error={currentPriceQuery.error}
+        selectedChannelName={selectedChannel?.name ?? null}
+        channelSelector={
+          channelsQuery.isLoading ? (
+            <LoadingState
+              title="Cargando canales"
+              message="Estamos consultando los canales de venta."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : channelsQuery.error ? (
+            <ErrorMessage
+              title="No se pudieron cargar los canales"
+              messages={getApiErrorMessages(channelsQuery.error)}
+            />
+          ) : allPricesQuery.error ? (
+            <ErrorMessage
+              title="No se pudo preparar el selector"
+              messages={getApiErrorMessages(allPricesQuery.error)}
+            />
+          ) : selectableChannels.length === 0 ? (
+            <EmptyState
+              title="Sin canales disponibles"
+              message="No hay canales activos ni canales inactivos con historial para consultar precios."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : (
+            <SalesChannelSelector
+              channels={selectableChannels}
+              selectedChannelId={effectiveChannelId}
+              onChange={(value) => { setSelectedChannelId(value); setPriceOffset(0); }}
+              description=""
+            />
+          )
+        }
+        createdByName={getCreatedByName(
+          currentPriceQuery.data?.createdById ?? null,
+        )}
+        currentCost={currentCostQuery.data ?? undefined}
+        isCostLoading={currentCostQuery.isLoading}
+        isCostMissing={currentCostMissing}
+        costError={currentCostQuery.error}
+      />
 
       <ExpandableSection
-        title="Editar precio de venta"
-        description="Carga un precio base y deriva automaticamente el precio final de cada canal activo."
+        title="Actualizar precio y costo"
+        description="Modifica los valores comerciales del producto desde un solo lugar."
+        defaultOpen={canMutate && (currentPriceMissing || currentCostMissing)}
       >
-        <CreatePriceVersionForm
-          channels={selectableChannels}
-          currentCost={currentCostQuery.data ?? undefined}
-          canSubmit={canMutate}
-          isPending={createPriceMutation.isPending}
-          error={createPriceMutation.error}
-          successMessage={priceSuccessMessage}
-          onSubmit={async (prices) => {
-            setPriceSuccessMessage(undefined);
-            for (const price of prices) {
-              await createPriceMutation.mutateAsync(price);
-            }
-            setSelectedChannelId(
-              prices.find((price) => price.salesChannelId === effectiveChannelId)
-                ?.salesChannelId ?? prices[0]?.salesChannelId
-            );
-            setPriceSuccessMessage(
-              `Se actualizaron ${prices.length} precios de venta desde el precio base.`
-            );
-          }}
-        />
-      </ExpandableSection>
+        <div className="grid items-start gap-4 lg:grid-cols-2">
+          <CreatePriceVersionForm
+            channels={selectableChannels}
+            currentCost={currentCostQuery.data ?? undefined}
+            canSubmit={canMutate}
+            isPending={createPriceMutation.isPending}
+            error={createPriceMutation.error}
+            successMessage={priceSuccessMessage}
+            onSubmit={async (prices) => {
+              setPriceSuccessMessage(undefined);
+              for (const price of prices) {
+                await createPriceMutation.mutateAsync(price);
+              }
+              setSelectedChannelId(
+                prices.find(
+                  (price) => price.salesChannelId === effectiveChannelId,
+                )?.salesChannelId ?? prices[0]?.salesChannelId,
+              );
+              setPriceSuccessMessage(
+                `Se actualizaron ${prices.length} precios de venta desde el precio base.`,
+              );
+            }}
+          />
 
-      <ExpandableSection
-        title="Editar costo"
-        description="Actualiza el costo vigente del producto."
-      >
-        <CreateCostVersionForm
-          currentCost={currentCostQuery.data ?? undefined}
-          canSubmit={canMutate}
-          isPending={createCostMutation.isPending}
-          error={createCostMutation.error}
-          successMessage={costSuccessMessage}
-          onSubmit={async (values) => {
-            setCostSuccessMessage(undefined);
-            await createCostMutation.mutateAsync(values);
-            setCostSuccessMessage("El costo vigente se actualizo correctamente.");
-          }}
-        />
+          <CreateCostVersionForm
+            currentCost={currentCostQuery.data ?? undefined}
+            canSubmit={canMutate}
+            isPending={createCostMutation.isPending}
+            error={createCostMutation.error}
+            successMessage={costSuccessMessage}
+            onSubmit={async (values) => {
+              setCostSuccessMessage(undefined);
+              await createCostMutation.mutateAsync(values);
+              setCostSuccessMessage(
+                "El costo vigente se actualizo correctamente.",
+              );
+            }}
+          />
+        </div>
       </ExpandableSection>
 
       <ExpandableSection
@@ -239,33 +247,34 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
         description="Consulta movimientos anteriores de costos y precios."
       >
         <div className="grid gap-4 xl:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Historial de costos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {costsQuery.isLoading ? (
-              <LoadingState
-                title="Cargando historial"
-                message="Estamos consultando los costos anteriores del producto."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : costsQuery.error ? (
-              <ErrorMessage
-                title="No se pudo cargar el historial de costos"
-                messages={getApiErrorMessages(costsQuery.error)}
-              />
-            ) : (costsQuery.data?.length ?? 0) === 0 ? (
-              <EmptyState
-                title="Sin historial"
-                message="Todavia no existen costos anteriores para este producto."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : (
-              <ProductCostHistoryTable items={costsQuery.data ?? []} />
-            )}
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Historial de costos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {costsQuery.isLoading ? (
+                <LoadingState
+                  title="Cargando historial"
+                  message="Estamos consultando los costos anteriores del producto."
+                  className="w-full max-w-none shadow-none"
+                />
+              ) : costsQuery.error ? (
+                <ErrorMessage
+                  title="No se pudo cargar el historial de costos"
+                  messages={getApiErrorMessages(costsQuery.error)}
+                />
+              ) : (costsQuery.data?.length ?? 0) === 0 ? (
+                <EmptyState
+                  title="Sin historial"
+                  message="Todavia no existen costos anteriores para este producto."
+                  className="w-full max-w-none shadow-none"
+                />
+              ) : (
+                <ProductCostHistoryTable items={costsQuery.data ?? []} />
+              )}
+              {!costsQuery.error ? <PaginationControls offset={costOffset} limit={DEFAULT_PAGE_LIMIT} itemCount={costsQuery.data?.length ?? 0} onOffsetChange={setCostOffset} disabled={costsQuery.isFetching} /> : null}
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -301,6 +310,7 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
                   getCreatedByName={getCreatedByName}
                 />
               )}
+              {!pricesQuery.error && effectiveChannelId ? <PaginationControls offset={priceOffset} limit={DEFAULT_PAGE_LIMIT} itemCount={pricesQuery.data?.length ?? 0} onOffsetChange={setPriceOffset} disabled={pricesQuery.isFetching} /> : null}
             </CardContent>
           </Card>
         </div>

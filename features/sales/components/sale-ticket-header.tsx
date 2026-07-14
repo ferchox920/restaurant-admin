@@ -24,7 +24,7 @@ export function SaleTicketHeader({
       <PageHeader
         eyebrow="Ventas"
         title={`Ticket ${formatTicketReadableId(ticket.id)}`}
-        description="Gestiona productos, cantidades y cierre de la venta."
+        description={`Venta en ${ticket.salesChannel?.name ?? "canal sin nombre"}. Agrega productos, registra el pago y confirma el cobro.`}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <SaleTicketStatusBadge status={ticket.status} />

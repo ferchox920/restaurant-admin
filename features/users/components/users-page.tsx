@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/feedback/empty-state";
@@ -19,6 +19,9 @@ import type { User } from "@/features/users/types/user.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 
 type UserFilterState = {
   search: string;
@@ -36,11 +39,12 @@ export function UsersPage() {
   const { user } = useAuth();
   const canMutate = user?.role === "ADMIN";
   const [filters, setFilters] = useState<UserFilterState>(defaultFilters);
+  const [offset, setOffset] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const deferredSearch = useDeferredValue(filters.search.trim().toLowerCase());
+  const deferredSearch = useDebouncedValue(filters.search.trim().toLowerCase(), 300);
 
-  const usersQuery = useUsers();
+  const usersQuery = useUsers({ limit: DEFAULT_PAGE_LIMIT, offset });
   const createUserMutation = useCreateUser();
   const isForbiddenQuery =
     usersQuery.error &&
@@ -101,7 +105,7 @@ export function UsersPage() {
 
       <Card>
         <CardContent className="space-y-4 pt-5">
-          <UserFilters values={filters} onChange={setFilters} onReset={() => setFilters(defaultFilters)} />
+          <UserFilters values={filters} onChange={(values) => { setFilters(values); setOffset(0); }} onReset={() => { setFilters(defaultFilters); setOffset(0); }} />
 
           {successMessage ? (
             <SuccessMessage title="Usuario creado" message={successMessage} />
@@ -133,6 +137,9 @@ export function UsersPage() {
 
           {!usersQuery.isLoading && !usersQuery.error && visibleUsers.length > 0 ? (
             <UsersTable users={visibleUsers} canMutate={canMutate} />
+          ) : null}
+          {!usersQuery.error ? (
+            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={usersQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={usersQuery.isFetching} />
           ) : null}
         </CardContent>
       </Card>

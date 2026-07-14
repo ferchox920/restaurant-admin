@@ -10,11 +10,9 @@ export function useCancelSaleTicket(ticketId: string) {
 
   return useMutation({
     mutationFn: (payload: CancelSaleTicketInput) => cancelSaleTicket(ticketId, payload),
-    onSuccess: () => {
+    onSuccess: (ticket) => {
+      queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
       void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: saleTicketsQueryKeys.detail(ticketId),
-      });
     },
   });
 }

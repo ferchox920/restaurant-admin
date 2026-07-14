@@ -5,21 +5,30 @@ import type {
   Product,
   UpdateProductInput,
 } from "@/features/products/types/product.types";
+import type { PaginationParams } from "@/types/common";
+import { fetchAllPages, withDefaultPagination } from "@/lib/api/pagination";
 
-export type ProductsFilters = {
+export type ProductsFilters = PaginationParams & {
   active?: boolean;
   categoryId?: string;
   search?: string;
 };
 
-export function getProducts(filters?: ProductsFilters) {
+export function getProducts(filters?: ProductsFilters, signal?: AbortSignal) {
+  const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     active: filters?.active,
     categoryId: filters?.categoryId,
     search: filters?.search,
+    limit: pagination.limit,
+    offset: pagination.offset,
   });
 
-  return apiClient.get<Product[]>(`/api/products${queryString}`);
+  return apiClient.get<Product[]>(`/api/products${queryString}`, signal);
+}
+
+export function getAllProducts(filters?: Omit<ProductsFilters, "limit" | "offset">) {
+  return fetchAllPages((pagination) => getProducts({ ...filters, ...pagination }));
 }
 
 export function getProduct(productId: string) {

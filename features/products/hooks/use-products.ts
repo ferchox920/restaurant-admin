@@ -10,6 +10,6 @@ import { productsQueryKeys } from "@/features/products/query-keys";
 export function useProducts(filters?: ProductsFilters) {
   return useQuery({
     queryKey: productsQueryKeys.list(filters),
-    queryFn: () => getProducts(filters),
+    queryFn: ({ signal }) => getProducts(filters, signal),
   });
 }

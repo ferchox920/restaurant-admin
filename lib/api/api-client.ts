@@ -33,6 +33,16 @@ type RequestOptions = {
   notFoundAsNull?: boolean;
 };
 
+function parseRetryAfter(value: string | null) {
+  if (!value) return undefined;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds) && seconds >= 0) return Math.ceil(seconds);
+  const date = Date.parse(value);
+  return Number.isNaN(date)
+    ? undefined
+    : Math.max(0, Math.ceil((date - Date.now()) / 1000));
+}
+
 function shouldReturnNullOnNotFound(path: string, options?: RequestOptions) {
   return (
     options?.notFoundAsNull ||
@@ -82,6 +92,14 @@ async function request<T>(
         ? (payload as ApiErrorPayload)
         : undefined;
 
+    if (response.status === HTTP_STATUS.unauthorized && token) {
+      const { clearAccessToken } = await import("@/lib/auth/token-storage");
+      clearAccessToken();
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.assign("/login");
+      }
+    }
+
     throw new ApiError({
       statusCode: response.status,
       message:
@@ -90,6 +108,7 @@ async function request<T>(
         "Unexpected API error.",
       error: errorPayload?.error,
       raw: payload,
+      retryAfter: parseRetryAfter(response.headers.get("Retry-After")),
     });
   }
 
@@ -97,11 +116,11 @@ async function request<T>(
 }
 
 export const apiClient = {
-  get<T>(path: string) {
-    return request<T>(path, { method: "GET" });
+  get<T>(path: string, signal?: AbortSignal) {
+    return request<T>(path, { method: "GET", signal });
   },
-  getOrNullOnNotFound<T>(path: string) {
-    return request<T | null>(path, { method: "GET" }, { notFoundAsNull: true });
+  getOrNullOnNotFound<T>(path: string, signal?: AbortSignal) {
+    return request<T | null>(path, { method: "GET", signal }, { notFoundAsNull: true });
   },
   post<T>(path: string, body?: unknown) {
     return request<T>(path, {

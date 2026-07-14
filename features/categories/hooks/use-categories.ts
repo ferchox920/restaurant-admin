@@ -10,6 +10,6 @@ import { categoriesQueryKeys } from "@/features/categories/query-keys";
 export function useCategories(filters?: CategoriesFilters) {
   return useQuery({
     queryKey: categoriesQueryKeys.list(filters),
-    queryFn: () => getCategories(filters),
+    queryFn: ({ signal }) => getCategories(filters, signal),
   });
 }

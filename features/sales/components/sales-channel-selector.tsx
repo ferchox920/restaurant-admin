@@ -17,6 +17,7 @@ type SalesChannelSelectorProps = {
   selectedChannelId?: string;
   onChange: (channelId: string | undefined) => void;
   placeholder?: string;
+  disabled?: boolean;
 };
 
 export function SalesChannelSelector({
@@ -24,11 +25,13 @@ export function SalesChannelSelector({
   selectedChannelId,
   onChange,
   placeholder = "Selecciona un canal",
+  disabled = false,
 }: SalesChannelSelectorProps) {
   return (
     <Select
       value={selectedChannelId ?? ""}
       onValueChange={(value) => onChange(value || undefined)}
+      disabled={disabled}
     >
       <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder}>

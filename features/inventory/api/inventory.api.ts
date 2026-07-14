@@ -12,15 +12,27 @@ import type {
   UpdateMinimumStockInput,
   WasteInput,
 } from "@/features/inventory/types/inventory.types";
+import { fetchAllPages, withDefaultPagination } from "@/lib/api/pagination";
 
-export function getInventory(filters?: InventoryFilters) {
+export function getInventory(filters?: InventoryFilters, signal?: AbortSignal) {
+  const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     active: filters?.active,
     stockStatus: filters?.stockStatus,
     search: filters?.search,
+    limit: pagination.limit,
+    offset: pagination.offset,
   });
 
-  return apiClient.get<InventoryStockItem[]>(`/api/inventory${queryString}`);
+  return apiClient.get<InventoryStockItem[]>(`/api/inventory${queryString}`, signal);
+}
+
+export function getAllInventory(
+  filters?: Omit<InventoryFilters, "limit" | "offset">
+) {
+  return fetchAllPages((pagination) =>
+    getInventory({ ...filters, ...pagination })
+  );
 }
 
 export function getProductInventory(productId: string) {
@@ -29,31 +41,38 @@ export function getProductInventory(productId: string) {
   );
 }
 
-export function getInventoryMovements(filters?: InventoryMovementsFilters) {
+export function getInventoryMovements(filters?: InventoryMovementsFilters, signal?: AbortSignal) {
+  const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     productId: filters?.productId,
     movementType: filters?.movementType,
     from: filters?.from,
     to: filters?.to,
+    limit: pagination.limit,
+    offset: pagination.offset,
   });
 
   return apiClient.get<InventoryMovement[]>(
-    `/api/inventory/movements${queryString}`
+    `/api/inventory/movements${queryString}`, signal
   );
 }
 
 export function getProductInventoryMovements(
   productId: string,
-  filters?: Omit<InventoryMovementsFilters, "productId">
+  filters?: Omit<InventoryMovementsFilters, "productId">,
+  signal?: AbortSignal
 ) {
+  const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     movementType: filters?.movementType,
     from: filters?.from,
     to: filters?.to,
+    limit: pagination.limit,
+    offset: pagination.offset,
   });
 
   return apiClient.get<InventoryMovement[]>(
-    `/api/inventory/products/${productId}/movements${queryString}`
+    `/api/inventory/products/${productId}/movements${queryString}`, signal
   );
 }
 

@@ -4,6 +4,7 @@ import { appName } from "@/lib/env";
 import type { AuthenticatedUser } from "@/features/auth/types/auth.types";
 import type { NavigationItem } from "@/types/navigation";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { UserMenu } from "@/components/layout/user-menu";
 
 type TopbarProps = {
@@ -31,7 +32,10 @@ export function Topbar({ user, currentItem }: TopbarProps) {
             </div>
           </div>
         </div>
-        <UserMenu user={user} />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <UserMenu user={user} />
+        </div>
       </div>
     </header>
   );

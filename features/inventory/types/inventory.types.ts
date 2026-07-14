@@ -1,4 +1,5 @@
 import type { StockManagementType } from "@/features/products/types/product.types";
+import type { PaginationParams } from "@/types/common";
 
 export const inventoryMovementTypes = [
   "STOCK_IN",
@@ -55,13 +56,13 @@ export type InventoryMovement = {
   createdAt: string;
 };
 
-export type InventoryFilters = {
+export type InventoryFilters = PaginationParams & {
   active?: boolean;
   stockStatus?: InventoryStockStatus;
   search?: string;
 };
 
-export type InventoryMovementsFilters = {
+export type InventoryMovementsFilters = PaginationParams & {
   productId?: string;
   movementType?: InventoryMovementType;
   from?: string;

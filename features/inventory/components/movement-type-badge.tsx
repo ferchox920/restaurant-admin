@@ -31,7 +31,7 @@ const movementTypeConfig: Record<
     automatic: true,
   },
   VOID_REVERSAL: {
-    label: "Reversion de venta anulada",
+    label: "Reversión de venta anulada",
     className: "border-violet-200 bg-violet-50 text-violet-700",
     automatic: true,
   },
@@ -51,7 +51,7 @@ export function MovementTypeBadge({
       </Badge>
       {config.automatic ? (
         <Badge variant="outline" className="border-border text-muted-foreground">
-          Automatico
+          Automático
         </Badge>
       ) : null}
     </div>

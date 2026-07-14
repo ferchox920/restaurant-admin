@@ -19,11 +19,9 @@ export function useUpdateSaleTicketItem(ticketId: string) {
       updateSaleTicketItem(ticketId, itemId, {
         quantity: toApiQuantityNumber(data.quantity),
       }),
-    onSuccess: () => {
+    onSuccess: (ticket) => {
+      queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
       void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: saleTicketsQueryKeys.detail(ticketId),
-      });
     },
   });
 }

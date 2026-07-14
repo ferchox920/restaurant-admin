@@ -9,12 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SalesByChannelReportTable } from "@/features/reports/components/sales-by-channel-report-table";
 import { SalesReportFilters } from "@/features/reports/components/sales-report-filters";
-import { SalesSummaryCards } from "@/features/reports/components/sales-summary-cards";
 import { useSalesByChannelReport } from "@/features/reports/hooks/use-sales-by-channel-report";
 import { salesReportFiltersSchema } from "@/features/reports/schemas/report-filters.schema";
 import type { SalesReportFilters as SalesReportQueryFilters } from "@/features/reports/types/report.types";
 import { toReportDateRange, formatReportDateRange, getReportEmptyMessage } from "@/features/reports/utils/report-formatters";
-import { useSalesChannels } from "@/features/sales-channels/hooks/use-sales-channels";
+import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
@@ -121,7 +120,6 @@ export function SalesByChannelReportPage() {
           !reportQuery.error &&
           (reportQuery.data?.length ?? 0) > 0 ? (
             <>
-              <SalesSummaryCards items={reportQuery.data ?? []} />
               <SalesByChannelReportTable items={reportQuery.data ?? []} />
             </>
           ) : null}

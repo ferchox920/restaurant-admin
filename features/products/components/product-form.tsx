@@ -121,7 +121,6 @@ export function ProductForm({
             <Label htmlFor="product-name">Nombre</Label>
             <Input
               id="product-name"
-              placeholder="Ej. Latte grande"
               disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.name)}
               {...form.register("name")}
@@ -135,13 +134,14 @@ export function ProductForm({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="product-sku">SKU</Label>
+              <Label htmlFor="product-sku">
+                SKU <span className="text-muted-foreground">(opcional)</span>
+              </Label>
               <Input
-              id="product-sku"
-              placeholder="SKU opcional"
-              disabled={isPending}
-              aria-invalid={Boolean(form.formState.errors.sku)}
-              {...form.register("sku")}
+                id="product-sku"
+                disabled={isPending}
+                aria-invalid={Boolean(form.formState.errors.sku)}
+                {...form.register("sku")}
               />
               {form.formState.errors.sku ? (
                 <p className="text-sm text-destructive">
@@ -151,13 +151,14 @@ export function ProductForm({
             </div>
 
             <div className="space-y-2">
-              <Label>Categoria</Label>
+              <Label>Categoría</Label>
               <Controller
                 control={form.control}
                 name="categoryId"
                 render={({ field }) => (
                   <Select
                     value={field.value || "__none__"}
+                    disabled={isPending}
                     onValueChange={(value) =>
                       field.onChange(value === "__none__" ? "" : value)
                     }
@@ -208,6 +209,7 @@ export function ProductForm({
                 render={({ field }) => (
                   <Select
                     value={field.value}
+                    disabled={isPending}
                     onValueChange={(value) => field.onChange(value)}
                   >
                     <SelectTrigger className="w-full">
@@ -242,6 +244,7 @@ export function ProductForm({
                 render={({ field }) => (
                   <Select
                     value={field.value}
+                    disabled={isPending}
                     onValueChange={(value) => field.onChange(value)}
                   >
                     <SelectTrigger className="w-full">
@@ -275,10 +278,12 @@ export function ProductForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="product-description">Descripcion</Label>
+            <Label htmlFor="product-description">
+              Descripción{" "}
+              <span className="text-muted-foreground">(opcional)</span>
+            </Label>
             <Textarea
               id="product-description"
-              placeholder="Descripcion operativa del producto"
               disabled={isPending}
               aria-invalid={Boolean(form.formState.errors.description)}
               {...form.register("description")}

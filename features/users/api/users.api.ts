@@ -5,9 +5,17 @@ import type {
   User,
   UserListItem,
 } from "@/features/users/types/user.types";
+import { buildQueryString } from "@/lib/api/build-query-string";
+import { fetchAllPages, withDefaultPagination } from "@/lib/api/pagination";
+import type { PaginationParams } from "@/types/common";
 
-export function getUsers() {
-  return apiClient.get<UserListItem[]>("/api/users");
+export function getUsers(pagination?: PaginationParams, signal?: AbortSignal) {
+  const queryString = buildQueryString(withDefaultPagination(pagination));
+  return apiClient.get<UserListItem[]>(`/api/users${queryString}`, signal);
+}
+
+export function getAllUsers() {
+  return fetchAllPages((pagination) => getUsers(pagination));
 }
 
 export function getUser(userId: string) {
@@ -15,11 +23,14 @@ export function getUser(userId: string) {
 }
 
 export function createUser(payload: CreateUserInput) {
-  return apiClient.post<User>("/api/users", payload);
+  return apiClient.post<User>("/api/users", { ...payload, email: payload.email.trim().toLowerCase() });
 }
 
 export function updateUser(userId: string, payload: UpdateUserInput) {
-  return apiClient.patch<User>(`/api/users/${userId}`, payload);
+  return apiClient.patch<User>(`/api/users/${userId}`, {
+    ...payload,
+    email: payload.email?.trim().toLowerCase(),
+  });
 }
 
 export function deactivateUser(userId: string) {

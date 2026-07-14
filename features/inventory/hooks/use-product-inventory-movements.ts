@@ -8,12 +8,13 @@ import { shouldRetryQuery } from "@/lib/api/query-utils";
 
 export function useProductInventoryMovements(
   productId: string | undefined,
-  filters?: Omit<InventoryMovementsFilters, "productId">
+  filters?: Omit<InventoryMovementsFilters, "productId">,
+  enabled = true,
 ) {
   return useQuery({
     queryKey: inventoryQueryKeys.productMovementList(productId ?? "", filters),
-    queryFn: () => getProductInventoryMovements(productId as string, filters),
-    enabled: Boolean(productId),
+    queryFn: ({ signal }) => getProductInventoryMovements(productId as string, filters, signal),
+    enabled: enabled && Boolean(productId),
     retry: shouldRetryQuery,
     staleTime: 15_000,
   });

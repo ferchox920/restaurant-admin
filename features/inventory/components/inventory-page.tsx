@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
@@ -14,6 +14,9 @@ import type { InventoryStockStatus } from "@/features/inventory/types/inventory.
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 
 type InventoryFilterValue = "all" | "active" | "inactive";
 
@@ -29,26 +32,37 @@ export function InventoryPage() {
     InventoryStockStatus | undefined
   >();
   const [search, setSearch] = useState("");
+  const [offset, setOffset] = useState(0);
 
-  const deferredSearch = useDeferredValue(search.trim());
+  const deferredSearch = useDebouncedValue(search.trim(), 300);
   const inventoryQuery = useInventory({
     active: filterToActiveMap[activeFilter],
     stockStatus,
     search: deferredSearch || undefined,
+    limit: DEFAULT_PAGE_LIMIT,
+    offset,
   });
 
   const isForbidden =
     inventoryQuery.error &&
     isApiError(inventoryQuery.error) &&
     inventoryQuery.error.statusCode === HTTP_STATUS.forbidden;
+  const hasActiveFilters =
+    activeFilter !== "all" || Boolean(stockStatus || deferredSearch);
 
   return (
     <section className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <PageHeader
         eyebrow="Inventario"
         title="Stock general"
-        description="Consulta el stock actual de productos finalizados, con filtros operativos y acceso al detalle por producto."
+        description="Controla existencias, mínimos y productos que necesitan reposición."
       />
+
+      {!inventoryQuery.isLoading &&
+      !inventoryQuery.error &&
+      (inventoryQuery.data?.length ?? 0) > 0 ? (
+        <InventorySummaryCards items={inventoryQuery.data ?? []} />
+      ) : null}
 
       <Card>
         <CardHeader>
@@ -57,11 +71,11 @@ export function InventoryPage() {
         <CardContent className="space-y-4">
           <InventoryFilters
             activeFilter={activeFilter}
-            onActiveFilterChange={setActiveFilter}
+            onActiveFilterChange={(value) => { setActiveFilter(value); setOffset(0); }}
             stockStatus={stockStatus}
-            onStockStatusChange={setStockStatus}
+            onStockStatusChange={(value) => { setStockStatus(value); setOffset(0); }}
             search={search}
-            onSearchChange={setSearch}
+            onSearchChange={(value) => { setSearch(value); setOffset(0); }}
           />
 
           {inventoryQuery.isLoading ? (
@@ -88,8 +102,12 @@ export function InventoryPage() {
           !inventoryQuery.error &&
           (inventoryQuery.data?.length ?? 0) === 0 ? (
             <EmptyState
-              title="Sin resultados"
-              message="No hay productos inventariables para los filtros seleccionados."
+              title={hasActiveFilters ? "Sin coincidencias" : "Sin inventario"}
+              message={
+                hasActiveFilters
+                  ? "No encontramos productos con los filtros seleccionados."
+                  : "Todavía no hay productos inventariables para mostrar."
+              }
               className="w-full max-w-none shadow-none"
             />
           ) : null}
@@ -98,9 +116,17 @@ export function InventoryPage() {
           !inventoryQuery.error &&
           (inventoryQuery.data?.length ?? 0) > 0 ? (
             <>
-              <InventorySummaryCards items={inventoryQuery.data ?? []} />
+              <p className="text-sm text-muted-foreground" aria-live="polite">
+                {(inventoryQuery.data ?? []).length}{" "}
+                {(inventoryQuery.data ?? []).length === 1
+                  ? "producto encontrado"
+                  : "productos encontrados"}
+              </p>
               <InventoryTable items={inventoryQuery.data ?? []} />
             </>
+          ) : null}
+          {!inventoryQuery.error ? (
+            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={inventoryQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={inventoryQuery.isFetching} />
           ) : null}
         </CardContent>
       </Card>

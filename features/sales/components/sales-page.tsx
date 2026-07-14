@@ -1,7 +1,7 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
-import { Clock, History, Play, ReceiptText } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Clock, History, Play, ReceiptText, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,18 +15,23 @@ import { SaleTicketFilters, type SaleTicketFilterValues } from "@/features/sales
 import { SaleTicketTable } from "@/features/sales/components/sale-ticket-table";
 import { useCreateSaleTicket } from "@/features/sales/hooks/use-create-sale-ticket";
 import { useSaleTickets } from "@/features/sales/hooks/use-sale-tickets";
-import { useSalesChannels } from "@/features/sales-channels/hooks/use-sales-channels";
+import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { formatTicketReadableId } from "@/features/sales/utils/sale-ticket";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
 import { formatDateTime } from "@/lib/formatters";
 import { formatMoney } from "@/lib/money";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { isValidDateRange, toIsoDateBoundary } from "@/lib/api/date-range";
 
 const initialFilters: SaleTicketFilterValues = {
   status: undefined,
   channelId: undefined,
   createdById: "",
+  search: "",
   from: "",
   to: "",
 };
@@ -38,7 +43,10 @@ export function SalesPage() {
   const [filters, setFilters] = useState<SaleTicketFilterValues>(initialFilters);
   const [selectedChannelId, setSelectedChannelId] = useState<string>("");
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
-  const deferredCreatedById = useDeferredValue(filters.createdById.trim());
+  const [offset, setOffset] = useState(0);
+  const deferredCreatedById = useDebouncedValue(filters.createdById.trim(), 300);
+  const deferredSearch = useDebouncedValue(filters.search.trim(), 300);
+  const validRange = isValidDateRange(filters.from, filters.to);
 
   const channelsQuery = useSalesChannels({ active: true });
   const createSaleTicketMutation = useCreateSaleTicket();
@@ -49,9 +57,12 @@ export function SalesPage() {
     status: filters.status,
     channelId: filters.channelId,
     createdById: deferredCreatedById || undefined,
-    from: filters.from || undefined,
-    to: filters.to || undefined,
-  });
+    search: deferredSearch || undefined,
+    from: validRange ? toIsoDateBoundary(filters.from, "start") : undefined,
+    to: validRange ? toIsoDateBoundary(filters.to, "end") : undefined,
+    limit: DEFAULT_PAGE_LIMIT,
+    offset,
+  }, validRange);
 
   const channelOptions = useMemo(
     () =>
@@ -67,6 +78,15 @@ export function SalesPage() {
 
   const effectiveSelectedChannelId =
     selectedChannelId || channelOptions[0]?.id || "";
+  const draftTickets = draftTicketsQuery.data ?? [];
+  const activeFiltersCount = [
+    filters.status,
+    filters.channelId,
+    filters.createdById.trim(),
+    filters.search.trim(),
+    filters.from,
+    filters.to,
+  ].filter(Boolean).length;
 
   async function handleStartSale(channelId = effectiveSelectedChannelId) {
     if (!channelId) {
@@ -98,18 +118,18 @@ export function SalesPage() {
       <PageHeader
         eyebrow="Ventas"
         title="Caja"
-        description="Inicia una venta, continua borradores y consulta el historial desde una misma pantalla."
+        description="Inicia una venta, continúa borradores y consulta el historial desde una misma pantalla."
       />
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <Card className="bg-card">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+        <Card className="overflow-hidden border-muted/70 bg-gradient-to-br from-background via-background to-muted/40 shadow-sm">
           <CardHeader className="gap-3">
             <CardTitle className="flex items-center gap-2 text-2xl">
               <ReceiptText aria-hidden="true" className="size-5" />
               Nueva venta
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Selecciona el canal y entra directo al panel de productos y pedido.
+              Elige dónde se realiza la venta para comenzar a cargar el pedido.
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -146,17 +166,18 @@ export function SalesPage() {
                       key={channel.id}
                       type="button"
                       onClick={() => setSelectedChannelId(channel.id)}
-                      className="rounded-lg border bg-background p-4 text-left transition-colors hover:bg-muted/60 data-[selected=true]:border-primary data-[selected=true]:bg-muted"
+                      aria-pressed={effectiveSelectedChannelId === channel.id}
+                      className="rounded-2xl border bg-background p-4 text-left shadow-sm outline-none transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 data-[selected=true]:border-primary data-[selected=true]:bg-primary/5 data-[selected=true]:shadow-md"
                       data-selected={effectiveSelectedChannelId === channel.id}
                     >
                       <div className="flex items-center justify-between gap-3">
                         <p className="font-medium">{channel.name}</p>
                         {effectiveSelectedChannelId === channel.id ? (
-                          <Badge>Activo</Badge>
+                          <Badge>Seleccionado</Badge>
                         ) : null}
                       </div>
                       <p className="mt-2 text-sm text-muted-foreground">
-                        Crear venta en este canal.
+                        Usar este canal para la nueva venta.
                       </p>
                     </button>
                   ))}
@@ -167,6 +188,12 @@ export function SalesPage() {
                     title="No se pudo iniciar la venta"
                     messages={getApiErrorMessages(createSaleTicketMutation.error)}
                   />
+                ) : null}
+
+                {!canCreate ? (
+                  <p className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
+                    Tu rol puede consultar ventas, pero no iniciar una nueva.
+                  </p>
                 ) : null}
 
                 <Button
@@ -185,7 +212,7 @@ export function SalesPage() {
                   ) : (
                     <>
                       <Play aria-hidden="true" data-icon="inline-start" />
-                      Abrir caja
+                      Iniciar venta
                     </>
                   )}
                 </Button>
@@ -194,14 +221,17 @@ export function SalesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="overflow-hidden border-muted/70 bg-gradient-to-br from-background via-background to-muted/30 shadow-sm">
           <CardHeader className="gap-2">
             <CardTitle className="flex items-center gap-2">
               <Clock aria-hidden="true" className="size-5" />
               Borradores
+              {!draftTicketsQuery.isLoading && !draftTicketsQuery.error ? (
+                <Badge variant="secondary">{draftTickets.length}</Badge>
+              ) : null}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              Ventas pendientes para continuar rapido.
+              Ventas pendientes para continuar rápidamente.
             </p>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -222,18 +252,18 @@ export function SalesPage() {
 
             {!draftTicketsQuery.isLoading &&
             !draftTicketsQuery.error &&
-            (draftTicketsQuery.data?.length ?? 0) === 0 ? (
+            draftTickets.length === 0 ? (
               <div className="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
                 No hay ventas pendientes.
               </div>
             ) : null}
 
-            {(draftTicketsQuery.data ?? []).slice(0, 5).map((ticket) => (
+            {draftTickets.slice(0, 5).map((ticket) => (
               <button
                 key={ticket.id}
                 type="button"
                 onClick={() => setActiveTicketId(ticket.id)}
-                className="w-full rounded-lg border bg-background p-3 text-left transition-colors hover:bg-muted/60"
+                className="w-full rounded-2xl border bg-background p-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
               >
                 <div className="flex items-center justify-between gap-3">
                   <p className="font-medium">{formatTicketReadableId(ticket.id)}</p>
@@ -247,24 +277,57 @@ export function SalesPage() {
                 </p>
               </button>
             ))}
+
+            {draftTickets.length > 5 ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() =>
+                  setFilters({ ...initialFilters, status: "DRAFT" })
+                }
+              >
+                Ver los {draftTickets.length} borradores en el historial
+              </Button>
+            ) : null}
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History aria-hidden="true" className="size-5" />
-            Historial de ventas
-          </CardTitle>
+      <Card className="border-muted/70 shadow-sm">
+        <CardHeader className="gap-1">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2">
+              <History aria-hidden="true" className="size-5" />
+              Historial de ventas
+            </CardTitle>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <SlidersHorizontal aria-hidden="true" className="size-4" />
+              {activeFiltersCount > 0
+                ? `${activeFiltersCount} ${activeFiltersCount === 1 ? "filtro aplicado" : "filtros aplicados"}`
+                : "Sin filtros"}
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Consulta y abre ventas anteriores o pendientes.
+          </p>
         </CardHeader>
         <CardContent className="space-y-4">
           <SaleTicketFilters
             channels={channelOptions}
             values={filters}
-            onChange={setFilters}
-            onReset={() => setFilters(initialFilters)}
+            onChange={(values) => { setFilters(values); setOffset(0); }}
+            onReset={() => { setFilters(initialFilters); setOffset(0); }}
           />
+
+          {!saleTicketsQuery.isLoading && !saleTicketsQuery.error ? (
+            <p className="text-sm text-muted-foreground" aria-live="polite">
+              {(saleTicketsQuery.data ?? []).length}{" "}
+              {(saleTicketsQuery.data ?? []).length === 1
+                ? "venta encontrada"
+                : "ventas encontradas"}
+            </p>
+          ) : null}
 
           {saleTicketsQuery.isLoading ? (
             <LoadingState
@@ -300,6 +363,9 @@ export function SalesPage() {
           !saleTicketsQuery.error &&
           (saleTicketsQuery.data?.length ?? 0) > 0 ? (
             <SaleTicketTable tickets={saleTicketsQuery.data ?? []} />
+          ) : null}
+          {!saleTicketsQuery.error && validRange ? (
+            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={saleTicketsQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={saleTicketsQuery.isFetching} />
           ) : null}
         </CardContent>
       </Card>

@@ -6,11 +6,12 @@ import { saleTicketsQueryKeys } from "@/features/sales/query-keys";
 import type { SaleTicketFilters } from "@/features/sales/types/sale-ticket.types";
 import { shouldRetryQuery } from "@/lib/api/query-utils";
 
-export function useSaleTickets(filters?: SaleTicketFilters) {
+export function useSaleTickets(filters?: SaleTicketFilters, enabled = true) {
   return useQuery({
     queryKey: saleTicketsQueryKeys.list(filters),
-    queryFn: () => getSaleTickets(filters),
+    queryFn: ({ signal }) => getSaleTickets(filters, signal),
     retry: shouldRetryQuery,
     staleTime: 15_000,
+    enabled,
   });
 }

@@ -22,6 +22,7 @@ export type SaleTicketFilterValues = {
   status?: SaleTicketStatus;
   channelId?: string;
   createdById: string;
+  search: string;
   from: string;
   to: string;
 };
@@ -39,6 +40,18 @@ export function SaleTicketFilters({
   onChange,
   onReset,
 }: SaleTicketFiltersProps) {
+  const hasFilters = Boolean(
+    values.status ||
+      values.channelId ||
+      values.createdById.trim() ||
+      values.search.trim() ||
+      values.from ||
+      values.to,
+  );
+  const hasInvalidDateRange = Boolean(
+    values.from && values.to && values.from > values.to,
+  );
+
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div className="space-y-2">
@@ -109,6 +122,14 @@ export function SaleTicketFilters({
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="sale-ticket-search">Buscar</Label>
+        <div className="relative">
+          <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input id="sale-ticket-search" value={values.search} onChange={(event) => onChange({ ...values, search: event.target.value })} placeholder="Numero, nota o referencia" className="pl-9" />
+        </div>
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="sale-ticket-created-by">Creado por</Label>
         <div className="relative">
           <Search
@@ -128,6 +149,9 @@ export function SaleTicketFilters({
             className="pl-9"
           />
         </div>
+        <p className="text-xs text-muted-foreground">
+          Usa el identificador exacto del usuario responsable.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -136,13 +160,13 @@ export function SaleTicketFilters({
           <Input
             id="sale-ticket-from"
             type="date"
+            max={values.to || undefined}
+            aria-invalid={hasInvalidDateRange}
             value={values.from}
-            onChange={(event) =>
-              onChange({
-                ...values,
-                from: event.target.value,
-              })
-            }
+            onChange={(event) => {
+              const from = event.target.value;
+              onChange({ ...values, from, to: values.to && from > values.to ? "" : values.to });
+            }}
           />
         </div>
 
@@ -151,6 +175,8 @@ export function SaleTicketFilters({
           <Input
             id="sale-ticket-to"
             type="date"
+            min={values.from || undefined}
+            aria-invalid={hasInvalidDateRange}
             value={values.to}
             onChange={(event) =>
               onChange({
@@ -162,8 +188,19 @@ export function SaleTicketFilters({
         </div>
       </div>
 
+      {hasInvalidDateRange ? (
+        <p className="text-sm text-destructive lg:col-span-2">
+          La fecha inicial no puede ser posterior a la fecha final.
+        </p>
+      ) : null}
+
       <div className="flex flex-wrap items-center gap-2 lg:col-span-2">
-        <Button type="button" variant="outline" onClick={onReset}>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={!hasFilters}
+          onClick={onReset}
+        >
           <RotateCcw aria-hidden="true" />
           Limpiar filtros
         </Button>

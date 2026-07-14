@@ -26,7 +26,7 @@ export function CancelSaleTicketDialog({
     <div className="space-y-3">
       <ConfirmActionDialog
         trigger={
-          <Button type="button" variant="destructive">
+          <Button type="button" variant="destructive" className="w-full">
             <Ban />
             Cancelar borrador
           </Button>

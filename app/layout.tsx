@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AppProviders } from "@/components/providers/app-providers";
 import { appName } from "@/lib/env";
+import { themeInitializerScript } from "@/lib/theme/theme-initializer-script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="h-full antialiased">
+    <html lang="es" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />
+      </head>
       <body className="min-h-full bg-background font-sans text-foreground">
         <AppProviders>{children}</AppProviders>
       </body>

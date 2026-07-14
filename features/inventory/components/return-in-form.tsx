@@ -53,7 +53,6 @@ export function ReturnInForm({
           id="return-in-quantity"
           inputMode="decimal"
           disabled={isPending}
-          placeholder="Ej. 1"
           {...form.register("quantity")}
         />
       </FieldError>
@@ -62,7 +61,6 @@ export function ReturnInForm({
         <Textarea
           id="return-in-reason"
           disabled={isPending}
-          placeholder="Ej. Devolucion interna en buen estado."
           {...form.register("reason")}
         />
       </FieldError>

@@ -1,12 +1,7 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ForbiddenState } from "@/components/feedback/forbidden-state";
@@ -17,8 +12,7 @@ import { SaleTicketCriticalActions } from "@/features/sales/components/sale-tick
 import { SaleTicketItemsTable } from "@/features/sales/components/sale-ticket-items-table";
 import { SaleTicketSummary } from "@/features/sales/components/sale-ticket-summary";
 import { SaleTicketPosWorkspace } from "@/features/sales/components/sale-ticket-pos-workspace";
-import { SalesChannelSelector } from "@/features/sales/components/sales-channel-selector";
-import { updateSaleTicketSchema } from "@/features/sales/schemas/sale-ticket.schema";
+import { useAllPaymentBanks as usePaymentBanks } from "@/features/payment-banks/hooks/use-all-payment-banks";
 import { useAddSaleTicketItem } from "@/features/sales/hooks/use-add-sale-ticket-item";
 import { useCancelSaleTicket } from "@/features/sales/hooks/use-cancel-sale-ticket";
 import { useConfirmSaleTicket } from "@/features/sales/hooks/use-confirm-sale-ticket";
@@ -28,13 +22,14 @@ import { useUpdateSaleTicket } from "@/features/sales/hooks/use-update-sale-tick
 import { useUpdateSaleTicketItem } from "@/features/sales/hooks/use-update-sale-ticket-item";
 import { useVoidSaleTicket } from "@/features/sales/hooks/use-void-sale-ticket";
 import type {
+  ConfirmSaleTicketInput,
   SaleProductOption,
-  UpdateSaleTicketFormValues,
+  SaleTicketPaymentFormValues,
 } from "@/features/sales/types/sale-ticket.types";
 import { canEditTicket } from "@/features/sales/utils/sale-ticket";
-import { useProducts } from "@/features/products/hooks/use-products";
-import { useInventory } from "@/features/inventory/hooks/use-inventory";
-import { useSalesChannels } from "@/features/sales-channels/hooks/use-sales-channels";
+import { useAllProducts as useProducts } from "@/features/products/hooks/use-all-products";
+import { useAllInventory as useInventory } from "@/features/inventory/hooks/use-all-inventory";
+import { useAllCategories as useCategories } from "@/features/categories/hooks/use-all-categories";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
@@ -55,7 +50,8 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
     user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "AUDITOR";
 
   const saleTicketQuery = useSaleTicket(ticketId);
-  const salesChannelsQuery = useSalesChannels({ active: true });
+  const paymentBanksQuery = usePaymentBanks({ active: true });
+  const categoriesQuery = useCategories({ active: true });
   const productsQuery = useProducts({ active: true });
   const inventoryQuery = useInventory({ active: true });
 
@@ -67,41 +63,13 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
   const updateSaleTicketItemMutation = useUpdateSaleTicketItem(ticketId);
   const removeSaleTicketItemMutation = useRemoveSaleTicketItem(ticketId);
 
-  const form = useForm<UpdateSaleTicketFormValues>({
-    resolver: zodResolver(updateSaleTicketSchema),
-    defaultValues: {
-      salesChannelId: "",
-      notes: "",
-    },
-  });
-
-  useEffect(() => {
-    if (!saleTicketQuery.data) {
-      return;
-    }
-
-    form.reset({
-      salesChannelId: saleTicketQuery.data.salesChannelId,
-      notes: saleTicketQuery.data.notes ?? "",
-    });
-  }, [form, saleTicketQuery.data]);
-
-  const activeChannels = useMemo(
-    () =>
-      (salesChannelsQuery.data ?? [])
-        .filter((channel) => channel.active)
-        .map((channel) => ({
-          id: channel.id,
-          name: channel.name,
-          active: channel.active,
-        })),
-    [salesChannelsQuery.data]
-  );
-
   const sellableProducts = useMemo<SaleProductOption[]>(
     () => {
       const inventoryByProductId = new Map(
         (inventoryQuery.data ?? []).map((item) => [item.productId, item])
+      );
+      const categoryNamesById = new Map(
+        (categoriesQuery.data ?? []).map((category) => [category.id, category.name])
       );
 
       return (productsQuery.data ?? [])
@@ -117,7 +85,11 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
             description: product.description,
             sku: product.sku,
             categoryId: product.categoryId,
-            categoryName: product.category?.name ?? null,
+            categoryName:
+              product.category?.name ??
+              (product.categoryId
+                ? categoryNamesById.get(product.categoryId) ?? null
+                : null),
             unit: product.unit,
             stockManagementType: product.stockManagementType,
             stockStatus: inventory?.stockStatus,
@@ -126,7 +98,7 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
           };
         });
     },
-    [inventoryQuery.data, productsQuery.data]
+    [categoriesQuery.data, inventoryQuery.data, productsQuery.data]
   );
 
   if (saleTicketQuery.isLoading) {
@@ -190,9 +162,8 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
       : null) ??
     removeSaleTicketItemMutation.variables ??
     null;
-
   return (
-    <section className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+    <section className="mx-auto flex w-full max-w-7xl flex-col gap-6">
       <SaleTicketHeader
         ticket={ticket}
         onBack={onBack}
@@ -220,11 +191,16 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
               });
             }}
             onConfirm={async () => {
-              if (!hasItems) {
+              if (!hasItems || !ticket.paymentMethod) {
                 return;
               }
 
-              await confirmSaleTicketMutation.mutateAsync(undefined);
+              await confirmSaleTicketMutation.mutateAsync({
+                paymentMethod: ticket.paymentMethod,
+                ...(ticket.paymentMethod === "TRANSFER" && ticket.paymentBankId
+                  ? { paymentBankId: ticket.paymentBankId }
+                  : {}),
+              });
             }}
             onVoid={async (values) => {
               await voidSaleTicketMutation.mutateAsync(values);
@@ -235,83 +211,25 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
 
       {canEditDraft ? (
         <>
-          <Card>
-            <CardContent className="space-y-4 pt-5">
-              <form
-                className="grid gap-4 lg:grid-cols-[minmax(18rem,1fr)_minmax(0,1.6fr)_auto]"
-                onSubmit={form.handleSubmit(async (values) => {
-                  await updateSaleTicketMutation.mutateAsync({
-                    ticketId,
-                    data: values,
-                  });
-                })}
-              >
-                <div className="space-y-2">
-                  <Label>Canal</Label>
-                  <Controller
-                    control={form.control}
-                    name="salesChannelId"
-                    render={({ field }) => (
-                      <SalesChannelSelector
-                        channels={activeChannels}
-                        selectedChannelId={field.value}
-                        onChange={(value) => field.onChange(value ?? "")}
-                      />
-                    )}
-                  />
-                  {form.formState.errors.salesChannelId ? (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.salesChannelId.message}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="sale-ticket-edit-notes">Notas</Label>
-                  <Textarea
-                    id="sale-ticket-edit-notes"
-                    placeholder="Comentarios opcionales"
-                    aria-invalid={Boolean(form.formState.errors.notes)}
-                    className="min-h-10"
-                    {...form.register("notes")}
-                  />
-                  {form.formState.errors.notes ? (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.notes.message}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="flex items-end">
-                  <Button
-                    type="submit"
-                    disabled={updateSaleTicketMutation.isPending}
-                    className="w-full"
-                  >
-                    {updateSaleTicketMutation.isPending
-                      ? "Guardando..."
-                      : "Guardar"}
-                  </Button>
-                </div>
-              </form>
-
-              {updateSaleTicketMutation.error ? (
-                <ErrorMessage
-                  title="No se pudo actualizar el borrador"
-                  messages={getApiErrorMessages(updateSaleTicketMutation.error)}
-                />
-              ) : null}
-            </CardContent>
-          </Card>
-
           <SaleTicketPosWorkspace
             ticket={ticket}
             products={sellableProducts}
-            isProductsLoading={productsQuery.isLoading || inventoryQuery.isLoading}
-            productsError={productsQuery.error ?? inventoryQuery.error}
+            isProductsLoading={
+              productsQuery.isLoading ||
+              inventoryQuery.isLoading ||
+              categoriesQuery.isLoading
+            }
+            productsError={
+              productsQuery.error ?? inventoryQuery.error ?? categoriesQuery.error
+            }
             isAddingItem={addSaleTicketItemMutation.isPending}
             isUpdatingItem={updateSaleTicketItemMutation.isPending}
             isRemovingItem={removeSaleTicketItemMutation.isPending}
+            paymentBanks={paymentBanksQuery.data ?? []}
+            isPaymentBanksLoading={paymentBanksQuery.isLoading}
+            paymentBanksError={paymentBanksQuery.error}
+            isSavingPayment={updateSaleTicketMutation.isPending}
+            savePaymentError={updateSaleTicketMutation.error}
             addError={addSaleTicketItemMutation.error}
             updateError={updateSaleTicketItemMutation.error}
             removeError={removeSaleTicketItemMutation.error}
@@ -337,17 +255,23 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
             onRemoveItem={async (itemId) => {
               await removeSaleTicketItemMutation.mutateAsync(itemId);
             }}
+            onSavePayment={async (values: SaleTicketPaymentFormValues) => {
+              await updateSaleTicketMutation.mutateAsync({
+                ticketId,
+                data: values,
+              });
+            }}
             onCancel={async () => {
               await cancelSaleTicketMutation.mutateAsync({
                 reason: "Cancelado desde el panel de ventas.",
               });
             }}
-            onConfirm={async () => {
+            onConfirm={async (values: ConfirmSaleTicketInput) => {
               if (!hasItems) {
                 return;
               }
 
-              await confirmSaleTicketMutation.mutateAsync(undefined);
+              await confirmSaleTicketMutation.mutateAsync(values);
             }}
           />
         </>

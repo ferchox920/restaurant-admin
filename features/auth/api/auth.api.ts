@@ -6,7 +6,10 @@ import type {
 } from "@/features/auth/types/auth.types";
 
 export function login(payload: LoginRequest) {
-  return apiClient.post<LoginResponse>("/api/auth/login", payload);
+  return apiClient.post<LoginResponse>("/api/auth/login", {
+    ...payload,
+    email: payload.email.trim().toLowerCase(),
+  });
 }
 
 export function getCurrentUser() {

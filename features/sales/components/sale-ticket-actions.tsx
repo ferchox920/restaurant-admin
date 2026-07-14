@@ -11,7 +11,7 @@ type SaleTicketActionsProps = {
 
 export function SaleTicketActions({
   ticketId,
-  readOnlyLabel = "Abrir detalle",
+  readOnlyLabel = "Ver detalle",
 }: SaleTicketActionsProps) {
   return (
     <div className="flex items-center justify-end gap-2">

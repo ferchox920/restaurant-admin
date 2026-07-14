@@ -9,6 +9,7 @@ import { getApiErrorMessages } from "@/lib/api/error-messages";
 
 type ConfirmSaleTicketDialogProps = {
   itemsCount: number;
+  disabledReason?: string | null;
   isPending?: boolean;
   error?: unknown;
   success?: boolean;
@@ -17,18 +18,24 @@ type ConfirmSaleTicketDialogProps = {
 
 export function ConfirmSaleTicketDialog({
   itemsCount,
+  disabledReason,
   isPending = false,
   error,
   success = false,
   onConfirm,
 }: ConfirmSaleTicketDialogProps) {
-  const isDisabled = isPending || itemsCount === 0;
+  const isDisabled = isPending || itemsCount === 0 || Boolean(disabledReason);
 
   return (
     <div className="space-y-3">
       <ConfirmActionDialog
         trigger={
-          <Button type="button" disabled={isDisabled}>
+          <Button
+            type="button"
+            size="lg"
+            className="w-full"
+            disabled={isDisabled}
+          >
             <CheckCircle2 aria-hidden="true" />
             Confirmar venta
           </Button>
@@ -41,10 +48,15 @@ export function ConfirmSaleTicketDialog({
       />
 
       {itemsCount === 0 ? (
-        <ErrorMessage
-          title="Ticket vacio"
-          messages="Agrega al menos un item al borrador antes de confirmar la venta."
-        />
+        <p className="rounded-lg bg-muted/50 p-3 text-sm text-muted-foreground">
+          Agrega al menos un producto para habilitar la confirmación.
+        </p>
+      ) : null}
+
+      {itemsCount > 0 && disabledReason ? (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+          {disabledReason}
+        </p>
       ) : null}
 
       {success ? (

@@ -9,7 +9,7 @@ import { shouldRetryQuery } from "@/lib/api/query-utils";
 export function useInventory(filters?: InventoryFilters) {
   return useQuery({
     queryKey: inventoryQueryKeys.list(filters),
-    queryFn: () => getInventory(filters),
+    queryFn: ({ signal }) => getInventory(filters, signal),
     retry: shouldRetryQuery,
     staleTime: 15_000,
   });

@@ -52,7 +52,6 @@ export function MinimumStockForm({
           id="minimum-stock"
           inputMode="decimal"
           disabled={isPending}
-          placeholder="Ej. 4"
           {...form.register("minimumStock")}
         />
       </FieldError>

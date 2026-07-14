@@ -38,16 +38,17 @@ export function ProductTable({
   pendingAction,
 }: ProductTableProps) {
   return (
-    <Table>
+    <Table className="min-w-[720px]">
       <TableHeader>
         <TableRow>
           <TableHead>Producto</TableHead>
-          <TableHead>SKU</TableHead>
-          <TableHead>Categoria</TableHead>
+          <TableHead>Categoría</TableHead>
           <TableHead>Unidad</TableHead>
           <TableHead>Estado</TableHead>
-          <TableHead>Actualizado</TableHead>
-          <TableHead className="text-right">Acciones</TableHead>
+          <TableHead className="hidden xl:table-cell">Actualizado</TableHead>
+          {canMutate ? (
+            <TableHead className="text-right">Acciones</TableHead>
+          ) : null}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -61,39 +62,54 @@ export function ProductTable({
               key={product.id}
               className={!product.active ? "bg-muted/30 text-muted-foreground" : ""}
             >
-              <TableCell className="font-medium text-foreground">
+              <TableCell className="max-w-72 whitespace-normal">
                 <Link
                   href={`/products/${product.id}`}
-                  className="underline-offset-4 hover:underline"
+                  className="font-medium text-foreground underline-offset-4 hover:underline"
                 >
                   {product.name}
                 </Link>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {product.description || "Sin descripcion"}
-                </p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {product.sku ? (
+                    <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-foreground">
+                      {product.sku}
+                    </span>
+                  ) : null}
+                  {product.description ? (
+                    <p className="line-clamp-1 text-xs text-muted-foreground">
+                      {product.description}
+                    </p>
+                  ) : null}
+                </div>
               </TableCell>
-              <TableCell>{product.sku || "-"}</TableCell>
               <TableCell>{formatCategoryName(categoryName ? { name: categoryName } : null)}</TableCell>
               <TableCell>{formatProductUnit(product.unit)}</TableCell>
               <TableCell>
                 <ProductStatusBadges product={product} />
               </TableCell>
-              <TableCell>{formatDateTime(product.updatedAt)}</TableCell>
-              <TableCell>
-                <ProductActions
-                  product={product}
-                  canMutate={canMutate}
-                  onEdit={onEdit}
-                  onDeactivate={onDeactivate}
-                  onReactivate={onReactivate}
-                  isDeactivatePending={
-                    pendingProductId === product.id && pendingAction === "deactivate"
-                  }
-                  isReactivatePending={
-                    pendingProductId === product.id && pendingAction === "reactivate"
-                  }
-                />
+              <TableCell className="hidden xl:table-cell">
+                {formatDateTime(product.updatedAt)}
               </TableCell>
+              {canMutate ? (
+                <TableCell>
+                  <ProductActions
+                    product={product}
+                    canMutate={canMutate}
+                    showViewLink={false}
+                    onEdit={onEdit}
+                    onDeactivate={onDeactivate}
+                    onReactivate={onReactivate}
+                    isDeactivatePending={
+                      pendingProductId === product.id &&
+                      pendingAction === "deactivate"
+                    }
+                    isReactivatePending={
+                      pendingProductId === product.id &&
+                      pendingAction === "reactivate"
+                    }
+                  />
+                </TableCell>
+              ) : null}
             </TableRow>
           );
         })}

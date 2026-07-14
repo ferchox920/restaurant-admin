@@ -17,16 +17,14 @@ export function InventoryMovementTable({
   movements: InventoryMovement[];
 }) {
   return (
-    <Table>
+    <Table className="min-w-[720px]">
       <TableHeader>
         <TableRow>
           <TableHead>Fecha</TableHead>
           <TableHead>Tipo</TableHead>
-          <TableHead>Cantidad</TableHead>
-          <TableHead>Stock anterior</TableHead>
-          <TableHead>Stock nuevo</TableHead>
-          <TableHead>Usuario</TableHead>
-          <TableHead>Referencia</TableHead>
+          <TableHead>Variación</TableHead>
+          <TableHead>Stock</TableHead>
+          <TableHead className="hidden xl:table-cell">Responsable</TableHead>
           <TableHead>Motivo</TableHead>
         </TableRow>
       </TableHeader>
@@ -36,16 +34,26 @@ export function InventoryMovementTable({
             <TableCell>{formatDateTime(movement.createdAt)}</TableCell>
             <TableCell>
               <MovementTypeBadge movementType={movement.movementType} />
+              <div className="mt-1 text-xs text-muted-foreground">
+                <MovementReference
+                  referenceType={movement.referenceType}
+                  referenceId={movement.referenceId}
+                />
+              </div>
             </TableCell>
-            <TableCell>{movement.quantity}</TableCell>
-            <TableCell>{movement.previousStock}</TableCell>
-            <TableCell>{movement.newStock}</TableCell>
-            <TableCell>{movement.createdById ?? "-"}</TableCell>
+            <TableCell className="font-semibold text-foreground">
+              {movement.quantity}
+            </TableCell>
             <TableCell>
-              <MovementReference
-                referenceType={movement.referenceType}
-                referenceId={movement.referenceId}
-              />
+              <span className="text-muted-foreground">
+                {movement.previousStock}
+              </span>{" "}
+              → <span className="font-medium">{movement.newStock}</span>
+            </TableCell>
+            <TableCell className="hidden xl:table-cell">
+              {movement.createdById
+                ? `#${movement.createdById.slice(0, 8)}`
+                : "Sistema"}
             </TableCell>
             <TableCell className="max-w-72 whitespace-normal">
               {movement.reason}

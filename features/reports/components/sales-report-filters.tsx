@@ -47,7 +47,12 @@ export function SalesReportFilters({
             id="sales-report-from"
             type="date"
             value={values.from}
-            onChange={(event) => onFromChange(event.target.value)}
+            max={values.to || undefined}
+            onChange={(event) => {
+              const value = event.target.value;
+              onFromChange(value);
+              if (values.to && value > values.to) onToChange("");
+            }}
           />
         </div>
 
@@ -57,6 +62,7 @@ export function SalesReportFilters({
             id="sales-report-to"
             type="date"
             value={values.to}
+            min={values.from || undefined}
             onChange={(event) => onToChange(event.target.value)}
           />
         </div>

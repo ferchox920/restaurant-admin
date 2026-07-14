@@ -2,7 +2,9 @@
 
 import { useMemo } from "react";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useUsers } from "@/features/users/hooks/use-users";
+import { useQuery } from "@tanstack/react-query";
+import { getAllUsers } from "@/features/users/api/users.api";
+import { usersQueryKeys } from "@/features/users/query-keys";
 import type { UserOption } from "@/features/users/types/user-option.types";
 
 type UseUserOptionsParams = {
@@ -13,7 +15,11 @@ export function useUserOptions(params: UseUserOptionsParams = {}) {
   const { includeInactive = false } = params;
   const { user } = useAuth();
   const canReadUsers = user?.role === "ADMIN";
-  const query = useUsers(canReadUsers);
+  const query = useQuery({
+    queryKey: [...usersQueryKeys.options(), "all-pages"],
+    queryFn: getAllUsers,
+    enabled: canReadUsers,
+  });
 
   const options = useMemo<UserOption[]>(() => {
     const source = query.data ?? [];

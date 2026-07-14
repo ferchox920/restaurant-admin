@@ -18,7 +18,6 @@ import type { SelectableSalesChannel } from "@/features/products/prices/componen
 import { calculateChannelPrice } from "@/features/products/prices/utils/price-adjustments";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { formatMoney } from "@/lib/money";
-import { formatCommissionType } from "@/lib/formatters";
 
 function isValidDecimalString(value: string) {
   return /^\d+(\.\d+)?$/.test(value);
@@ -39,7 +38,9 @@ const baseProductPriceSchema = z.object({
 });
 
 type CreatePriceVersionFormValues = z.input<typeof baseProductPriceSchema>;
-type CreatePriceVersionFormSubmitValues = z.output<typeof baseProductPriceSchema>;
+type CreatePriceVersionFormSubmitValues = z.output<
+  typeof baseProductPriceSchema
+>;
 
 type CreatePriceVersionFormProps = {
   channels: SelectableSalesChannel[];
@@ -82,16 +83,13 @@ export function CreatePriceVersionForm({
       activeChannels.map((channel) => ({
         salesChannelId: channel.id,
         price: calculateChannelPrice(values.price, channel),
-      }))
+      })),
     );
     form.reset({
       price: "",
     });
   }
 
-  const basePrice = form.watch("price");
-  const normalizedBasePrice = normalizeDecimalInput(basePrice);
-  const canPreview = isValidDecimalString(normalizedBasePrice);
   const activeChannels = channels.filter((channel) => channel.active);
 
   return (
@@ -113,24 +111,17 @@ export function CreatePriceVersionForm({
             className="w-full max-w-none shadow-none"
           />
         ) : (
-          <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-lg bg-muted/50 p-4">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Canales activos
-                </p>
-                <p className="mt-2 text-lg font-semibold">
-                  {activeChannels.length}
-                </p>
-              </div>
-              <div className="rounded-lg bg-muted/50 p-4">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Costo actual
-                </p>
-                <p className="mt-2 text-lg font-semibold">
-                  {currentCost ? formatMoney(currentCost.cost) : "Sin costo"}
-                </p>
-              </div>
+          <form
+            className="space-y-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
+            <div className="rounded-lg bg-muted/50 p-4">
+              <p className="text-sm font-medium text-muted-foreground">
+                Costo actual
+              </p>
+              <p className="mt-2 text-lg font-semibold">
+                {currentCost ? formatMoney(currentCost.cost) : "Sin costo"}
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -149,39 +140,10 @@ export function CreatePriceVersionForm({
                 </p>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Al guardar, este valor queda como precio sin ajuste para canales sin comision y como base para calcular los canales con porcentaje o monto fijo.
+                  Al guardar, este valor queda como precio base y se ajusta por
+                  los impuestos y comisiones configurados en cada canal.
                 </p>
               )}
-            </div>
-
-            <div className="overflow-hidden rounded-lg border">
-              <div className="grid grid-cols-[1fr_auto] gap-3 border-b bg-muted/50 px-4 py-3 text-sm font-medium text-muted-foreground">
-                <span>Canal</span>
-                <span>Precio final</span>
-              </div>
-              <div className="divide-y">
-                {activeChannels.map((channel) => (
-                  <div
-                    key={channel.id}
-                    className="grid grid-cols-[1fr_auto] gap-3 px-4 py-3 text-sm"
-                  >
-                    <div>
-                      <p className="font-medium">{channel.name}</p>
-                      <p className="text-muted-foreground">
-                        {formatCommissionType(channel.commissionType)}{" "}
-                        {channel.commissionType === "NONE"
-                          ? "0"
-                          : channel.commissionValue}
-                      </p>
-                    </div>
-                    <p className="font-medium">
-                      {canPreview
-                        ? formatMoney(calculateChannelPrice(normalizedBasePrice, channel))
-                        : "-"}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {error ? (

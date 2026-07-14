@@ -7,15 +7,14 @@ import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useProducts } from "@/features/products/hooks/use-products";
+import { useAllProducts as useProducts } from "@/features/products/hooks/use-all-products";
 import { SalesReportFilters } from "@/features/reports/components/sales-report-filters";
-import { SalesSummaryCards } from "@/features/reports/components/sales-summary-cards";
 import { SalesByProductReportTable } from "@/features/reports/components/sales-by-product-report-table";
 import { useSalesByProductReport } from "@/features/reports/hooks/use-sales-by-product-report";
 import { salesReportFiltersSchema } from "@/features/reports/schemas/report-filters.schema";
 import type { SalesReportFilters as SalesReportQueryFilters } from "@/features/reports/types/report.types";
 import { formatReportDateRange, getReportEmptyMessage, toReportDateRange } from "@/features/reports/utils/report-formatters";
-import { useSalesChannels } from "@/features/sales-channels/hooks/use-sales-channels";
+import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
@@ -129,7 +128,6 @@ export function SalesByProductReportPage() {
           !reportQuery.error &&
           (reportQuery.data?.length ?? 0) > 0 ? (
             <>
-              <SalesSummaryCards items={reportQuery.data ?? []} />
               <SalesByProductReportTable items={reportQuery.data ?? []} />
             </>
           ) : null}

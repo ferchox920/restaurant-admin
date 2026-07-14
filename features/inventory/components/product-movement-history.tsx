@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
@@ -15,6 +15,9 @@ import type {
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
+import { isValidDateRange, toIsoDateBoundary } from "@/lib/api/date-range";
 
 export function ProductMovementHistory({
   productId,
@@ -28,15 +31,20 @@ export function ProductMovementHistory({
   >();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [offset, setOffset] = useState(0);
+  const validRange = isValidDateRange(from, to);
 
-  const deferredFilters = useDeferredValue<InventoryMovementsFilters>({
+  const deferredFilters: InventoryMovementsFilters = {
     movementType,
-    from: from || undefined,
-    to: to || undefined,
-  });
+    from: validRange ? toIsoDateBoundary(from, "start") : undefined,
+    to: validRange ? toIsoDateBoundary(to, "end") : undefined,
+    limit: DEFAULT_PAGE_LIMIT,
+    offset,
+  };
   const movementsQuery = useProductInventoryMovements(
     canRead ? productId : undefined,
-    deferredFilters
+    deferredFilters,
+    validRange,
   );
   const isForbidden =
     movementsQuery.error &&
@@ -60,15 +68,18 @@ export function ProductMovementHistory({
     <Card>
       <CardHeader>
         <CardTitle>Movimientos del producto</CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Consulta ingresos, salidas, ajustes y reversiones de stock.
+        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         <MovementFilters
           movementType={movementType}
           from={from}
           to={to}
-          onMovementTypeChange={setMovementType}
-          onFromChange={setFrom}
-          onToChange={setTo}
+          onMovementTypeChange={(value) => { setMovementType(value); setOffset(0); }}
+          onFromChange={(value) => { setFrom(value); setOffset(0); if (to && value > to) setTo(""); }}
+          onToChange={(value) => { setTo(value); setOffset(0); }}
         />
 
         {movementsQuery.isLoading ? (
@@ -91,6 +102,15 @@ export function ProductMovementHistory({
           />
         ) : null}
 
+        {!movementsQuery.isLoading && !movementsQuery.error ? (
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            {(movementsQuery.data ?? []).length}{" "}
+            {(movementsQuery.data ?? []).length === 1
+              ? "movimiento encontrado"
+              : "movimientos encontrados"}
+          </p>
+        ) : null}
+
         {!movementsQuery.isLoading &&
         !movementsQuery.error &&
         (movementsQuery.data?.length ?? 0) === 0 ? (
@@ -105,6 +125,9 @@ export function ProductMovementHistory({
         !movementsQuery.error &&
         (movementsQuery.data?.length ?? 0) > 0 ? (
           <InventoryMovementsTable movements={movementsQuery.data ?? []} />
+        ) : null}
+        {!movementsQuery.error && validRange ? (
+          <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={movementsQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={movementsQuery.isFetching} />
         ) : null}
       </CardContent>
     </Card>

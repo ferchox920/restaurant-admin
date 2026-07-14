@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { RotateCcw, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +23,11 @@ type ProductFiltersProps = {
   categoryId?: string;
   onCategoryChange: (value?: string) => void;
   categories: Category[];
+  counts: {
+    total: number;
+    active: number;
+    inactive: number;
+  };
 };
 
 export function ProductFilters({
@@ -33,7 +38,10 @@ export function ProductFilters({
   categoryId,
   onCategoryChange,
   categories,
+  counts,
 }: ProductFiltersProps) {
+  const hasFilters = filter !== "all" || Boolean(search || categoryId);
+
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
       <div className="space-y-2">
@@ -47,14 +55,25 @@ export function ProductFilters({
             id="products-search"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Buscar por nombre o SKU"
-            className="pl-9"
+            className="pr-9 pl-9"
           />
+          {search ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="absolute top-1/2 right-2 -translate-y-1/2"
+              aria-label="Limpiar búsqueda"
+              onClick={() => onSearchChange("")}
+            >
+              <X aria-hidden="true" />
+            </Button>
+          ) : null}
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label>Categoria</Label>
+        <Label>Categoría</Label>
         <Select
           value={categoryId ?? "__all__"}
           onValueChange={(value) =>
@@ -64,22 +83,22 @@ export function ProductFilters({
           }
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Todas las categorias">
+            <SelectValue placeholder="Todas las categorías">
               {(value) => {
                 if (!value || value === "__all__") {
-                  return "Todas las categorias";
+                  return "Todas las categorías";
                 }
 
                 const category = categories.find((item) => item.id === value);
 
                 return category
                   ? `${category.name}${!category.active ? " (inactiva)" : ""}`
-                  : "Todas las categorias";
+                  : "Todas las categorías";
               }}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="__all__">Todas las categorias</SelectItem>
+            <SelectItem value="__all__">Todas las categorías</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
                 {category.name}
@@ -90,27 +109,53 @@ export function ProductFilters({
         </Select>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 lg:col-span-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 lg:col-span-2">
+        <div
+          className="flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label="Filtrar productos por estado"
+        >
+          <Button
+            type="button"
+            size="sm"
+            variant={filter === "all" ? "default" : "outline"}
+            aria-pressed={filter === "all"}
+            onClick={() => onFilterChange("all")}
+          >
+            Todos ({counts.total})
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={filter === "active" ? "default" : "outline"}
+            aria-pressed={filter === "active"}
+            onClick={() => onFilterChange("active")}
+          >
+            Activos ({counts.active})
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={filter === "inactive" ? "default" : "outline"}
+            aria-pressed={filter === "inactive"}
+            onClick={() => onFilterChange("inactive")}
+          >
+            Inactivos ({counts.inactive})
+          </Button>
+        </div>
         <Button
           type="button"
-          variant={filter === "all" ? "default" : "outline"}
-          onClick={() => onFilterChange("all")}
+          size="sm"
+          variant="ghost"
+          disabled={!hasFilters}
+          onClick={() => {
+            onFilterChange("all");
+            onSearchChange("");
+            onCategoryChange(undefined);
+          }}
         >
-          Todos
-        </Button>
-        <Button
-          type="button"
-          variant={filter === "active" ? "default" : "outline"}
-          onClick={() => onFilterChange("active")}
-        >
-          Activos
-        </Button>
-        <Button
-          type="button"
-          variant={filter === "inactive" ? "default" : "outline"}
-          onClick={() => onFilterChange("inactive")}
-        >
-          Inactivos
+          <RotateCcw aria-hidden="true" />
+          Limpiar filtros
         </Button>
       </div>
     </div>

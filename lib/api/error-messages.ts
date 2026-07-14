@@ -12,8 +12,63 @@ const CONFLICT_ERROR_MESSAGE =
 const CONNECTION_ERROR_MESSAGE =
   "No se pudo conectar con la API. Verifica tu red o el backend.";
 const INTERNAL_DEFAULT_API_MESSAGE = "Unexpected API error.";
+const TOO_MANY_REQUESTS_ERROR_MESSAGE =
+  "Demasiadas solicitudes. Espera unos segundos e intenta nuevamente.";
+const NOT_FOUND_ERROR_MESSAGE = "El recurso solicitado no existe.";
 
 function sanitizeMessage(message: string) {
+  if (/table.*not found|mesa.*no encontrada/i.test(message)) {
+    return "Mesa no encontrada.";
+  }
+
+  if (/inactive table|table.*inactive|mesa.*inactiva/i.test(message)) {
+    return "La mesa esta inactiva.";
+  }
+
+  if (/occupied table|table.*occupied|mesa.*ocupada/i.test(message)) {
+    return "La mesa esta ocupada.";
+  }
+
+  if (/order.*not found|orden.*no encontrada/i.test(message)) {
+    return "Orden no encontrada.";
+  }
+
+  if (/already cancelled|orden.*cancelada/i.test(message)) {
+    return "La orden ya esta cancelada.";
+  }
+
+  if (/already closed|orden.*cerrada/i.test(message)) {
+    return "La orden ya esta cerrada.";
+  }
+
+  if (/empty order|without items|sin items|sin consumos/i.test(message)) {
+    return "La orden no tiene consumos para cerrar.";
+  }
+
+  if (/insufficient stock|stock insuficiente/i.test(message)) {
+    return "Stock insuficiente. La orden sigue abierta y no se modificaron los consumos.";
+  }
+
+  if (/paymentMethod|payment method|metodo.*pago/i.test(message)) {
+    return "Falta el metodo de cierre requerido.";
+  }
+
+  if (/paymentBankId|payment bank|banco/i.test(message)) {
+    return "La transferencia requiere un banco valido y CASH no debe enviar banco.";
+  }
+
+  if (/not sellable|producto.*no vendible/i.test(message)) {
+    return "El producto no es vendible.";
+  }
+
+  if (/inactive product|producto.*inactivo/i.test(message)) {
+    return "El producto esta inactivo.";
+  }
+
+  if (/recipe_based|RECIPE_BASED/i.test(message)) {
+    return "Los productos RECIPE_BASED no se pueden vender directamente.";
+  }
+
   if (/current cost for product/i.test(message)) {
     return "El producto no es elegible para venta porque no tiene costo vigente.";
   }
@@ -63,6 +118,14 @@ export function getApiErrorMessages(error: unknown) {
     return [DEFAULT_ERROR_MESSAGE];
   }
 
+  if (error.statusCode === HTTP_STATUS.tooManyRequests) {
+    return [TOO_MANY_REQUESTS_ERROR_MESSAGE];
+  }
+
+  if (error.statusCode === HTTP_STATUS.internalServerError) {
+    return [DEFAULT_ERROR_MESSAGE];
+  }
+
   const normalizedMessages = normalizeMessages(
     getRawMessage(error.raw) ?? error.message
   );
@@ -87,17 +150,22 @@ export function getApiErrorMessages(error: unknown) {
     return [CONFLICT_ERROR_MESSAGE];
   }
 
+  if (error.statusCode === HTTP_STATUS.notFound) {
+    return [NOT_FOUND_ERROR_MESSAGE];
+  }
+
   return [DEFAULT_ERROR_MESSAGE];
 }
 
 export function getApiErrorMessage(error: unknown) {
-  return getApiErrorMessages(error)[0] ?? DEFAULT_ERROR_MESSAGE;
+  return getApiErrorMessages(error).join("\n") || DEFAULT_ERROR_MESSAGE;
 }
 
 export const apiErrorMessages = {
   unauthorized: UNAUTHORIZED_ERROR_MESSAGE,
   forbidden: FORBIDDEN_ERROR_MESSAGE,
   conflict: CONFLICT_ERROR_MESSAGE,
+  tooManyRequests: TOO_MANY_REQUESTS_ERROR_MESSAGE,
   connection: CONNECTION_ERROR_MESSAGE,
   unexpected: DEFAULT_ERROR_MESSAGE,
 } as const;

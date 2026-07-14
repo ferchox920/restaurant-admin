@@ -3,7 +3,18 @@ import { ProductStatusBadges } from "@/features/products/components/product-stat
 import { StockStatusBadge } from "@/features/inventory/components/stock-status-badge";
 import type { ProductInventoryDetail } from "@/features/inventory/types/inventory.types";
 import type { Product } from "@/features/products/types/product.types";
-import { formatDateTime, formatStockManagementType } from "@/lib/formatters";
+import type { ProductUnit } from "@/features/products/types/product.types";
+import {
+  formatDateTime,
+  formatProductUnit,
+  formatStockManagementType,
+} from "@/lib/formatters";
+
+function formatInventoryUnit(unit: string) {
+  return ["UNIT", "PORTION", "SERVICE"].includes(unit)
+    ? formatProductUnit(unit as ProductUnit)
+    : unit;
+}
 
 export function CurrentStockCard({
   product,
@@ -23,16 +34,37 @@ export function CurrentStockCard({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-4 sm:grid-cols-2">
-        <Metric label="Stock actual" value={inventory.currentStock} />
-        <Metric label="Stock minimo" value={inventory.minimumStock} />
-        <Metric label="SKU" value={inventory.productSku || "-"} />
-        <Metric label="Unidad" value={inventory.unit} />
-        <Metric
-          label="Tipo de stock"
-          value={formatStockManagementType(inventory.stockManagementType)}
-        />
-        <Metric label="Actualizado" value={formatDateTime(inventory.updatedAt)} />
+      <CardContent className="space-y-5">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl bg-primary/5 p-4 ring-1 ring-primary/15">
+            <p className="text-sm font-medium text-muted-foreground">
+              Stock actual
+            </p>
+            <p className="mt-2 text-3xl font-semibold">
+              {inventory.currentStock}
+            </p>
+          </div>
+          <div className="rounded-xl bg-muted/50 p-4">
+            <p className="text-sm font-medium text-muted-foreground">
+              Stock mínimo
+            </p>
+            <p className="mt-2 text-3xl font-semibold">
+              {inventory.minimumStock}
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-4 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Metric label="SKU" value={inventory.productSku || "Sin SKU"} />
+          <Metric label="Unidad" value={formatInventoryUnit(inventory.unit)} />
+          <Metric
+            label="Control de stock"
+            value={formatStockManagementType(inventory.stockManagementType)}
+          />
+          <Metric
+            label="Última actualización"
+            value={formatDateTime(inventory.updatedAt)}
+          />
+        </div>
       </CardContent>
     </Card>
   );

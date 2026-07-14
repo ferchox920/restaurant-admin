@@ -1,6 +1,26 @@
 "use client";
 
+import { RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { InventoryMovementType } from "@/features/inventory/types/inventory.types";
+
+const movementTypeLabels: Record<InventoryMovementType, string> = {
+  STOCK_IN: "Ingreso de stock",
+  SALE_OUT: "Salida por venta",
+  MANUAL_ADJUSTMENT: "Ajuste manual",
+  WASTE: "Merma",
+  RETURN_IN: "Reingreso",
+  VOID_REVERSAL: "Reversión de venta anulada",
+};
 
 type MovementFiltersProps = {
   movementType?: InventoryMovementType;
@@ -19,48 +39,85 @@ export function MovementFilters({
   onFromChange,
   onToChange,
 }: MovementFiltersProps) {
+  const hasFilters = Boolean(movementType || from || to);
+  const hasInvalidDateRange = Boolean(from && to && from > to);
+
   return (
     <div className="grid gap-4 md:grid-cols-3">
-      <label className="space-y-2 text-sm">
-        <span className="font-medium">Tipo de movimiento</span>
-        <select
-          className="flex h-8 w-full rounded-lg border border-input bg-transparent px-3 text-sm"
+      <div className="space-y-2">
+        <Label>Tipo de movimiento</Label>
+        <Select
           value={movementType ?? "__all__"}
-          onChange={(event) =>
+          onValueChange={(value) =>
             onMovementTypeChange(
-              event.target.value === "__all__"
+              value === "__all__"
                 ? undefined
-                : (event.target.value as InventoryMovementType)
+                : (value as InventoryMovementType),
             )
           }
         >
-          <option value="__all__">Todos</option>
-          <option value="STOCK_IN">Ingreso de stock</option>
-          <option value="SALE_OUT">Salida por venta</option>
-          <option value="MANUAL_ADJUSTMENT">Ajuste manual</option>
-          <option value="WASTE">Merma</option>
-          <option value="RETURN_IN">Reingreso</option>
-          <option value="VOID_REVERSAL">Reversion de venta anulada</option>
-        </select>
-      </label>
-      <label className="space-y-2 text-sm">
-        <span className="font-medium">Desde</span>
-        <input
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {(value) =>
+                value && value !== "__all__"
+                  ? movementTypeLabels[value as InventoryMovementType]
+                  : "Todos los movimientos"
+              }
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">Todos los movimientos</SelectItem>
+            {Object.entries(movementTypeLabels).map(([value, label]) => (
+              <SelectItem key={value} value={value}>
+                {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="movement-from">Desde</Label>
+        <Input
+          id="movement-from"
           type="date"
-          className="flex h-8 w-full rounded-lg border border-input bg-transparent px-3 text-sm"
           value={from}
+          max={to || undefined}
+          aria-invalid={hasInvalidDateRange}
           onChange={(event) => onFromChange(event.target.value)}
         />
-      </label>
-      <label className="space-y-2 text-sm">
-        <span className="font-medium">Hasta</span>
-        <input
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="movement-to">Hasta</Label>
+        <Input
+          id="movement-to"
           type="date"
-          className="flex h-8 w-full rounded-lg border border-input bg-transparent px-3 text-sm"
           value={to}
+          min={from || undefined}
+          aria-invalid={hasInvalidDateRange}
           onChange={(event) => onToChange(event.target.value)}
         />
-      </label>
+      </div>
+      {hasInvalidDateRange ? (
+        <p className="text-sm text-destructive md:col-span-3">
+          La fecha inicial no puede ser posterior a la fecha final.
+        </p>
+      ) : null}
+      <div className="md:col-span-3">
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          disabled={!hasFilters}
+          onClick={() => {
+            onMovementTypeChange(undefined);
+            onFromChange("");
+            onToChange("");
+          }}
+        >
+          <RotateCcw aria-hidden="true" />
+          Limpiar filtros
+        </Button>
+      </div>
     </div>
   );
 }

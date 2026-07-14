@@ -22,6 +22,7 @@ export function SalesByUserReportTable({
           <TableHead>Usuario confirmador</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Tickets confirmados</TableHead>
+          <TableHead>Items</TableHead>
           <TableHead>Unidades vendidas</TableHead>
           <TableHead>Ventas brutas</TableHead>
           <TableHead>Costo total</TableHead>
@@ -36,6 +37,7 @@ export function SalesByUserReportTable({
             </TableCell>
             <TableCell>{item.userEmail || "-"}</TableCell>
             <TableCell>{item.ticketsCount}</TableCell>
+            <TableCell>{item.itemsCount}</TableCell>
             <TableCell>{item.quantitySold}</TableCell>
             <TableCell>{formatMoney(item.grossSales)}</TableCell>
             <TableCell>{formatMoney(item.historicalCost)}</TableCell>

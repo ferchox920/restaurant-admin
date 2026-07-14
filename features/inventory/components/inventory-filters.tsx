@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { RotateCcw, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +38,9 @@ export function InventoryFilters({
   search,
   onSearchChange,
 }: InventoryFiltersProps) {
+  const hasFilters =
+    activeFilter !== "all" || Boolean(stockStatus || search.trim());
+
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
       <div className="space-y-2">
@@ -51,9 +54,20 @@ export function InventoryFilters({
             id="inventory-search"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Buscar por nombre o SKU"
-            className="pl-9"
+            className="pr-9 pl-9"
           />
+          {search ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="absolute top-1/2 right-2 -translate-y-1/2"
+              aria-label="Limpiar búsqueda"
+              onClick={() => onSearchChange("")}
+            >
+              <X aria-hidden="true" />
+            </Button>
+          ) : null}
         </div>
       </div>
 
@@ -87,27 +101,53 @@ export function InventoryFilters({
         </Select>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 lg:col-span-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 lg:col-span-2">
+        <div
+          className="flex flex-wrap items-center gap-2"
+          role="group"
+          aria-label="Filtrar productos por estado"
+        >
+          <Button
+            type="button"
+            size="sm"
+            variant={activeFilter === "all" ? "default" : "outline"}
+            aria-pressed={activeFilter === "all"}
+            onClick={() => onActiveFilterChange("all")}
+          >
+            Todos
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={activeFilter === "active" ? "default" : "outline"}
+            aria-pressed={activeFilter === "active"}
+            onClick={() => onActiveFilterChange("active")}
+          >
+            Activos
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={activeFilter === "inactive" ? "default" : "outline"}
+            aria-pressed={activeFilter === "inactive"}
+            onClick={() => onActiveFilterChange("inactive")}
+          >
+            Inactivos
+          </Button>
+        </div>
         <Button
           type="button"
-          variant={activeFilter === "all" ? "default" : "outline"}
-          onClick={() => onActiveFilterChange("all")}
+          size="sm"
+          variant="ghost"
+          disabled={!hasFilters}
+          onClick={() => {
+            onActiveFilterChange("all");
+            onStockStatusChange(undefined);
+            onSearchChange("");
+          }}
         >
-          Todos
-        </Button>
-        <Button
-          type="button"
-          variant={activeFilter === "active" ? "default" : "outline"}
-          onClick={() => onActiveFilterChange("active")}
-        >
-          Activos
-        </Button>
-        <Button
-          type="button"
-          variant={activeFilter === "inactive" ? "default" : "outline"}
-          onClick={() => onActiveFilterChange("inactive")}
-        >
-          Inactivos
+          <RotateCcw aria-hidden="true" />
+          Limpiar filtros
         </Button>
       </div>
     </div>

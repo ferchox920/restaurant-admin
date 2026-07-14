@@ -7,6 +7,8 @@ import type {
   ProductPriceHistoryItem,
 } from "@/features/products/prices/types/product-price.types";
 import { toApiDecimalNumber } from "@/lib/money";
+import { fetchAllPages, withDefaultPagination } from "@/lib/api/pagination";
+import type { PaginationParams } from "@/types/common";
 
 function toCreateProductPriceRequest(
   payload: CreateProductPriceInput
@@ -17,12 +19,17 @@ function toCreateProductPriceRequest(
   };
 }
 
-export function getProductPrices(productId: string, channelId?: string) {
-  const queryString = buildQueryString({ channelId });
+export function getProductPrices(productId: string, channelId?: string, pagination?: PaginationParams, signal?: AbortSignal) {
+  const params = withDefaultPagination(pagination);
+  const queryString = buildQueryString({ channelId, ...params });
 
   return apiClient.get<ProductPriceHistoryItem[]>(
-    `/api/products/${productId}/prices${queryString}`
+    `/api/products/${productId}/prices${queryString}`, signal
   );
+}
+
+export function getAllProductPrices(productId: string, channelId?: string) {
+  return fetchAllPages((pagination) => getProductPrices(productId, channelId, pagination));
 }
 
 export function getCurrentProductPrice(productId: string, channelId: string) {

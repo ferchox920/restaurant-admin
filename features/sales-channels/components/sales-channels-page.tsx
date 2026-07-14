@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Plus } from "lucide-react";
+import { CircleCheck, CircleOff, Plus, Store } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/feedback/empty-state";
@@ -16,24 +16,25 @@ import { useDeactivateSalesChannel } from "@/features/sales-channels/hooks/use-d
 import { useReactivateSalesChannel } from "@/features/sales-channels/hooks/use-reactivate-sales-channel";
 import { SalesChannelForm } from "@/features/sales-channels/components/sales-channel-form";
 import { SalesChannelTable } from "@/features/sales-channels/components/sales-channel-table";
-import type { SalesChannel } from "@/features/sales-channels/types/sales-channel.types";
+import type {
+  CreateSalesChannelInput,
+  SalesChannel,
+  UpdateSalesChannelInput,
+} from "@/features/sales-channels/types/sales-channel.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
+import { PaginationControls } from "@/components/common/pagination-controls";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
 
 type SalesChannelFilterValue = "all" | "active" | "inactive";
-
-const filterToActiveMap: Record<SalesChannelFilterValue, boolean | undefined> = {
-  all: undefined,
-  active: true,
-  inactive: false,
-};
 
 export function SalesChannelsPage() {
   const { user } = useAuth();
   const canMutate = user?.role === "ADMIN" || user?.role === "MANAGER";
 
   const [filter, setFilter] = useState<SalesChannelFilterValue>("all");
+  const [offset, setOffset] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingSalesChannel, setEditingSalesChannel] =
     useState<SalesChannel | null>(null);
@@ -45,24 +46,26 @@ export function SalesChannelsPage() {
   >(null);
 
   const salesChannelsQuery = useSalesChannels({
-    active: filterToActiveMap[filter],
+    active: filter === "all" ? undefined : filter === "active",
+    limit: DEFAULT_PAGE_LIMIT,
+    offset,
   });
   const createSalesChannelMutation = useCreateSalesChannel();
   const updateSalesChannelMutation = useUpdateSalesChannel();
   const deactivateSalesChannelMutation = useDeactivateSalesChannel();
   const reactivateSalesChannelMutation = useReactivateSalesChannel();
 
-  const salesChannels = useMemo(() => {
-    const source = salesChannelsQuery.data ?? [];
+  const salesChannels = salesChannelsQuery.data ?? [];
+  const channelCounts = useMemo(() => {
+    const items = salesChannelsQuery.data ?? [];
+    const active = items.filter((salesChannel) => salesChannel.active).length;
 
-    if (filter === "all") {
-      return source;
-    }
-
-    return source.filter((salesChannel) =>
-      filter === "active" ? salesChannel.active : !salesChannel.active
-    );
-  }, [salesChannelsQuery.data, filter]);
+    return {
+      total: items.length,
+      active,
+      inactive: items.length - active,
+    };
+  }, [salesChannelsQuery.data]);
 
   const queryMessages = salesChannelsQuery.error
     ? getApiErrorMessages(salesChannelsQuery.error)
@@ -72,24 +75,12 @@ export function SalesChannelsPage() {
     isApiError(salesChannelsQuery.error) &&
     salesChannelsQuery.error.statusCode === HTTP_STATUS.forbidden;
 
-  async function handleCreateSalesChannel(values: {
-    name: string;
-    code: string;
-    description?: string;
-    commissionType: SalesChannel["commissionType"];
-    commissionValue: number;
-  }) {
+  async function handleCreateSalesChannel(values: CreateSalesChannelInput) {
     await createSalesChannelMutation.mutateAsync(values);
     setIsCreateOpen(false);
   }
 
-  async function handleUpdateSalesChannel(values: {
-    name?: string;
-    code?: string;
-    description?: string;
-    commissionType?: SalesChannel["commissionType"];
-    commissionValue?: number;
-  }) {
+  async function handleUpdateSalesChannel(values: UpdateSalesChannelInput) {
     if (!editingSalesChannel) {
       return;
     }
@@ -130,7 +121,7 @@ export function SalesChannelsPage() {
       <PageHeader
         eyebrow="Catalogo"
         title="Canales de venta"
-        description="Administra canales comerciales y sus datos operativos sin introducir precios por canal ni logica de ventas."
+        description="Organiza dónde vendes y configura los impuestos, comisiones y recargos de cada canal."
         actions={
           canMutate ? (
             <Button type="button" onClick={() => setIsCreateOpen(true)}>
@@ -141,30 +132,86 @@ export function SalesChannelsPage() {
         }
       />
 
+      {!salesChannelsQuery.isLoading && !salesChannelsQuery.error ? (
+        <div className="grid gap-3 sm:grid-cols-3">
+          <Card size="sm">
+            <CardContent className="flex items-center gap-3">
+              <span className="rounded-lg bg-primary/10 p-2 text-primary">
+                <Store aria-hidden="true" className="size-5" />
+              </span>
+              <div>
+                <p className="text-sm text-muted-foreground">Total</p>
+                <p className="text-2xl font-semibold">{channelCounts.total}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent className="flex items-center gap-3">
+              <span className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600 dark:text-emerald-400">
+                <CircleCheck aria-hidden="true" className="size-5" />
+              </span>
+              <div>
+                <p className="text-sm text-muted-foreground">Activos</p>
+                <p className="text-2xl font-semibold">{channelCounts.active}</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card size="sm">
+            <CardContent className="flex items-center gap-3">
+              <span className="rounded-lg bg-muted p-2 text-muted-foreground">
+                <CircleOff aria-hidden="true" className="size-5" />
+              </span>
+              <div>
+                <p className="text-sm text-muted-foreground">Inactivos</p>
+                <p className="text-2xl font-semibold">{channelCounts.inactive}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
+
       <Card>
         <CardContent className="space-y-4 pt-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              variant={filter === "all" ? "default" : "outline"}
-              onClick={() => setFilter("all")}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="font-medium">Listado de canales</p>
+              <p className="text-sm text-muted-foreground">
+                Selecciona un estado para acotar los resultados.
+              </p>
+            </div>
+            <div
+              className="flex flex-wrap items-center gap-2"
+              role="group"
+              aria-label="Filtrar canales por estado"
             >
-              Todos
-            </Button>
-            <Button
-              type="button"
-              variant={filter === "active" ? "default" : "outline"}
-              onClick={() => setFilter("active")}
-            >
-              Activos
-            </Button>
-            <Button
-              type="button"
-              variant={filter === "inactive" ? "default" : "outline"}
-              onClick={() => setFilter("inactive")}
-            >
-              Inactivos
-            </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={filter === "all" ? "default" : "outline"}
+                aria-pressed={filter === "all"}
+                onClick={() => { setFilter("all"); setOffset(0); }}
+              >
+                Todos ({channelCounts.total})
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={filter === "active" ? "default" : "outline"}
+                aria-pressed={filter === "active"}
+                onClick={() => { setFilter("active"); setOffset(0); }}
+              >
+                Activos ({channelCounts.active})
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={filter === "inactive" ? "default" : "outline"}
+                aria-pressed={filter === "inactive"}
+                onClick={() => { setFilter("inactive"); setOffset(0); }}
+              >
+                Inactivos ({channelCounts.inactive})
+              </Button>
+            </div>
           </div>
 
           {salesChannelsQuery.isLoading ? (
@@ -173,6 +220,9 @@ export function SalesChannelsPage() {
               message="Estamos consultando los canales de venta disponibles."
               className="w-full max-w-none shadow-none"
             />
+          ) : null}
+          {!salesChannelsQuery.error ? (
+            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={salesChannels.length} onOffsetChange={setOffset} disabled={salesChannelsQuery.isFetching} />
           ) : null}
 
           {salesChannelsQuery.error ? (
@@ -191,8 +241,16 @@ export function SalesChannelsPage() {
           !salesChannelsQuery.error &&
           salesChannels.length === 0 ? (
             <EmptyState
-              title="Sin canales"
-              message="Todavia no hay canales para mostrar con el filtro seleccionado."
+              title={
+                filter === "all"
+                  ? "Sin canales"
+                  : `Sin canales ${filter === "active" ? "activos" : "inactivos"}`
+              }
+              message={
+                filter === "all"
+                  ? "Crea el primer canal para comenzar a configurar tus formas de venta."
+                  : "No hay resultados para este filtro. Prueba seleccionando otro estado."
+              }
               className="w-full max-w-none shadow-none"
             />
           ) : null}
@@ -217,7 +275,7 @@ export function SalesChannelsPage() {
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         title="Nuevo canal de venta"
-        description="Crea un canal operativo basico. La comision es solo un dato descriptivo del catalogo."
+        description="Crea un canal operativo y configura sus impuestos, comisiones o recargos."
         submitLabel="Crear canal"
         isPending={createSalesChannelMutation.isPending}
         error={createSalesChannelMutation.error}
@@ -240,8 +298,12 @@ export function SalesChannelsPage() {
                 name: editingSalesChannel.name,
                 code: editingSalesChannel.code,
                 description: editingSalesChannel.description ?? undefined,
-                commissionType: editingSalesChannel.commissionType,
-                commissionValue: editingSalesChannel.commissionValue,
+                subTaxes: (editingSalesChannel.subTaxes ?? []).map(
+                  (subTax) => ({
+                    name: subTax.name,
+                    percentage: subTax.percentage,
+                  }),
+                ),
               }
             : undefined
         }

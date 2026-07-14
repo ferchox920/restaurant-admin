@@ -5,6 +5,7 @@ import type {
 import type { InventoryStockStatus } from "@/features/inventory/types/inventory.types";
 export type { SaleTicketStatus } from "@/features/sales/constants/sale-ticket-status";
 import type { SaleTicketStatus } from "@/features/sales/constants/sale-ticket-status";
+import type { PaginationParams } from "@/types/common";
 
 export type SaleTicketActor = {
   id: string;
@@ -19,6 +20,8 @@ export type SaleTicketChannel = {
   code?: string | null;
   active?: boolean;
 };
+
+export type SalePaymentMethod = "CASH" | "TRANSFER";
 
 export type SaleTicketItem = {
   id: string;
@@ -40,6 +43,10 @@ export type SaleTicketBase = {
   status: SaleTicketStatus;
   salesChannelId: string;
   salesChannel?: SaleTicketChannel | null;
+  paymentMethod?: SalePaymentMethod | null;
+  paymentBankId?: string | null;
+  paymentBankName?: string | null;
+  paymentBankNameSnapshot?: string | null;
   notes?: string | null;
   subtotal: string;
   total: string;
@@ -66,9 +73,10 @@ export type SaleTicketDetail = SaleTicketBase & {
 
 export type SaleTicket = SaleTicketListItem | SaleTicketDetail;
 
-export type SaleTicketFilters = {
+export type SaleTicketFilters = PaginationParams & {
   status?: SaleTicketStatus;
   channelId?: string;
+  search?: string;
   createdById?: string;
   from?: string;
   to?: string;
@@ -77,11 +85,20 @@ export type SaleTicketFilters = {
 export type CreateSaleTicketInput = {
   salesChannelId: string;
   notes?: string;
+  paymentMethod?: SalePaymentMethod;
+  paymentBankId?: string;
 };
 
 export type UpdateSaleTicketInput = {
   salesChannelId?: string;
   notes?: string;
+  paymentMethod?: SalePaymentMethod;
+  paymentBankId?: string;
+};
+
+export type ConfirmSaleTicketInput = {
+  paymentMethod: SalePaymentMethod;
+  paymentBankId?: string;
 };
 
 export type AddSaleTicketItemInput = {
@@ -104,11 +121,20 @@ export type VoidSaleTicketInput = {
 export type CreateSaleTicketFormValues = {
   salesChannelId: string;
   notes?: string;
+  paymentMethod?: SalePaymentMethod;
+  paymentBankId?: string;
 };
 
 export type UpdateSaleTicketFormValues = {
   salesChannelId?: string;
   notes?: string;
+  paymentMethod?: SalePaymentMethod;
+  paymentBankId?: string;
+};
+
+export type SaleTicketPaymentFormValues = {
+  paymentMethod: SalePaymentMethod;
+  paymentBankId?: string;
 };
 
 export type AddSaleTicketItemFormValues = {

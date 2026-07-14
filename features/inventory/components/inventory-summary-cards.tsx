@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertTriangle, CircleCheck, CircleX } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import type { InventoryStockItem } from "@/features/inventory/types/inventory.types";
 
 export function InventorySummaryCards({
@@ -11,21 +12,21 @@ export function InventorySummaryCards({
   const outOfStock = items.filter((item) => item.stockStatus === "OUT_OF_STOCK").length;
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-3 md:grid-cols-3">
       <SummaryCard
         title="Disponibles"
         value={String(available)}
-        description="Productos con stock por encima del minimo."
+        tone="available"
       />
       <SummaryCard
         title="Bajo stock"
         value={String(lowStock)}
-        description="Productos que requieren seguimiento operativo."
+        tone="low"
       />
       <SummaryCard
         title="Agotados"
         value={String(outOfStock)}
-        description="Productos sin stock actual disponible."
+        tone="empty"
       />
     </div>
   );
@@ -34,20 +35,35 @@ export function InventorySummaryCards({
 function SummaryCard({
   title,
   value,
-  description,
+  tone,
 }: {
   title: string;
   value: string;
-  description: string;
+  tone: "available" | "low" | "empty";
 }) {
+  const icon =
+    tone === "available" ? (
+      <CircleCheck aria-hidden="true" className="size-5" />
+    ) : tone === "low" ? (
+      <AlertTriangle aria-hidden="true" className="size-5" />
+    ) : (
+      <CircleX aria-hidden="true" className="size-5" />
+    );
+  const toneClass =
+    tone === "available"
+      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+      : tone === "low"
+        ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+        : "bg-rose-500/10 text-rose-600 dark:text-rose-400";
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1">
-        <p className="text-3xl font-medium">{value}</p>
-        <p className="text-sm text-muted-foreground">{description}</p>
+    <Card size="sm">
+      <CardContent className="flex items-center gap-3">
+        <span className={`rounded-lg p-2 ${toneClass}`}>{icon}</span>
+        <div>
+          <p className="text-sm text-muted-foreground">{title}</p>
+          <p className="text-2xl font-semibold">{value}</p>
+        </div>
       </CardContent>
     </Card>
   );

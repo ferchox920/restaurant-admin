@@ -8,7 +8,7 @@ import type { SalesChannel } from "@/features/sales-channels/types/sales-channel
 
 export type SelectableSalesChannel = Pick<
   SalesChannel,
-  "id" | "name" | "active" | "commissionType" | "commissionValue"
+  "id" | "name" | "active" | "subTaxes"
 >;
 
 type SalesChannelSelectorProps = {
@@ -25,7 +25,7 @@ export function SalesChannelSelector({
   description = "El historial y el precio vigente se muestran para el canal seleccionado.",
 }: SalesChannelSelectorProps) {
   const selectedChannel = channels.find(
-    (channel) => channel.id === selectedChannelId
+    (channel) => channel.id === selectedChannelId,
   );
 
   return (
