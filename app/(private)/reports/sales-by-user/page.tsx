@@ -1,5 +1,5 @@
-import { SalesByUserPage } from "@/features/reports/components/sales-by-user-page";
+import { SalesByUserReportPage } from "@/features/reports/components/sales-by-user-report-page";
 
 export default function ReportsSalesByUserPage() {
-  return <SalesByUserPage />;
+  return <SalesByUserReportPage />;
 }

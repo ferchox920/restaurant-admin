@@ -9,12 +9,9 @@ export function useReactivateSalesChannel() {
 
   return useMutation({
     mutationFn: reactivateSalesChannel,
-    onSuccess: (_, salesChannelId) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: salesChannelsQueryKeys.lists(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: salesChannelsQueryKeys.detail(salesChannelId),
       });
     },
   });

@@ -16,12 +16,9 @@ export function useUpdateSalesChannel() {
   return useMutation({
     mutationFn: ({ salesChannelId, data }: UpdateSalesChannelPayload) =>
       updateSalesChannel(salesChannelId, data),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: salesChannelsQueryKeys.lists(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: salesChannelsQueryKeys.detail(variables.salesChannelId),
       });
     },
   });

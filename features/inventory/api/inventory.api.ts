@@ -41,22 +41,6 @@ export function getProductInventory(productId: string) {
   );
 }
 
-export function getInventoryMovements(filters?: InventoryMovementsFilters, signal?: AbortSignal) {
-  const pagination = withDefaultPagination(filters);
-  const queryString = buildQueryString({
-    productId: filters?.productId,
-    movementType: filters?.movementType,
-    from: filters?.from,
-    to: filters?.to,
-    limit: pagination.limit,
-    offset: pagination.offset,
-  });
-
-  return apiClient.get<InventoryMovement[]>(
-    `/api/inventory/movements${queryString}`, signal
-  );
-}
-
 export function getProductInventoryMovements(
   productId: string,
   filters?: Omit<InventoryMovementsFilters, "productId">,

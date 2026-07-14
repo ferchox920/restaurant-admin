@@ -15,14 +15,8 @@ export function useCloseTableOrder(orderId: string) {
   return useMutation({
     mutationFn: (payload: CloseTableOrderFormValues) =>
       closeTableOrder(orderId, payload),
-    onSuccess: (order) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: tablesQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: tablesQueryKeys.detail(order.restaurantTableId),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: tableOrdersQueryKeys.currentByTable(order.restaurantTableId),
-      });
       void queryClient.invalidateQueries({
         queryKey: tableOrdersQueryKeys.detail(orderId),
       });

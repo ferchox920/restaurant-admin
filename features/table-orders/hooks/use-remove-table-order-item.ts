@@ -13,7 +13,6 @@ export function useRemoveTableOrderItem(orderId: string) {
       void queryClient.invalidateQueries({
         queryKey: tableOrdersQueryKeys.detail(orderId),
       });
-      void queryClient.invalidateQueries({ queryKey: tableOrdersQueryKeys.current() });
       void queryClient.invalidateQueries({ queryKey: tableOrdersQueryKeys.lists() });
     },
   });

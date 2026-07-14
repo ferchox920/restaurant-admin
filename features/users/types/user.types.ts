@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export const userRoles = ["ADMIN", "MANAGER", "CASHIER", "AUDITOR"] as const;
 
 export type UserRole = (typeof userRoles)[number];
@@ -38,15 +36,3 @@ export type UserFilters = {
   active?: boolean;
   role?: UserRole;
 };
-
-export const userSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
-  firstName: z.string(),
-  lastName: z.string(),
-  role: z.enum(userRoles),
-  active: z.boolean(),
-  lastLoginAt: z.string().datetime().nullable(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
-});

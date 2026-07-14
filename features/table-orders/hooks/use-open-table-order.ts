@@ -20,12 +20,6 @@ export function useOpenTableOrder() {
     onSuccess: (order) => {
       void queryClient.invalidateQueries({ queryKey: tablesQueryKeys.lists() });
       void queryClient.invalidateQueries({
-        queryKey: tablesQueryKeys.detail(order.restaurantTableId),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: tableOrdersQueryKeys.currentByTable(order.restaurantTableId),
-      });
-      void queryClient.invalidateQueries({
         queryKey: tableOrdersQueryKeys.lists(),
       });
       void queryClient.invalidateQueries({

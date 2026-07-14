@@ -9,12 +9,9 @@ export function useReactivateCategory() {
 
   return useMutation({
     mutationFn: reactivateCategory,
-    onSuccess: (_, categoryId) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: categoriesQueryKeys.lists(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: categoriesQueryKeys.detail(categoryId),
       });
     },
   });

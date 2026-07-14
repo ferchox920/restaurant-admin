@@ -71,8 +71,6 @@ export type SaleTicketDetail = SaleTicketBase & {
   items: SaleTicketItem[];
 };
 
-export type SaleTicket = SaleTicketListItem | SaleTicketDetail;
-
 export type SaleTicketFilters = PaginationParams & {
   status?: SaleTicketStatus;
   channelId?: string;
@@ -120,13 +118,6 @@ export type VoidSaleTicketInput = {
 
 export type CreateSaleTicketFormValues = {
   salesChannelId: string;
-  notes?: string;
-  paymentMethod?: SalePaymentMethod;
-  paymentBankId?: string;
-};
-
-export type UpdateSaleTicketFormValues = {
-  salesChannelId?: string;
   notes?: string;
   paymentMethod?: SalePaymentMethod;
   paymentBankId?: string;

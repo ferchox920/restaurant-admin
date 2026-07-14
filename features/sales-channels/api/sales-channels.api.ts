@@ -27,10 +27,6 @@ export function getAllSalesChannels(filters?: Omit<SalesChannelsFilters, "limit"
   return fetchAllPages((pagination) => getSalesChannels({ ...filters, ...pagination }));
 }
 
-export function getSalesChannel(salesChannelId: string) {
-  return apiClient.get<SalesChannel>(`/api/sales-channels/${salesChannelId}`);
-}
-
 export function createSalesChannel(payload: CreateSalesChannelInput) {
   return apiClient.post<SalesChannel>("/api/sales-channels", payload);
 }

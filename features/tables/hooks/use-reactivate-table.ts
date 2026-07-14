@@ -9,11 +9,8 @@ export function useReactivateTable() {
 
   return useMutation({
     mutationFn: reactivateTable,
-    onSuccess: (table) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: tablesQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: tablesQueryKeys.detail(table.id),
-      });
     },
   });
 }

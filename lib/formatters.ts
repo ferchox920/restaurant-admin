@@ -3,8 +3,6 @@ import type {
   StockManagementType,
 } from "@/features/products/types/product.types";
 import type { Category } from "@/features/categories/types/category.types";
-import type { CommissionType } from "@/features/sales-channels/types/sales-channel.types";
-import type { SalesChannel } from "@/features/sales-channels/types/sales-channel.types";
 import type { UserRole } from "@/features/users/types/user.types";
 
 const stockManagementLabels: Record<StockManagementType, string> = {
@@ -17,12 +15,6 @@ const productUnitLabels: Record<ProductUnit, string> = {
   UNIT: "Unidad",
   PORTION: "Porcion",
   SERVICE: "Servicio",
-};
-
-const commissionTypeLabels: Record<CommissionType, string> = {
-  NONE: "Sin comision",
-  PERCENTAGE: "Porcentaje",
-  FIXED: "Monto fijo",
 };
 
 const userRoleLabels: Record<UserRole, string> = {
@@ -60,20 +52,10 @@ export function formatStockManagementType(value: StockManagementType) {
   return stockManagementLabels[value];
 }
 
-export function formatCommissionType(value: CommissionType) {
-  return commissionTypeLabels[value];
-}
-
 export function formatUserRole(value: UserRole) {
   return userRoleLabels[value];
 }
 
 export function formatCategoryName(category?: Pick<Category, "name"> | null) {
   return category?.name ?? "Sin categoria";
-}
-
-export function formatSalesChannelName(
-  salesChannel?: Pick<SalesChannel, "name"> | null
-) {
-  return salesChannel?.name ?? "Sin canal";
 }

@@ -16,11 +16,8 @@ export function useUpdateTable() {
       tableId: string;
       data: UpdateTableInput;
     }) => updateTable(tableId, data),
-    onSuccess: (table) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: tablesQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: tablesQueryKeys.detail(table.id),
-      });
     },
   });
 }

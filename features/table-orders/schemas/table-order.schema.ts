@@ -24,11 +24,6 @@ export const openTableOrderSchema = z.object({
   notes: z.string().optional().transform(optionalText),
 });
 
-export const addTableOrderItemSchema = z.object({
-  productId: z.string().uuid("Selecciona un producto valido."),
-  quantity: quantityStringSchema("La cantidad"),
-});
-
 export const updateTableOrderItemSchema = z.object({
   quantity: quantityStringSchema("La cantidad"),
 });

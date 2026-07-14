@@ -13,14 +13,8 @@ export function useCancelTableOrder(orderId: string) {
   return useMutation({
     mutationFn: (payload: CancelTableOrderFormValues) =>
       cancelTableOrder(orderId, payload),
-    onSuccess: (order) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: tablesQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: tablesQueryKeys.detail(order.restaurantTableId),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: tableOrdersQueryKeys.currentByTable(order.restaurantTableId),
-      });
       void queryClient.invalidateQueries({
         queryKey: tableOrdersQueryKeys.detail(orderId),
       });

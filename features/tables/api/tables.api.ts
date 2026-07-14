@@ -25,10 +25,6 @@ export function getAllTables(filters?: Omit<TableFilters, "limit" | "offset">) {
   return fetchAllPages((pagination) => getTables({ ...filters, ...pagination }));
 }
 
-export function getTable(tableId: string) {
-  return apiClient.get<RestaurantTable>(`/api/tables/${tableId}`);
-}
-
 export function createTable(payload: CreateTableInput) {
   return apiClient.post<RestaurantTable>("/api/tables", payload);
 }

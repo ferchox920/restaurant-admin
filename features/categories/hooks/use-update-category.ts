@@ -16,12 +16,9 @@ export function useUpdateCategory() {
   return useMutation({
     mutationFn: ({ categoryId, data }: UpdateCategoryPayload) =>
       updateCategory(categoryId, data),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: categoriesQueryKeys.lists(),
-      });
-      void queryClient.invalidateQueries({
-        queryKey: categoriesQueryKeys.detail(variables.categoryId),
       });
     },
   });

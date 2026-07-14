@@ -27,10 +27,6 @@ export function getAllCategories(filters?: Omit<CategoriesFilters, "limit" | "of
   return fetchAllPages((pagination) => getCategories({ ...filters, ...pagination }));
 }
 
-export function getCategory(categoryId: string) {
-  return apiClient.get<Category>(`/api/categories/${categoryId}`);
-}
-
 export function createCategory(payload: CreateCategoryInput) {
   return apiClient.post<Category>("/api/categories", payload);
 }

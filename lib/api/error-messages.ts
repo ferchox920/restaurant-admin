@@ -156,16 +156,3 @@ export function getApiErrorMessages(error: unknown) {
 
   return [DEFAULT_ERROR_MESSAGE];
 }
-
-export function getApiErrorMessage(error: unknown) {
-  return getApiErrorMessages(error).join("\n") || DEFAULT_ERROR_MESSAGE;
-}
-
-export const apiErrorMessages = {
-  unauthorized: UNAUTHORIZED_ERROR_MESSAGE,
-  forbidden: FORBIDDEN_ERROR_MESSAGE,
-  conflict: CONFLICT_ERROR_MESSAGE,
-  tooManyRequests: TOO_MANY_REQUESTS_ERROR_MESSAGE,
-  connection: CONNECTION_ERROR_MESSAGE,
-  unexpected: DEFAULT_ERROR_MESSAGE,
-} as const;

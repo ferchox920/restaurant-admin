@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
-import { InventoryMovementsTable } from "@/features/inventory/components/inventory-movements-table";
+import { InventoryMovementTable } from "@/features/inventory/components/inventory-movement-table";
 import { MovementFilters } from "@/features/inventory/components/movement-filters";
 import { useProductInventoryMovements } from "@/features/inventory/hooks/use-product-inventory-movements";
 import type {
@@ -124,7 +124,7 @@ export function ProductMovementHistory({
         {!movementsQuery.isLoading &&
         !movementsQuery.error &&
         (movementsQuery.data?.length ?? 0) > 0 ? (
-          <InventoryMovementsTable movements={movementsQuery.data ?? []} />
+          <InventoryMovementTable movements={movementsQuery.data ?? []} />
         ) : null}
         {!movementsQuery.error && validRange ? (
           <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={movementsQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={movementsQuery.isFetching} />

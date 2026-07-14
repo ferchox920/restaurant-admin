@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export const auditActions = [
   "USER_CREATED",
   "USER_UPDATED",
@@ -84,15 +82,3 @@ export type AuditLogFilters = {
   limit?: number;
   offset?: number;
 };
-
-export const auditLogSchema = z.object({
-  id: z.string().uuid(),
-  userId: z.string().uuid().nullable(),
-  action: z.enum(auditActions),
-  entityType: z.enum(auditEntityTypes),
-  entityId: z.string().nullable(),
-  beforeData: z.unknown().nullable(),
-  afterData: z.unknown().nullable(),
-  metadata: z.unknown().nullable(),
-  createdAt: z.string().datetime(),
-});
