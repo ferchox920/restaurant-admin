@@ -13,11 +13,14 @@ export function withDefaultPagination<T extends PaginationParams>(params?: T) {
 
 export async function fetchAllPages<T>(
   fetchPage: (pagination: Required<PaginationParams>) => Promise<T[]>,
+  signal?: AbortSignal,
 ) {
   const items: T[] = [];
   let offset = 0;
   while (true) {
+    signal?.throwIfAborted();
     const page = await fetchPage({ limit: ALL_OPTIONS_PAGE_LIMIT, offset });
+    signal?.throwIfAborted();
     items.push(...page);
     if (page.length < ALL_OPTIONS_PAGE_LIMIT) return items;
     offset += page.length;

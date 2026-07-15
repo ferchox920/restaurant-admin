@@ -14,12 +14,14 @@ export function useAddTableOrderItem(orderId: string) {
       addTableOrderItem(orderId, {
         productId: payload.productId,
         quantity: toApiQuantityNumber(payload.quantity),
+        ...(payload.expectedVersion ? { expectedVersion: payload.expectedVersion } : {}),
       }),
-    onSuccess: () => {
+    onSuccess: (order) => {
+      queryClient.setQueryData(tableOrdersQueryKeys.detail(orderId), order);
       void queryClient.invalidateQueries({
-        queryKey: tableOrdersQueryKeys.detail(orderId),
+        queryKey: tableOrdersQueryKeys.lists(),
+        refetchType: "none",
       });
-      void queryClient.invalidateQueries({ queryKey: tableOrdersQueryKeys.lists() });
     },
   });
 }

@@ -1,4 +1,4 @@
-import { apiUrl } from "@/lib/env";
+import { apiUrl, sessionMode } from "@/lib/env";
 import { getAccessToken } from "@/lib/auth/token-storage";
 import { ApiError } from "@/lib/api/api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
@@ -9,6 +9,31 @@ function buildUrl(path: string) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
 
   return `${normalizedBaseUrl}${normalizedPath}`;
+}
+
+function reportRequestMetric(
+  path: string,
+  method: string,
+  startedAt: number | undefined,
+  response?: Response
+) {
+  if (typeof window === "undefined" || startedAt === undefined) {
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent("restaurant:api-metric", {
+      detail: {
+        path: path.split("?")[0],
+        method,
+        status: response?.status ?? 0,
+        duration: performance.now() - startedAt,
+        requestId: response?.headers.get("X-Request-ID") ?? undefined,
+        serverTiming: response?.headers.get("Server-Timing") ?? undefined,
+        recordedAt: new Date().toISOString(),
+      },
+    })
+  );
 }
 
 async function parseResponse(response: Response) {
@@ -67,14 +92,24 @@ async function request<T>(
     headers.set("Accept", "application/json");
   }
 
-  if (token) {
+  if (token && sessionMode === "bearer") {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(buildUrl(path), {
-    ...init,
-    headers,
-  });
+  const startedAt =
+    typeof performance === "undefined" ? undefined : performance.now();
+  let response: Response;
+  try {
+    response = await fetch(buildUrl(path), {
+      ...init,
+      headers,
+      credentials: sessionMode === "cookie" ? "include" : init?.credentials,
+    });
+  } catch (error) {
+    reportRequestMetric(path, init?.method ?? "GET", startedAt);
+    throw error;
+  }
+  reportRequestMetric(path, init?.method ?? "GET", startedAt, response);
 
   const payload = await parseResponse(response);
 
@@ -92,9 +127,14 @@ async function request<T>(
         ? (payload as ApiErrorPayload)
         : undefined;
 
-    if (response.status === HTTP_STATUS.unauthorized && token) {
-      const { clearAccessToken } = await import("@/lib/auth/token-storage");
-      clearAccessToken();
+    if (
+      response.status === HTTP_STATUS.unauthorized &&
+      (token || sessionMode === "cookie")
+    ) {
+      if (sessionMode === "bearer") {
+        const { clearAccessToken } = await import("@/lib/auth/token-storage");
+        clearAccessToken();
+      }
       if (typeof window !== "undefined" && window.location.pathname !== "/login") {
         window.location.assign("/login");
       }
@@ -122,8 +162,9 @@ export const apiClient = {
   getOrNullOnNotFound<T>(path: string, signal?: AbortSignal) {
     return request<T | null>(path, { method: "GET", signal }, { notFoundAsNull: true });
   },
-  post<T>(path: string, body?: unknown) {
+  post<T>(path: string, body?: unknown, init?: Omit<RequestInit, "method" | "body">) {
     return request<T>(path, {
+      ...init,
       method: "POST",
       body: body === undefined ? undefined : JSON.stringify(body),
     });

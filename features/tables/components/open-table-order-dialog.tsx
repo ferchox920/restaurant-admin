@@ -35,6 +35,7 @@ type Props = {
   trigger: React.ReactElement;
   isPending?: boolean;
   error?: unknown;
+  initialOpen?: boolean;
   onSubmit: (values: OpenTableOrderFormValues) => Promise<void> | void;
 };
 
@@ -44,9 +45,10 @@ export function OpenTableOrderDialog({
   trigger,
   isPending = false,
   error,
+  initialOpen = false,
   onSubmit,
 }: Props) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const defaultChannelId = useMemo(() => channels[0]?.id ?? "", [channels]);
   const form = useForm<OpenTableOrderFormValues>({
     resolver: zodResolver(openTableOrderSchema),

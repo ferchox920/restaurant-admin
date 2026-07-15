@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getSaleTickets } from "@/features/sales/api/sales.api";
 import { saleTicketsQueryKeys } from "@/features/sales/query-keys";
 import type { SaleTicketFilters } from "@/features/sales/types/sale-ticket.types";
@@ -13,5 +13,6 @@ export function useSaleTickets(filters?: SaleTicketFilters, enabled = true) {
     retry: shouldRetryQuery,
     staleTime: 15_000,
     enabled,
+    placeholderData: keepPreviousData,
   });
 }

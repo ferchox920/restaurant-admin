@@ -12,7 +12,7 @@ export function useSalesByUserReport(filters?: SalesReportFilters) {
 
   return useQuery({
     queryKey: reportsQueryKeys.salesByUser(filters),
-    queryFn: () => getSalesByUserReport(parsedFilters.data),
+    queryFn: ({ signal }) => getSalesByUserReport(parsedFilters.data, signal),
     enabled: parsedFilters.success,
     retry: shouldRetryQuery,
     staleTime: 15_000,

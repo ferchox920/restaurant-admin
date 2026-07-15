@@ -7,7 +7,8 @@ import { productPricesQueryKeys } from "@/features/products/prices/query-keys";
 export function useAllProductPrices(productId: string | undefined, channelId?: string) {
   return useQuery({
     queryKey: [...productPricesQueryKeys.history(productId ?? "", channelId), "all-pages"],
-    queryFn: () => getAllProductPrices(productId as string, channelId),
+    queryFn: ({ signal }) =>
+      getAllProductPrices(productId as string, channelId, signal),
     enabled: Boolean(productId),
   });
 }

@@ -28,6 +28,7 @@ export type TableOrderItem = {
 
 export type TableOrderSaleTicket = {
   id: string;
+  version?: string;
   status: SaleTicketStatus;
   salesChannelId: string;
   items: TableOrderItem[];
@@ -37,6 +38,7 @@ export type TableOrderSaleTicket = {
 
 export type TableOrder = {
   id: string;
+  version?: string;
   restaurantTableId: string;
   tableCode: string;
   tableName: string | null;
@@ -78,19 +80,23 @@ export type OpenTableOrderInput = {
 };
 
 export type AddTableOrderItemInput = {
+  expectedVersion?: string;
   productId: string;
   quantity: number;
 };
 
 export type UpdateTableOrderItemInput = {
+  expectedVersion?: string;
   quantity: number;
 };
 
 export type CancelTableOrderInput = {
+  expectedVersion?: string;
   reason: string;
 };
 
 export type CloseTableOrderInput = {
+  expectedVersion?: string;
   paymentMethod: SalePaymentMethod;
   paymentBankId?: string;
 };
@@ -101,19 +107,23 @@ export type OpenTableOrderFormValues = {
 };
 
 export type AddTableOrderItemFormValues = {
+  expectedVersion?: string;
   productId: string;
   quantity: string;
 };
 
 export type UpdateTableOrderItemFormValues = {
+  expectedVersion?: string;
   quantity: string;
 };
 
 export type CancelTableOrderFormValues = {
+  expectedVersion?: string;
   reason: string;
 };
 
 export type CloseTableOrderFormValues = {
+  expectedVersion?: string;
   paymentMethod: SalePaymentMethod;
   paymentBankId?: string;
 };

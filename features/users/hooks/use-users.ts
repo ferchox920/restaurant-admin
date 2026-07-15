@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getUsers } from "@/features/users/api/users.api";
 import { usersQueryKeys } from "@/features/users/query-keys";
 import type { PaginationParams } from "@/types/common";
@@ -16,6 +16,7 @@ export function useUsers(
   return useQuery({
     queryKey: usersQueryKeys.list(pagination),
     queryFn: ({ signal }) => getUsers(pagination, signal),
+    placeholderData: keepPreviousData,
     enabled: isEnabled,
   });
 }

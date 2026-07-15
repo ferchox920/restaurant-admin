@@ -1,4 +1,4 @@
-import { SaleTicketPage } from "@/features/sales/components/sale-ticket-page";
+import { SaleTicketRoute } from "@/features/sales/components/sale-ticket-route";
 
 type SaleTicketRoutePageProps = {
   params: Promise<{
@@ -11,5 +11,5 @@ export default async function SaleTicketRoutePage({
 }: SaleTicketRoutePageProps) {
   const { ticketId } = await params;
 
-  return <SaleTicketPage ticketId={ticketId} />;
+  return <SaleTicketRoute ticketId={ticketId} />;
 }

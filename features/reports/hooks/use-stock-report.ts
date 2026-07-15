@@ -12,7 +12,7 @@ export function useStockReport(filters?: StockReportFilters) {
 
   return useQuery({
     queryKey: reportsQueryKeys.stock(filters),
-    queryFn: () => getStockReport(parsedFilters.data),
+    queryFn: ({ signal }) => getStockReport(parsedFilters.data, signal),
     enabled: parsedFilters.success,
     retry: shouldRetryQuery,
     staleTime: 15_000,

@@ -23,8 +23,14 @@ export function getPaymentBanks(filters?: PaymentBanksFilters, signal?: AbortSig
   return apiClient.get<PaymentBank[]>(`/api/payment-banks${queryString}`, signal);
 }
 
-export function getAllPaymentBanks(filters?: Omit<PaymentBanksFilters, "limit" | "offset">) {
-  return fetchAllPages((pagination) => getPaymentBanks({ ...filters, ...pagination }));
+export function getAllPaymentBanks(
+  filters?: Omit<PaymentBanksFilters, "limit" | "offset">,
+  signal?: AbortSignal
+) {
+  return fetchAllPages(
+    (pagination) => getPaymentBanks({ ...filters, ...pagination }, signal),
+    signal
+  );
 }
 
 export function createPaymentBank(payload: CreatePaymentBankInput) {

@@ -14,10 +14,14 @@ export function useAddSaleTicketItem(ticketId: string) {
       addSaleTicketItem(ticketId, {
         productId: payload.productId,
         quantity: toApiQuantityNumber(payload.quantity),
+        ...(payload.expectedVersion ? { expectedVersion: payload.expectedVersion } : {}),
       }),
     onSuccess: (ticket) => {
       queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
-      void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
+      void queryClient.invalidateQueries({
+        queryKey: saleTicketsQueryKeys.lists(),
+        refetchType: "none",
+      });
     },
   });
 }

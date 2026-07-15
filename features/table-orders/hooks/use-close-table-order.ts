@@ -15,15 +15,18 @@ export function useCloseTableOrder(orderId: string) {
   return useMutation({
     mutationFn: (payload: CloseTableOrderFormValues) =>
       closeTableOrder(orderId, payload),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: tablesQueryKeys.lists() });
-      void queryClient.invalidateQueries({
-        queryKey: tableOrdersQueryKeys.detail(orderId),
+    onSuccess: (order) => {
+      queryClient.setQueryData(tableOrdersQueryKeys.detail(orderId), order);
+      const staleKeys = [
+        tablesQueryKeys.lists(),
+        tableOrdersQueryKeys.lists(),
+        saleTicketsQueryKeys.all,
+        inventoryQueryKeys.all,
+        reportsQueryKeys.all,
+      ];
+      staleKeys.forEach((queryKey) => {
+        void queryClient.invalidateQueries({ queryKey, refetchType: "none" });
       });
-      void queryClient.invalidateQueries({ queryKey: tableOrdersQueryKeys.lists() });
-      void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.all });
-      void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.all });
-      void queryClient.invalidateQueries({ queryKey: reportsQueryKeys.all });
     },
   });
 }

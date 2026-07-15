@@ -12,15 +12,16 @@ import { SalesReportFilters } from "@/features/reports/components/sales-report-f
 import { useSalesByChannelReport } from "@/features/reports/hooks/use-sales-by-channel-report";
 import { salesReportFiltersSchema } from "@/features/reports/schemas/report-filters.schema";
 import type { SalesReportFilters as SalesReportQueryFilters } from "@/features/reports/types/report.types";
-import { toReportDateRange, formatReportDateRange, getReportEmptyMessage } from "@/features/reports/utils/report-formatters";
+import { toReportDateRange, formatReportDateRange, getDefaultSalesDateRange, getReportEmptyMessage } from "@/features/reports/utils/report-formatters";
 import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
 
 export function SalesByChannelReportPage() {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const initialRange = useMemo(() => getDefaultSalesDateRange(), []);
+  const [from, setFrom] = useState(initialRange.from);
+  const [to, setTo] = useState(initialRange.to);
   const [salesChannelId, setSalesChannelId] = useState<string>("__all__");
 
   const filters = useMemo<SalesReportQueryFilters>(
@@ -66,8 +67,8 @@ export function SalesByChannelReportPage() {
             onToChange={setTo}
             onSalesChannelIdChange={setSalesChannelId}
             onReset={() => {
-              setFrom("");
-              setTo("");
+              setFrom(initialRange.from);
+              setTo(initialRange.to);
               setSalesChannelId("__all__");
             }}
           />

@@ -1,5 +1,5 @@
-import { StockReportPage } from "@/features/reports/components/stock-report-page";
+import { StockReportRoute } from "@/features/reports/components/stock-report-route";
 
 export default function ReportsStockPage() {
-  return <StockReportPage />;
+  return <StockReportRoute />;
 }

@@ -11,6 +11,10 @@ import type {
 } from "@/features/table-orders/types/table-order.types";
 import { withDefaultPagination } from "@/lib/api/pagination";
 
+function idempotencyHeaders() {
+  return { headers: { "Idempotency-Key": crypto.randomUUID() } };
+}
+
 export function openTableOrder(tableId: string, payload: OpenTableOrderInput) {
   return apiClient.post<TableOrder>(`/api/tables/${tableId}/orders/open`, payload);
 }
@@ -67,5 +71,9 @@ export function cancelTableOrder(orderId: string, payload: CancelTableOrderInput
 }
 
 export function closeTableOrder(orderId: string, payload: CloseTableOrderInput) {
-  return apiClient.post<TableOrder>(`/api/table-orders/${orderId}/close`, payload);
+  return apiClient.post<TableOrder>(
+    `/api/table-orders/${orderId}/close`,
+    payload,
+    idempotencyHeaders()
+  );
 }

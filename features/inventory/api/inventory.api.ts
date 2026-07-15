@@ -28,10 +28,12 @@ export function getInventory(filters?: InventoryFilters, signal?: AbortSignal) {
 }
 
 export function getAllInventory(
-  filters?: Omit<InventoryFilters, "limit" | "offset">
+  filters?: Omit<InventoryFilters, "limit" | "offset">,
+  signal?: AbortSignal
 ) {
-  return fetchAllPages((pagination) =>
-    getInventory({ ...filters, ...pagination })
+  return fetchAllPages(
+    (pagination) => getInventory({ ...filters, ...pagination }, signal),
+    signal
   );
 }
 

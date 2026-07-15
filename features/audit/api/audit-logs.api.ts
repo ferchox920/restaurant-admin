@@ -6,7 +6,7 @@ import type {
   AuditLogListItem,
 } from "@/features/audit/types/audit-log.types";
 
-export function getAuditLogs(filters?: AuditLogFilters) {
+export function getAuditLogs(filters?: AuditLogFilters, signal?: AbortSignal) {
   const queryString = buildQueryString({
     userId: filters?.userId,
     action: filters?.action,
@@ -18,7 +18,7 @@ export function getAuditLogs(filters?: AuditLogFilters) {
     offset: filters?.offset,
   });
 
-  return apiClient.get<AuditLogListItem[]>(`/api/audit-logs${queryString}`);
+  return apiClient.get<AuditLogListItem[]>(`/api/audit-logs${queryString}`, signal);
 }
 
 export function getAuditLog(auditLogId: string) {

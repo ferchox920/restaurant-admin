@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowLeft } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/common/page-header";
@@ -10,10 +11,8 @@ import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { ForbiddenState } from "@/components/feedback/forbidden-state";
 import { LoadingState } from "@/components/feedback/loading-state";
-import { TableOrderItemsTable } from "@/features/table-orders/components/table-order-items-table";
 import { TableOrderStatusBadge } from "@/features/table-orders/components/table-order-status-badge";
 import { TableOrderTotalCard } from "@/features/table-orders/components/table-order-total-card";
-import { TableOrderWorkspace } from "@/features/table-orders/components/table-order-workspace";
 import { useAddTableOrderItem } from "@/features/table-orders/hooks/use-add-table-order-item";
 import { useCancelTableOrder } from "@/features/table-orders/hooks/use-cancel-table-order";
 import { useCloseTableOrder } from "@/features/table-orders/hooks/use-close-table-order";
@@ -29,20 +28,66 @@ import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
 import { isNotFoundError } from "@/lib/api/query-utils";
 import { formatDateTime } from "@/lib/formatters";
+import { usePosCatalog } from "@/features/pos/hooks/use-pos-catalog";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { posCatalogEnabled } from "@/lib/env";
 
 type Props = {
   orderId: string;
 };
 
+const TableOrderWorkspace = dynamic(
+  () =>
+    import("@/features/table-orders/components/table-order-workspace").then(
+      (module) => module.TableOrderWorkspace
+    ),
+  {
+    loading: () => (
+      <LoadingState
+        title="Cargando catalogo"
+        message="Estamos preparando los consumos disponibles."
+        className="w-full max-w-none shadow-none"
+      />
+    ),
+  }
+);
+
+const TableOrderItemsTable = dynamic(
+  () =>
+    import("@/features/table-orders/components/table-order-items-table").then(
+      (module) => module.TableOrderItemsTable
+    )
+);
+
 export function TableOrderDetailPage({ orderId }: Props) {
+  const [catalogSearch, setCatalogSearch] = useState("");
+  const [catalogCategoryId, setCatalogCategoryId] = useState<string>();
+  const debouncedCatalogSearch = useDebouncedValue(catalogSearch.trim(), 300);
   const { user } = useAuth();
   const canMutate =
     user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "CASHIER";
   const canViewCosts =
     user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "AUDITOR";
   const orderQuery = useTableOrder(orderId);
-  const productsQuery = useProducts({ active: true });
-  const paymentBanksQuery = usePaymentBanks({ active: true });
+  const shouldLoadOrderResources = Boolean(
+    canMutate && orderQuery.data?.status === "OPEN"
+  );
+  const posCatalogQuery = usePosCatalog(
+    {
+      salesChannelId: orderQuery.data?.saleTicket.salesChannelId ?? "",
+      search: debouncedCatalogSearch || undefined,
+      categoryId: catalogCategoryId,
+    },
+    posCatalogEnabled && shouldLoadOrderResources
+  );
+  const productsQuery = useProducts(
+    { active: true },
+    { enabled: shouldLoadOrderResources && !posCatalogEnabled }
+  );
+  const paymentBanksQuery = usePaymentBanks(
+    { active: true },
+    { enabled: shouldLoadOrderResources }
+  );
   const addItemMutation = useAddTableOrderItem(orderId);
   const updateItemMutation = useUpdateTableOrderItem(orderId);
   const removeItemMutation = useRemoveTableOrderItem(orderId);
@@ -50,7 +95,11 @@ export function TableOrderDetailPage({ orderId }: Props) {
   const closeOrderMutation = useCloseTableOrder(orderId);
 
   const products = useMemo<SaleProductOption[]>(
-    () =>
+    () => {
+      if (posCatalogEnabled) {
+        return posCatalogQuery.data?.pages.flatMap((page) => page.items) ?? [];
+      }
+      return (
       (productsQuery.data ?? [])
         .filter((product) => product.active && product.stockManagementType !== "RECIPE_BASED")
         .map((product) => ({
@@ -63,9 +112,12 @@ export function TableOrderDetailPage({ orderId }: Props) {
           unit: product.unit,
           stockManagementType: product.stockManagementType,
           active: product.active,
-        })),
-    [productsQuery.data]
+        }))
+      );
+    },
+    [posCatalogQuery.data, productsQuery.data]
   );
+  const catalogCategories = posCatalogQuery.data?.pages[0]?.categories;
 
   if (orderQuery.isLoading) {
     return (
@@ -174,8 +226,15 @@ export function TableOrderDetailPage({ orderId }: Props) {
           <TableOrderWorkspace
             order={order}
             products={products}
-            isProductsLoading={productsQuery.isLoading}
-            productsError={productsQuery.error}
+            catalogCategories={catalogCategories}
+            remoteFiltering={posCatalogEnabled}
+            hasMoreProducts={Boolean(posCatalogQuery.hasNextPage)}
+            isLoadingMoreProducts={posCatalogQuery.isFetchingNextPage}
+            onCatalogSearchChange={setCatalogSearch}
+            onCatalogCategoryChange={setCatalogCategoryId}
+            onLoadMoreProducts={() => void posCatalogQuery.fetchNextPage()}
+            isProductsLoading={posCatalogEnabled ? posCatalogQuery.isLoading : productsQuery.isLoading}
+            productsError={posCatalogQuery.error ?? productsQuery.error}
             isAddingItem={addItemMutation.isPending}
             isUpdatingItem={updateItemMutation.isPending}
             isRemovingItem={removeItemMutation.isPending}
@@ -189,19 +248,34 @@ export function TableOrderDetailPage({ orderId }: Props) {
             cancelError={cancelOrderMutation.error}
             closeError={closeOrderMutation.error}
             onAddItem={async (values) => {
-              await addItemMutation.mutateAsync(values);
+              await addItemMutation.mutateAsync({
+                ...values,
+                ...(order.version ? { expectedVersion: order.version } : {}),
+              });
             }}
             onUpdateItem={async (itemId, values) => {
-              await updateItemMutation.mutateAsync({ itemId, data: values });
+              await updateItemMutation.mutateAsync({
+                itemId,
+                data: {
+                  ...values,
+                  ...(order.version ? { expectedVersion: order.version } : {}),
+                },
+              });
             }}
             onRemoveItem={async (itemId) => {
               await removeItemMutation.mutateAsync(itemId);
             }}
             onCancel={async (values) => {
-              await cancelOrderMutation.mutateAsync(values);
+              await cancelOrderMutation.mutateAsync({
+                ...values,
+                ...(order.version ? { expectedVersion: order.version } : {}),
+              });
             }}
             onClose={async (values) => {
-              await closeOrderMutation.mutateAsync(values);
+              await closeOrderMutation.mutateAsync({
+                ...values,
+                ...(order.version ? { expectedVersion: order.version } : {}),
+              });
             }}
           />
         </>

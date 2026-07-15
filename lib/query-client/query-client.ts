@@ -1,18 +1,30 @@
 import { MutationCache, QueryClient } from "@tanstack/react-query";
 import { shouldRetryQuery } from "@/lib/api/query-utils";
 import { isApiError } from "@/lib/api/is-api-error";
-import { HTTP_STATUS } from "@/lib/api/http-status";
+import { saleTicketsQueryKeys } from "@/features/sales/query-keys";
+import { tableOrdersQueryKeys } from "@/features/table-orders/query-keys";
+import { inventoryQueryKeys } from "@/features/inventory/query-keys";
 
 function makeQueryClient() {
-  const holder: { client?: QueryClient } = {};
+  const clientRef: { current?: QueryClient } = {};
   const mutationCache = new MutationCache({
     onError: (error) => {
-      if (
-        isApiError(error) &&
-        error.statusCode === HTTP_STATUS.conflict &&
-        holder.client
-      ) {
-        return holder.client.invalidateQueries();
+      if (!isApiError(error) || error.statusCode !== 409) return;
+      const conflict = error.raw as
+        | { code?: string; entityType?: string; entityId?: string }
+        | undefined;
+      if (conflict?.code !== "STALE_VERSION" || !conflict.entityId) return;
+
+      const queryKey =
+        conflict.entityType === "SaleTicket"
+          ? saleTicketsQueryKeys.detail(conflict.entityId)
+          : conflict.entityType === "TableOrder"
+            ? tableOrdersQueryKeys.detail(conflict.entityId)
+            : conflict.entityType === "ProductStock"
+              ? inventoryQueryKeys.detail(conflict.entityId)
+              : undefined;
+      if (queryKey) {
+        void clientRef.current?.invalidateQueries({ queryKey, exact: true });
       }
     },
   });
@@ -26,7 +38,7 @@ function makeQueryClient() {
       },
     },
   });
-  holder.client = queryClient;
+  clientRef.current = queryClient;
   return queryClient;
 }
 

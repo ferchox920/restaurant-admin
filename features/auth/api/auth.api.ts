@@ -15,3 +15,7 @@ export function login(payload: LoginRequest) {
 export function getCurrentUser() {
   return apiClient.get<AuthMeResponse>("/api/auth/me");
 }
+
+export function logout() {
+  return apiClient.post<void>("/api/auth/logout");
+}

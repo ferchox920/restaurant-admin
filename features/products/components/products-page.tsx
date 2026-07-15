@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { Boxes, CircleCheck, CircleOff, Plus } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import { PageHeader } from "@/components/common/page-header";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useAllCategories as useCategories } from "@/features/categories/hooks/use-all-categories";
 import { ProductFilters } from "@/features/products/components/product-filters";
-import { ProductForm } from "@/features/products/components/product-form";
 import { ProductTable } from "@/features/products/components/product-table";
 import { useCreateProduct } from "@/features/products/hooks/use-create-product";
 import { useDeactivateProduct } from "@/features/products/hooks/use-deactivate-product";
@@ -27,6 +27,13 @@ import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 
 type ProductFilterValue = "all" | "active" | "inactive";
+
+const ProductForm = dynamic(
+  () =>
+    import("@/features/products/components/product-form").then(
+      (module) => module.ProductForm
+    )
+);
 
 export function ProductsPage() {
   const { user } = useAuth();
@@ -284,7 +291,7 @@ export function ProductsPage() {
         </CardContent>
       </Card>
 
-      <ProductForm
+      {isCreateOpen ? <ProductForm
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
         title="Nuevo producto"
@@ -294,9 +301,9 @@ export function ProductsPage() {
         isPending={createProductMutation.isPending}
         error={createProductMutation.error}
         onSubmit={handleCreateProduct}
-      />
+      /> : null}
 
-      <ProductForm
+      {editingProduct ? <ProductForm
         open={Boolean(editingProduct)}
         onOpenChange={(open) => {
           if (!open) {
@@ -322,7 +329,7 @@ export function ProductsPage() {
         isPending={updateProductMutation.isPending}
         error={updateProductMutation.error}
         onSubmit={handleUpdateProduct}
-      />
+      /> : null}
     </section>
   );
 }

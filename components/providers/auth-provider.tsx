@@ -11,7 +11,7 @@ import {
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { getCurrentUser } from "@/features/auth/api/auth.api";
+import { getCurrentUser, logout as logoutRequest } from "@/features/auth/api/auth.api";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import type {
   AuthenticatedUser,
@@ -25,6 +25,8 @@ import {
 } from "@/lib/auth/token-storage";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
+import { OperationalEvents } from "@/components/providers/operational-events";
+import { sessionMode } from "@/lib/env";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
@@ -34,7 +36,7 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (payload: LoginResponse) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   clearSession: () => void;
   refreshCurrentUser: () => Promise<AuthenticatedUser | null>;
   authErrorStatus: number | null;
@@ -56,7 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 
   const currentUserQuery = useCurrentUser({
-    enabled: Boolean(token),
+    enabled: sessionMode === "cookie" || Boolean(token),
   });
 
   const authErrorStatus =
@@ -67,7 +69,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const user = (currentUserQuery.data ?? null) as AuthenticatedUser | null;
 
   useEffect(() => {
-    if (authErrorStatus === HTTP_STATUS.unauthorized) {
+    if (
+      authErrorStatus === HTTP_STATUS.unauthorized &&
+      sessionMode === "bearer"
+    ) {
       clearAccessToken();
       queryClient.removeQueries({ queryKey: ["auth"] });
     }
@@ -75,11 +80,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const clearSession = useCallback(() => {
     clearAccessToken();
-    queryClient.removeQueries({ queryKey: ["auth"] });
+    queryClient.clear();
   }, [queryClient]);
 
   const refreshCurrentUser = useCallback(async () => {
-    if (!getAccessToken()) {
+    if (sessionMode === "bearer" && !getAccessToken()) {
       queryClient.removeQueries({ queryKey: ["auth"] });
       return null;
     }
@@ -94,7 +99,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(
     async (payload: LoginResponse) => {
-      setAccessToken(payload.accessToken);
+      if (sessionMode === "bearer") {
+        if (!payload.accessToken) {
+          throw new Error("La API no devolvio el token de acceso esperado.");
+        }
+        setAccessToken(payload.accessToken);
+      }
       if (payload.user) {
         queryClient.setQueryData(["auth", "me"], payload.user);
         return;
@@ -105,13 +115,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [queryClient, refreshCurrentUser]
   );
 
-  const logout = useCallback(() => {
-    clearSession();
-    router.replace("/login");
+  const logout = useCallback(async () => {
+    try {
+      if (sessionMode === "cookie") {
+        await logoutRequest();
+      }
+    } finally {
+      clearSession();
+      router.replace("/login");
+    }
   }, [clearSession, router]);
 
   const status: AuthStatus = useMemo(() => {
-    if (!token) {
+    if (sessionMode === "bearer" && !token) {
       return "unauthenticated";
     }
 
@@ -150,7 +166,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     ]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      <OperationalEvents enabled={status === "authenticated"} />
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

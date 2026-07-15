@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   getSalesChannels,
   type SalesChannelsFilters,
@@ -11,5 +11,6 @@ export function useSalesChannels(filters?: SalesChannelsFilters) {
   return useQuery({
     queryKey: salesChannelsQueryKeys.list(filters),
     queryFn: ({ signal }) => getSalesChannels(filters, signal),
+    placeholderData: keepPreviousData,
   });
 }

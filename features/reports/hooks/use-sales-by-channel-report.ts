@@ -12,7 +12,8 @@ export function useSalesByChannelReport(filters?: SalesReportFilters) {
 
   return useQuery({
     queryKey: reportsQueryKeys.salesByChannel(filters),
-    queryFn: () => getSalesByChannelReport(parsedFilters.data),
+    queryFn: ({ signal }) =>
+      getSalesByChannelReport(parsedFilters.data, signal),
     enabled: parsedFilters.success,
     retry: shouldRetryQuery,
     staleTime: 15_000,

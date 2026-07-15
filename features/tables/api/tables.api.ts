@@ -21,8 +21,14 @@ export function getTables(filters?: TableFilters, signal?: AbortSignal) {
   return apiClient.get<RestaurantTable[]>(`/api/tables${queryString}`, signal);
 }
 
-export function getAllTables(filters?: Omit<TableFilters, "limit" | "offset">) {
-  return fetchAllPages((pagination) => getTables({ ...filters, ...pagination }));
+export function getAllTables(
+  filters?: Omit<TableFilters, "limit" | "offset">,
+  signal?: AbortSignal
+) {
+  return fetchAllPages(
+    (pagination) => getTables({ ...filters, ...pagination }, signal),
+    signal
+  );
 }
 
 export function createTable(payload: CreateTableInput) {

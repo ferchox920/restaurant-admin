@@ -3,6 +3,7 @@ import type {
   InventoryReferenceType,
 } from "@/features/inventory/types/inventory.types";
 import type { StockManagementType } from "@/features/products/types/product.types";
+import type { PaginationParams } from "@/types/common";
 
 export const reportStockStatuses = [
   "AVAILABLE",
@@ -26,6 +27,21 @@ export type StockReportItem = {
   minimumStock: string;
   stockStatus: ReportStockStatus;
   updatedAt: string;
+};
+
+export type StockReportSummary = {
+  available: number;
+  lowStock: number;
+  outOfStock: number;
+  notTracked: number;
+};
+
+export type StockReportResponse = {
+  items: StockReportItem[];
+  summary: StockReportSummary;
+  total: number;
+  limit: number;
+  offset: number;
 };
 
 export type SalesByChannelReportItem = {
@@ -90,7 +106,7 @@ export type InventoryMovementsReportResponse = {
   total: number;
 };
 
-export type StockReportFilters = {
+export type StockReportFilters = PaginationParams & {
   active?: boolean;
   categoryId?: string;
   stockStatus?: ReportStockStatus;

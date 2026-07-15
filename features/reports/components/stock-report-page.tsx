@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PageHeader } from "@/components/common/page-header";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
@@ -21,6 +21,10 @@ import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
 import type { StockManagementType } from "@/features/products/types/product.types";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { ReportPagination } from "@/features/reports/components/report-pagination";
+import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
+import { stockReportPaginationEnabled } from "@/lib/env";
 
 const initialFilters = {
   activeFilter: "__all__",
@@ -42,8 +46,9 @@ export function StockReportPage() {
     StockManagementType | "__all__"
   >(initialFilters.stockManagementType);
   const [search, setSearch] = useState<string>(initialFilters.search);
+  const [offset, setOffset] = useState(0);
 
-  const deferredSearch = useDeferredValue(search.trim());
+  const deferredSearch = useDebouncedValue(search.trim(), 300);
   const filters = useMemo<StockReportQueryFilters>(
     () => ({
       active:
@@ -57,13 +62,17 @@ export function StockReportPage() {
       stockManagementType:
         stockManagementType === "__all__" ? undefined : stockManagementType,
       search: deferredSearch || undefined,
+      ...(stockReportPaginationEnabled
+        ? { limit: DEFAULT_PAGE_LIMIT, offset }
+        : {}),
     }),
-    [activeFilter, categoryId, stockManagementType, stockStatus, deferredSearch]
+    [activeFilter, categoryId, deferredSearch, offset, stockManagementType, stockStatus]
   );
 
   const categoriesQuery = useCategories({ active: true });
   const validation = stockReportFiltersSchema.safeParse(filters);
   const stockQuery = useStockReport(filters);
+  const items = stockQuery.data?.items ?? [];
   const isForbidden =
     stockQuery.error &&
     isApiError(stockQuery.error) &&
@@ -91,17 +100,33 @@ export function StockReportPage() {
               stockManagementType,
               search,
             }}
-            onActiveFilterChange={setActiveFilter}
-            onCategoryIdChange={setCategoryId}
-            onStockStatusChange={setStockStatus}
-            onStockManagementTypeChange={setStockManagementType}
-            onSearchChange={setSearch}
+            onActiveFilterChange={(value) => {
+              setActiveFilter(value);
+              setOffset(0);
+            }}
+            onCategoryIdChange={(value) => {
+              setCategoryId(value);
+              setOffset(0);
+            }}
+            onStockStatusChange={(value) => {
+              setStockStatus(value);
+              setOffset(0);
+            }}
+            onStockManagementTypeChange={(value) => {
+              setStockManagementType(value);
+              setOffset(0);
+            }}
+            onSearchChange={(value) => {
+              setSearch(value);
+              setOffset(0);
+            }}
             onReset={() => {
               setActiveFilter(initialFilters.activeFilter);
               setCategoryId(initialFilters.categoryId);
               setStockStatus(initialFilters.stockStatus);
               setStockManagementType(initialFilters.stockManagementType);
               setSearch(initialFilters.search);
+              setOffset(0);
             }}
           />
 
@@ -136,7 +161,7 @@ export function StockReportPage() {
 
           {!stockQuery.isLoading &&
           !stockQuery.error &&
-          (stockQuery.data?.length ?? 0) === 0 ? (
+          items.length === 0 ? (
             <EmptyState
               title="Sin resultados"
               message={getReportEmptyMessage("stock")}
@@ -146,10 +171,29 @@ export function StockReportPage() {
 
           {!stockQuery.isLoading &&
           !stockQuery.error &&
-          (stockQuery.data?.length ?? 0) > 0 ? (
+          items.length > 0 ? (
             <>
-              <StockReportSummary items={stockQuery.data ?? []} />
-              <StockReportTable items={stockQuery.data ?? []} />
+              <StockReportSummary
+                items={items}
+                summary={stockQuery.data?.summary}
+              />
+              <StockReportTable items={items} />
+              {stockQuery.data?.paginationMode === "server" ? (
+                <ReportPagination
+                  count={items.length}
+                  limit={stockQuery.data.limit}
+                  offset={stockQuery.data.offset}
+                  total={stockQuery.data.total}
+                  onPrevious={() =>
+                    setOffset((current) =>
+                      Math.max(0, current - DEFAULT_PAGE_LIMIT)
+                    )
+                  }
+                  onNext={() =>
+                    setOffset((current) => current + DEFAULT_PAGE_LIMIT)
+                  }
+                />
+              ) : null}
             </>
           ) : null}
         </CardContent>

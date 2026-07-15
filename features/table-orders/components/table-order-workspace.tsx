@@ -32,6 +32,13 @@ type TableOrderWorkspaceProps = {
   products: SaleProductOption[];
   isProductsLoading: boolean;
   productsError?: unknown;
+  catalogCategories?: Array<{ id: string; name: string }>;
+  remoteFiltering?: boolean;
+  hasMoreProducts?: boolean;
+  isLoadingMoreProducts?: boolean;
+  onCatalogSearchChange?: (value: string) => void;
+  onCatalogCategoryChange?: (categoryId?: string) => void;
+  onLoadMoreProducts?: () => void;
   isAddingItem: boolean;
   isUpdatingItem: boolean;
   isRemovingItem: boolean;
@@ -73,6 +80,13 @@ export function TableOrderWorkspace({
   products,
   isProductsLoading,
   productsError,
+  catalogCategories,
+  remoteFiltering = false,
+  hasMoreProducts = false,
+  isLoadingMoreProducts = false,
+  onCatalogSearchChange,
+  onCatalogCategoryChange,
+  onLoadMoreProducts,
   isAddingItem,
   isUpdatingItem,
   isRemovingItem,
@@ -100,18 +114,21 @@ export function TableOrderWorkspace({
     [items]
   );
   const categories = useMemo(() => {
+    if (catalogCategories) {
+      return ["Todos", ...catalogCategories.map((category) => category.name)];
+    }
     const names = new Set(products.map(getProductCategory));
     return ["Todos", ...Array.from(names).sort((a, b) => a.localeCompare(b))];
-  }, [products]);
+  }, [catalogCategories, products]);
   const filteredProducts = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
 
     return products.filter((product) => {
-      const matchesCategory =
+      const matchesCategory = remoteFiltering ||
         selectedCategory === "Todos" ||
         getProductCategory(product) === selectedCategory;
       const matchesSearch =
-        !normalizedSearch ||
+        remoteFiltering || !normalizedSearch ||
         [product.name, product.sku ?? "", product.description ?? ""]
           .join(" ")
           .toLowerCase()
@@ -119,7 +136,7 @@ export function TableOrderWorkspace({
 
       return matchesCategory && matchesSearch;
     });
-  }, [products, search, selectedCategory]);
+  }, [products, remoteFiltering, search, selectedCategory]);
   const isMutating =
     isAddingItem ||
     isUpdatingItem ||
@@ -219,7 +236,13 @@ export function TableOrderWorkspace({
                     variant={selectedCategory === category ? "default" : "ghost"}
                     size="sm"
                     aria-pressed={selectedCategory === category}
-                    onClick={() => setSelectedCategory(category)}
+                    onClick={() => {
+                      setSelectedCategory(category);
+                      const selected = catalogCategories?.find(
+                        (item) => item.name === category
+                      );
+                      onCatalogCategoryChange?.(selected?.id);
+                    }}
                     className="shrink-0 rounded-full"
                   >
                     {category}
@@ -233,7 +256,10 @@ export function TableOrderWorkspace({
                 />
                 <Input
                   value={search}
-                  onChange={(event) => setSearch(event.target.value)}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    onCatalogSearchChange?.(event.target.value);
+                  }}
                   aria-label="Buscar productos"
                   className="h-10 rounded-xl bg-muted/30 pr-9 pl-9"
                 />
@@ -244,7 +270,10 @@ export function TableOrderWorkspace({
                     size="icon-sm"
                     className="absolute top-1/2 right-2 -translate-y-1/2"
                     aria-label="Limpiar búsqueda"
-                    onClick={() => setSearch("")}
+                    onClick={() => {
+                      setSearch("");
+                      onCatalogSearchChange?.("");
+                    }}
                   >
                     <X aria-hidden="true" />
                   </Button>
@@ -359,6 +388,18 @@ export function TableOrderWorkspace({
                     </div>
                   );
                 })}
+              </div>
+            ) : null}
+            {hasMoreProducts ? (
+              <div className="flex justify-center pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isLoadingMoreProducts}
+                  onClick={onLoadMoreProducts}
+                >
+                  {isLoadingMoreProducts ? "Cargando..." : "Cargar mas"}
+                </Button>
               </div>
             ) : null}
           </CardContent>

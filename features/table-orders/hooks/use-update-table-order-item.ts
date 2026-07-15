@@ -19,12 +19,14 @@ export function useUpdateTableOrderItem(orderId: string) {
     }) =>
       updateTableOrderItem(orderId, itemId, {
         quantity: toApiQuantityNumber(data.quantity),
+        ...(data.expectedVersion ? { expectedVersion: data.expectedVersion } : {}),
       }),
-    onSuccess: () => {
+    onSuccess: (order) => {
+      queryClient.setQueryData(tableOrdersQueryKeys.detail(orderId), order);
       void queryClient.invalidateQueries({
-        queryKey: tableOrdersQueryKeys.detail(orderId),
+        queryKey: tableOrdersQueryKeys.lists(),
+        refetchType: "none",
       });
-      void queryClient.invalidateQueries({ queryKey: tableOrdersQueryKeys.lists() });
     },
   });
 }

@@ -27,8 +27,14 @@ export function getProducts(filters?: ProductsFilters, signal?: AbortSignal) {
   return apiClient.get<Product[]>(`/api/products${queryString}`, signal);
 }
 
-export function getAllProducts(filters?: Omit<ProductsFilters, "limit" | "offset">) {
-  return fetchAllPages((pagination) => getProducts({ ...filters, ...pagination }));
+export function getAllProducts(
+  filters?: Omit<ProductsFilters, "limit" | "offset">,
+  signal?: AbortSignal
+) {
+  return fetchAllPages(
+    (pagination) => getProducts({ ...filters, ...pagination }, signal),
+    signal
+  );
 }
 
 export function getProduct(productId: string) {

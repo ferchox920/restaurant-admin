@@ -12,9 +12,14 @@ import type {
 } from "@/features/sales/types/sale-ticket.types";
 import { withDefaultPagination } from "@/lib/api/pagination";
 
+function idempotencyHeaders() {
+  return { headers: { "Idempotency-Key": crypto.randomUUID() } };
+}
+
 export function getSaleTickets(filters?: SaleTicketFilters, signal?: AbortSignal) {
   const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
+    responseMode: "summary",
     status: filters?.status,
     salesChannelId: filters?.channelId,
     createdById: filters?.createdById,
@@ -50,10 +55,15 @@ export function confirmSaleTicket(
 ) {
   return apiClient.post<SaleTicketDetail>(
     `/api/sales/tickets/${ticketId}/confirm`,
-    payload
+    payload,
+    idempotencyHeaders()
   );
 }
 
 export function voidSaleTicket(ticketId: string, payload: VoidSaleTicketInput) {
-  return apiClient.post<SaleTicketDetail>(`/api/sales/tickets/${ticketId}/void`, payload);
+  return apiClient.post<SaleTicketDetail>(
+    `/api/sales/tickets/${ticketId}/void`,
+    payload,
+    idempotencyHeaders()
+  );
 }

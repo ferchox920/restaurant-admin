@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { EmptyState } from "@/components/feedback/empty-state";
@@ -8,10 +9,8 @@ import { ForbiddenState } from "@/components/feedback/forbidden-state";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { SaleTicketHeader } from "@/features/sales/components/sale-ticket-header";
-import { SaleTicketCriticalActions } from "@/features/sales/components/sale-ticket-critical-actions";
 import { SaleTicketItemsTable } from "@/features/sales/components/sale-ticket-items-table";
 import { SaleTicketSummary } from "@/features/sales/components/sale-ticket-summary";
-import { SaleTicketPosWorkspace } from "@/features/sales/components/sale-ticket-pos-workspace";
 import { useAllPaymentBanks as usePaymentBanks } from "@/features/payment-banks/hooks/use-all-payment-banks";
 import { useAddSaleTicketItem } from "@/features/sales/hooks/use-add-sale-ticket-item";
 import { useCancelSaleTicket } from "@/features/sales/hooks/use-cancel-sale-ticket";
@@ -30,6 +29,9 @@ import { canEditTicket } from "@/features/sales/utils/sale-ticket";
 import { useAllProducts as useProducts } from "@/features/products/hooks/use-all-products";
 import { useAllInventory as useInventory } from "@/features/inventory/hooks/use-all-inventory";
 import { useAllCategories as useCategories } from "@/features/categories/hooks/use-all-categories";
+import { usePosCatalog } from "@/features/pos/hooks/use-pos-catalog";
+import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
+import { posCatalogEnabled } from "@/lib/env";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
@@ -40,7 +42,33 @@ type SaleTicketPageProps = {
   onBack?: () => void;
 };
 
+const SaleTicketPosWorkspace = dynamic(
+  () =>
+    import("@/features/sales/components/sale-ticket-pos-workspace").then(
+      (module) => module.SaleTicketPosWorkspace
+    ),
+  {
+    loading: () => (
+      <LoadingState
+        title="Cargando catalogo"
+        message="Estamos preparando los productos disponibles."
+        className="w-full max-w-none shadow-none"
+      />
+    ),
+  }
+);
+
+const SaleTicketCriticalActions = dynamic(
+  () =>
+    import("@/features/sales/components/sale-ticket-critical-actions").then(
+      (module) => module.SaleTicketCriticalActions
+    )
+);
+
 export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
+  const [catalogSearch, setCatalogSearch] = useState("");
+  const [catalogCategoryId, setCatalogCategoryId] = useState<string>();
+  const debouncedCatalogSearch = useDebouncedValue(catalogSearch.trim(), 300);
   const { user } = useAuth();
   const canMutateDraft =
     user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "CASHIER";
@@ -50,10 +78,35 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
     user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "AUDITOR";
 
   const saleTicketQuery = useSaleTicket(ticketId);
-  const paymentBanksQuery = usePaymentBanks({ active: true });
-  const categoriesQuery = useCategories({ active: true });
-  const productsQuery = useProducts({ active: true });
-  const inventoryQuery = useInventory({ active: true });
+  const shouldLoadDraftResources = Boolean(
+    canMutateDraft &&
+      saleTicketQuery.data &&
+      canEditTicket(saleTicketQuery.data)
+  );
+  const posCatalogQuery = usePosCatalog(
+    {
+      salesChannelId: saleTicketQuery.data?.salesChannelId ?? "",
+      search: debouncedCatalogSearch || undefined,
+      categoryId: catalogCategoryId,
+    },
+    posCatalogEnabled && shouldLoadDraftResources
+  );
+  const paymentBanksQuery = usePaymentBanks(
+    { active: true },
+    { enabled: shouldLoadDraftResources }
+  );
+  const categoriesQuery = useCategories(
+    { active: true },
+    { enabled: shouldLoadDraftResources && !posCatalogEnabled }
+  );
+  const productsQuery = useProducts(
+    { active: true },
+    { enabled: shouldLoadDraftResources && !posCatalogEnabled }
+  );
+  const inventoryQuery = useInventory(
+    { active: true },
+    { enabled: shouldLoadDraftResources && !posCatalogEnabled }
+  );
 
   const updateSaleTicketMutation = useUpdateSaleTicket();
   const cancelSaleTicketMutation = useCancelSaleTicket(ticketId);
@@ -65,6 +118,9 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
 
   const sellableProducts = useMemo<SaleProductOption[]>(
     () => {
+      if (posCatalogEnabled) {
+        return posCatalogQuery.data?.pages.flatMap((page) => page.items) ?? [];
+      }
       const inventoryByProductId = new Map(
         (inventoryQuery.data ?? []).map((item) => [item.productId, item])
       );
@@ -98,8 +154,9 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
           };
         });
     },
-    [categoriesQuery.data, inventoryQuery.data, productsQuery.data]
+    [categoriesQuery.data, inventoryQuery.data, posCatalogQuery.data, productsQuery.data]
   );
+  const catalogCategories = posCatalogQuery.data?.pages[0]?.categories;
 
   if (saleTicketQuery.isLoading) {
     return (
@@ -188,6 +245,7 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
             onCancel={async () => {
               await cancelSaleTicketMutation.mutateAsync({
                 reason: "Cancelado desde el panel de ventas.",
+                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
               });
             }}
             onConfirm={async () => {
@@ -196,6 +254,7 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
               }
 
               await confirmSaleTicketMutation.mutateAsync({
+                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
                 paymentMethod: ticket.paymentMethod,
                 ...(ticket.paymentMethod === "TRANSFER" && ticket.paymentBankId
                   ? { paymentBankId: ticket.paymentBankId }
@@ -203,7 +262,10 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
               });
             }}
             onVoid={async (values) => {
-              await voidSaleTicketMutation.mutateAsync(values);
+              await voidSaleTicketMutation.mutateAsync({
+                ...values,
+                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
+              });
             }}
           />
         ) : null}
@@ -214,13 +276,21 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
           <SaleTicketPosWorkspace
             ticket={ticket}
             products={sellableProducts}
+            catalogCategories={catalogCategories}
+            remoteFiltering={posCatalogEnabled}
+            hasMoreProducts={Boolean(posCatalogQuery.hasNextPage)}
+            isLoadingMoreProducts={posCatalogQuery.isFetchingNextPage}
+            onCatalogSearchChange={setCatalogSearch}
+            onCatalogCategoryChange={setCatalogCategoryId}
+            onLoadMoreProducts={() => void posCatalogQuery.fetchNextPage()}
             isProductsLoading={
+              (posCatalogEnabled && posCatalogQuery.isLoading) ||
               productsQuery.isLoading ||
               inventoryQuery.isLoading ||
               categoriesQuery.isLoading
             }
             productsError={
-              productsQuery.error ?? inventoryQuery.error ?? categoriesQuery.error
+              posCatalogQuery.error ?? productsQuery.error ?? inventoryQuery.error ?? categoriesQuery.error
             }
             isAddingItem={addSaleTicketItemMutation.isPending}
             isUpdatingItem={updateSaleTicketItemMutation.isPending}
@@ -244,12 +314,18 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
             cancelSuccess={cancelSucceeded}
             confirmSuccess={confirmSucceeded}
             onAddItem={async (values) => {
-              await addSaleTicketItemMutation.mutateAsync(values);
+              await addSaleTicketItemMutation.mutateAsync({
+                ...values,
+                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
+              });
             }}
             onUpdateItem={async (itemId, values) => {
               await updateSaleTicketItemMutation.mutateAsync({
                 itemId,
-                data: values,
+                data: {
+                  ...values,
+                  ...(ticket.version ? { expectedVersion: ticket.version } : {}),
+                },
               });
             }}
             onRemoveItem={async (itemId) => {
@@ -258,12 +334,16 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
             onSavePayment={async (values: SaleTicketPaymentFormValues) => {
               await updateSaleTicketMutation.mutateAsync({
                 ticketId,
-                data: values,
+                data: {
+                  ...values,
+                  ...(ticket.version ? { expectedVersion: ticket.version } : {}),
+                },
               });
             }}
             onCancel={async () => {
               await cancelSaleTicketMutation.mutateAsync({
                 reason: "Cancelado desde el panel de ventas.",
+                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
               });
             }}
             onConfirm={async (values: ConfirmSaleTicketInput) => {
@@ -271,7 +351,10 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
                 return;
               }
 
-              await confirmSaleTicketMutation.mutateAsync(values);
+              await confirmSaleTicketMutation.mutateAsync({
+                ...values,
+                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
+              });
             }}
           />
         </>

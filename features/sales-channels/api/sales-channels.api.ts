@@ -23,8 +23,14 @@ export function getSalesChannels(filters?: SalesChannelsFilters, signal?: AbortS
   return apiClient.get<SalesChannel[]>(`/api/sales-channels${queryString}`, signal);
 }
 
-export function getAllSalesChannels(filters?: Omit<SalesChannelsFilters, "limit" | "offset">) {
-  return fetchAllPages((pagination) => getSalesChannels({ ...filters, ...pagination }));
+export function getAllSalesChannels(
+  filters?: Omit<SalesChannelsFilters, "limit" | "offset">,
+  signal?: AbortSignal
+) {
+  return fetchAllPages(
+    (pagination) => getSalesChannels({ ...filters, ...pagination }, signal),
+    signal
+  );
 }
 
 export function createSalesChannel(payload: CreateSalesChannelInput) {

@@ -28,8 +28,15 @@ export function getProductPrices(productId: string, channelId?: string, paginati
   );
 }
 
-export function getAllProductPrices(productId: string, channelId?: string) {
-  return fetchAllPages((pagination) => getProductPrices(productId, channelId, pagination));
+export function getAllProductPrices(
+  productId: string,
+  channelId?: string,
+  signal?: AbortSignal
+) {
+  return fetchAllPages(
+    (pagination) => getProductPrices(productId, channelId, pagination, signal),
+    signal
+  );
 }
 
 export function getCurrentProductPrice(productId: string, channelId: string) {

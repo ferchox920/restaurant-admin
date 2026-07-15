@@ -18,10 +18,14 @@ export function useUpdateSaleTicketItem(ticketId: string) {
     mutationFn: ({ itemId, data }: UpdateSaleTicketItemPayload) =>
       updateSaleTicketItem(ticketId, itemId, {
         quantity: toApiQuantityNumber(data.quantity),
+        ...(data.expectedVersion ? { expectedVersion: data.expectedVersion } : {}),
       }),
     onSuccess: (ticket) => {
       queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
-      void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
+      void queryClient.invalidateQueries({
+        queryKey: saleTicketsQueryKeys.lists(),
+        refetchType: "none",
+      });
     },
   });
 }

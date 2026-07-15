@@ -11,7 +11,10 @@ export function useRemoveSaleTicketItem(ticketId: string) {
     mutationFn: (itemId: string) => removeSaleTicketItem(ticketId, itemId),
     onSuccess: (ticket) => {
       queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
-      void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
+      void queryClient.invalidateQueries({
+        queryKey: saleTicketsQueryKeys.lists(),
+        refetchType: "none",
+      });
     },
   });
 }

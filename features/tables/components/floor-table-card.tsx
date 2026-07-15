@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { DoorOpen, Eye, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { TableStatusBadge } from "@/features/tables/components/table-status-badge";
-import { OpenTableOrderDialog } from "@/features/tables/components/open-table-order-dialog";
 import type { RestaurantTable } from "@/features/tables/types/table.types";
 import type { SalesChannel } from "@/features/sales-channels/types/sales-channel.types";
 import type { OpenTableOrderFormValues } from "@/features/table-orders/types/table-order.types";
@@ -13,6 +14,13 @@ import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { formatDateTime } from "@/lib/formatters";
 import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
+
+const OpenTableOrderDialog = dynamic(
+  () =>
+    import("@/features/tables/components/open-table-order-dialog").then(
+      (module) => module.OpenTableOrderDialog
+    )
+);
 
 type Props = {
   table: RestaurantTable;
@@ -40,6 +48,7 @@ export function FloorTableCard({
   onOpenOrder,
   onViewOrder,
 }: Props) {
+  const [dialogRequested, setDialogRequested] = useState(false);
   const total =
     table.currentOrder?.total ?? table.currentOrder?.saleTicket?.total ?? null;
 
@@ -90,10 +99,11 @@ export function FloorTableCard({
           ) : null}
         </div>
 
-        {table.status === "AVAILABLE" && canOperate ? (
+        {table.status === "AVAILABLE" && canOperate && dialogRequested ? (
           <OpenTableOrderDialog
             table={table}
             channels={channels}
+            initialOpen
             isPending={isOpening}
             error={openError}
             onSubmit={(values) => onOpenOrder(table, values)}
@@ -104,6 +114,17 @@ export function FloorTableCard({
               </Button>
             }
           />
+        ) : null}
+
+        {table.status === "AVAILABLE" && canOperate && !dialogRequested ? (
+          <Button
+            type="button"
+            className="w-full"
+            onClick={() => setDialogRequested(true)}
+          >
+            <DoorOpen aria-hidden="true" />
+            Abrir orden
+          </Button>
         ) : null}
 
         {table.status === "AVAILABLE" && !canOperate ? (

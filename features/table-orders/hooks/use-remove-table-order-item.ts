@@ -9,11 +9,12 @@ export function useRemoveTableOrderItem(orderId: string) {
 
   return useMutation({
     mutationFn: (itemId: string) => removeTableOrderItem(orderId, itemId),
-    onSuccess: () => {
+    onSuccess: (order) => {
+      queryClient.setQueryData(tableOrdersQueryKeys.detail(orderId), order);
       void queryClient.invalidateQueries({
-        queryKey: tableOrdersQueryKeys.detail(orderId),
+        queryKey: tableOrdersQueryKeys.lists(),
+        refetchType: "none",
       });
-      void queryClient.invalidateQueries({ queryKey: tableOrdersQueryKeys.lists() });
     },
   });
 }

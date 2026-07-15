@@ -14,7 +14,8 @@ export function useInventoryMovementsReport(
 
   return useQuery({
     queryKey: reportsQueryKeys.inventoryMovements(filters),
-    queryFn: () => getInventoryMovementsReport(parsedFilters.data),
+    queryFn: ({ signal }) =>
+      getInventoryMovementsReport(parsedFilters.data, signal),
     enabled: parsedFilters.success,
     retry: shouldRetryQuery,
     staleTime: 15_000,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   getPaymentBanks,
   type PaymentBanksFilters,
@@ -12,6 +12,7 @@ export function usePaymentBanks(filters?: PaymentBanksFilters) {
   return useQuery({
     queryKey: paymentBanksQueryKeys.list(filters),
     queryFn: ({ signal }) => getPaymentBanks(filters, signal),
+    placeholderData: keepPreviousData,
     retry: shouldRetryQuery,
     staleTime: 60_000,
   });

@@ -23,8 +23,14 @@ export function getCategories(filters?: CategoriesFilters, signal?: AbortSignal)
   return apiClient.get<Category[]>(`/api/categories${queryString}`, signal);
 }
 
-export function getAllCategories(filters?: Omit<CategoriesFilters, "limit" | "offset">) {
-  return fetchAllPages((pagination) => getCategories({ ...filters, ...pagination }));
+export function getAllCategories(
+  filters?: Omit<CategoriesFilters, "limit" | "offset">,
+  signal?: AbortSignal
+) {
+  return fetchAllPages(
+    (pagination) => getCategories({ ...filters, ...pagination }, signal),
+    signal
+  );
 }
 
 export function createCategory(payload: CreateCategoryInput) {

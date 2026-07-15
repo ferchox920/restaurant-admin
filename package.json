@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev --port 5174",
     "build": "next build",
+    "bundle:report": "node scripts/check-bundle-budget.mjs --output bundle-report.json",
+    "bundle:check": "node scripts/check-bundle-budget.mjs --enforce --output bundle-report.json",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",

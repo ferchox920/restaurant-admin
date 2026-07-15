@@ -50,6 +50,8 @@ export const stockReportFiltersSchema = z.object({
   stockStatus: z.enum(reportStockStatuses).optional(),
   stockManagementType: z.enum(stockManagementTypes).optional(),
   search: z.string().trim().optional(),
+  limit: z.number().int().min(1).max(100).optional(),
+  offset: z.number().int().min(0).optional(),
 });
 
 export const salesReportFiltersSchema = withDateRangeValidation({

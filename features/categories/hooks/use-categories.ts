@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   getCategories,
   type CategoriesFilters,
@@ -11,5 +11,6 @@ export function useCategories(filters?: CategoriesFilters) {
   return useQuery({
     queryKey: categoriesQueryKeys.list(filters),
     queryFn: ({ signal }) => getCategories(filters, signal),
+    placeholderData: keepPreviousData,
   });
 }

@@ -40,6 +40,7 @@ export type SaleTicketItem = {
 
 export type SaleTicketBase = {
   id: string;
+  version?: string;
   status: SaleTicketStatus;
   salesChannelId: string;
   salesChannel?: SaleTicketChannel | null;
@@ -88,6 +89,7 @@ export type CreateSaleTicketInput = {
 };
 
 export type UpdateSaleTicketInput = {
+  expectedVersion?: string;
   salesChannelId?: string;
   notes?: string;
   paymentMethod?: SalePaymentMethod;
@@ -95,24 +97,29 @@ export type UpdateSaleTicketInput = {
 };
 
 export type ConfirmSaleTicketInput = {
+  expectedVersion?: string;
   paymentMethod: SalePaymentMethod;
   paymentBankId?: string;
 };
 
 export type AddSaleTicketItemInput = {
+  expectedVersion?: string;
   productId: string;
   quantity: number;
 };
 
 export type UpdateSaleTicketItemInput = {
+  expectedVersion?: string;
   quantity: number;
 };
 
 export type CancelSaleTicketInput = {
+  expectedVersion?: string;
   reason: string;
 };
 
 export type VoidSaleTicketInput = {
+  expectedVersion?: string;
   reason: string;
 };
 
@@ -124,20 +131,24 @@ export type CreateSaleTicketFormValues = {
 };
 
 export type SaleTicketPaymentFormValues = {
+  expectedVersion?: string;
   paymentMethod: SalePaymentMethod;
   paymentBankId?: string;
 };
 
 export type AddSaleTicketItemFormValues = {
+  expectedVersion?: string;
   productId: string;
   quantity: string;
 };
 
 export type UpdateSaleTicketItemFormValues = {
+  expectedVersion?: string;
   quantity: string;
 };
 
 export type VoidSaleTicketFormValues = {
+  expectedVersion?: string;
   reason: string;
 };
 

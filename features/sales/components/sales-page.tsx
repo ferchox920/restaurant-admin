@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { Clock, History, Play, ReceiptText, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { SaleTicketPage } from "@/features/sales/components/sale-ticket-page";
 import { SaleTicketFilters, type SaleTicketFilterValues } from "@/features/sales/components/sale-ticket-filters";
 import { SaleTicketTable } from "@/features/sales/components/sale-ticket-table";
 import { useCreateSaleTicket } from "@/features/sales/hooks/use-create-sale-ticket";
@@ -35,6 +35,22 @@ const initialFilters: SaleTicketFilterValues = {
   from: "",
   to: "",
 };
+
+const SaleTicketPage = dynamic(
+  () =>
+    import("@/features/sales/components/sale-ticket-page").then(
+      (module) => module.SaleTicketPage
+    ),
+  {
+    loading: () => (
+      <LoadingState
+        title="Cargando ticket"
+        message="Estamos preparando el espacio de venta."
+        className="w-full max-w-none shadow-none"
+      />
+    ),
+  }
+);
 
 export function SalesPage() {
   const { user } = useAuth();

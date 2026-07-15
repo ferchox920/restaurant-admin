@@ -8,6 +8,6 @@ import type { AuditLogFilters } from "@/features/audit/types/audit-log.types";
 export function useAuditLogs(filters?: AuditLogFilters) {
   return useQuery({
     queryKey: auditQueryKeys.list(filters),
-    queryFn: () => getAuditLogs(filters),
+    queryFn: ({ signal }) => getAuditLogs(filters, signal),
   });
 }

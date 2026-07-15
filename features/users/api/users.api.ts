@@ -14,8 +14,11 @@ export function getUsers(pagination?: PaginationParams, signal?: AbortSignal) {
   return apiClient.get<UserListItem[]>(`/api/users${queryString}`, signal);
 }
 
-export function getAllUsers() {
-  return fetchAllPages((pagination) => getUsers(pagination));
+export function getAllUsers(signal?: AbortSignal) {
+  return fetchAllPages(
+    (pagination) => getUsers(pagination, signal),
+    signal
+  );
 }
 
 export function getUser(userId: string) {
