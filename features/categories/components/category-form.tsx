@@ -51,17 +51,15 @@ export function CategoryForm({
   error,
   onSubmit,
 }: CategoryFormProps) {
-  const form = useForm<
-    CategoryFormValues,
-    undefined,
-    CategoryFormSubmitValues
-  >({
-    resolver: zodResolver(categoryFormSchema),
-    defaultValues: {
-      name: initialValues?.name ?? "",
-      description: initialValues?.description ?? "",
-    },
-  });
+  const form = useForm<CategoryFormValues, undefined, CategoryFormSubmitValues>(
+    {
+      resolver: zodResolver(categoryFormSchema),
+      defaultValues: {
+        name: initialValues?.name ?? "",
+        description: initialValues?.description ?? "",
+      },
+    }
+  );
 
   useEffect(() => {
     if (!open) {

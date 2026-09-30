@@ -17,10 +17,16 @@ export function useCreateProductPrice(productId: string) {
         queryKey: productPricesQueryKeys.history(productId),
       });
       void queryClient.invalidateQueries({
-        queryKey: productPricesQueryKeys.history(productId, variables.salesChannelId),
+        queryKey: productPricesQueryKeys.history(
+          productId,
+          variables.salesChannelId
+        ),
       });
       void queryClient.invalidateQueries({
-        queryKey: productPricesQueryKeys.current(productId, variables.salesChannelId),
+        queryKey: productPricesQueryKeys.current(
+          productId,
+          variables.salesChannelId
+        ),
       });
       void queryClient.invalidateQueries({
         queryKey: productsQueryKeys.detail(productId),

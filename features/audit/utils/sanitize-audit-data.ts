@@ -48,12 +48,14 @@ function sanitizeRecursive(
     seen.add(value);
 
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => [
-        key,
-        SENSITIVE_KEYS.has(normalizeKey(key))
-          ? "[REDACTED]"
-          : sanitizeRecursive(nestedValue, depth + 1, seen),
-      ])
+      Object.entries(value as Record<string, unknown>).map(
+        ([key, nestedValue]) => [
+          key,
+          SENSITIVE_KEYS.has(normalizeKey(key))
+            ? "[REDACTED]"
+            : sanitizeRecursive(nestedValue, depth + 1, seen),
+        ]
+      )
     );
   }
 

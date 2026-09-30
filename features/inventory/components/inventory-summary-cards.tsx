@@ -7,9 +7,15 @@ export function InventorySummaryCards({
 }: {
   items: InventoryStockItem[];
 }) {
-  const available = items.filter((item) => item.stockStatus === "AVAILABLE").length;
-  const lowStock = items.filter((item) => item.stockStatus === "LOW_STOCK").length;
-  const outOfStock = items.filter((item) => item.stockStatus === "OUT_OF_STOCK").length;
+  const available = items.filter(
+    (item) => item.stockStatus === "AVAILABLE"
+  ).length;
+  const lowStock = items.filter(
+    (item) => item.stockStatus === "LOW_STOCK"
+  ).length;
+  const outOfStock = items.filter(
+    (item) => item.stockStatus === "OUT_OF_STOCK"
+  ).length;
 
   return (
     <div className="grid gap-3 md:grid-cols-3">
@@ -18,16 +24,8 @@ export function InventorySummaryCards({
         value={String(available)}
         tone="available"
       />
-      <SummaryCard
-        title="Bajo stock"
-        value={String(lowStock)}
-        tone="low"
-      />
-      <SummaryCard
-        title="Agotados"
-        value={String(outOfStock)}
-        tone="empty"
-      />
+      <SummaryCard title="Bajo stock" value={String(lowStock)} tone="low" />
+      <SummaryCard title="Agotados" value={String(outOfStock)} tone="empty" />
     </div>
   );
 }

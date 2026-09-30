@@ -52,7 +52,12 @@ function PaymentSectionHarness({
 
 describe("SaleTicketPaymentSection", () => {
   it("hides bank selector and enables save for cash", () => {
-    render(<PaymentSectionHarness initialPaymentMethod="TRANSFER" initialPaymentBankId={banks[0].id} />);
+    render(
+      <PaymentSectionHarness
+        initialPaymentMethod="TRANSFER"
+        initialPaymentBankId={banks[0].id}
+      />
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /efectivo/i }));
 

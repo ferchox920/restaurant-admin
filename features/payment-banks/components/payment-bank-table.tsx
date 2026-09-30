@@ -45,7 +45,9 @@ export function PaymentBankTable({
         {paymentBanks.map((paymentBank) => (
           <TableRow
             key={paymentBank.id}
-            className={!paymentBank.active ? "bg-muted/30 text-muted-foreground" : ""}
+            className={
+              !paymentBank.active ? "bg-muted/30 text-muted-foreground" : ""
+            }
           >
             <TableCell className="font-medium text-foreground">
               {paymentBank.name}
@@ -54,7 +56,9 @@ export function PaymentBankTable({
               {paymentBank.description || "Sin descripcion"}
             </TableCell>
             <TableCell>
-              <StatusBadge status={paymentBank.active ? "active" : "inactive"} />
+              <StatusBadge
+                status={paymentBank.active ? "active" : "inactive"}
+              />
             </TableCell>
             <TableCell>{formatDateTime(paymentBank.updatedAt)}</TableCell>
             <TableCell>
@@ -80,4 +84,3 @@ export function PaymentBankTable({
     </Table>
   );
 }
-

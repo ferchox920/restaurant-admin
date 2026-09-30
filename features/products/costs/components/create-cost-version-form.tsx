@@ -68,7 +68,10 @@ export function CreateCostVersionForm({
       </CardHeader>
       <CardContent>
         {canSubmit ? (
-          <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
+          <form
+            className="space-y-4"
+            onSubmit={form.handleSubmit(handleSubmit)}
+          >
             <div className="rounded-lg bg-muted/50 p-4">
               <p className="text-sm font-medium text-muted-foreground">
                 Costo actual

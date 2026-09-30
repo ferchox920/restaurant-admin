@@ -19,7 +19,9 @@ import { canAccessRoute } from "@/lib/permissions/can-access-route";
 
 export function StockReportTable({ items }: { items: StockReportItem[] }) {
   const { user } = useAuth();
-  const canOpenInventory = user ? canAccessRoute(user.role, "/inventory") : false;
+  const canOpenInventory = user
+    ? canAccessRoute(user.role, "/inventory")
+    : false;
 
   return (
     <Table>

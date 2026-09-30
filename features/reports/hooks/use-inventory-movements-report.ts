@@ -10,7 +10,9 @@ import { shouldRetryQuery } from "@/lib/api/query-utils";
 export function useInventoryMovementsReport(
   filters?: InventoryMovementReportFilters
 ) {
-  const parsedFilters = inventoryMovementReportFiltersSchema.safeParse(filters ?? {});
+  const parsedFilters = inventoryMovementReportFiltersSchema.safeParse(
+    filters ?? {}
+  );
 
   return useQuery({
     queryKey: reportsQueryKeys.inventoryMovements(filters),

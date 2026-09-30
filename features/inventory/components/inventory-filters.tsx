@@ -92,8 +92,12 @@ export function InventoryFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__all__">Todos los estados</SelectItem>
-            <SelectItem value="AVAILABLE">{stockStatusLabels.AVAILABLE}</SelectItem>
-            <SelectItem value="LOW_STOCK">{stockStatusLabels.LOW_STOCK}</SelectItem>
+            <SelectItem value="AVAILABLE">
+              {stockStatusLabels.AVAILABLE}
+            </SelectItem>
+            <SelectItem value="LOW_STOCK">
+              {stockStatusLabels.LOW_STOCK}
+            </SelectItem>
             <SelectItem value="OUT_OF_STOCK">
               {stockStatusLabels.OUT_OF_STOCK}
             </SelectItem>

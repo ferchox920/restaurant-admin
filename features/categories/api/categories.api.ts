@@ -12,7 +12,10 @@ export type CategoriesFilters = PaginationParams & {
   active?: boolean;
 };
 
-export function getCategories(filters?: CategoriesFilters, signal?: AbortSignal) {
+export function getCategories(
+  filters?: CategoriesFilters,
+  signal?: AbortSignal
+) {
   const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     active: filters?.active,

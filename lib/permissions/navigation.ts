@@ -73,7 +73,8 @@ export const navigationItems: NavigationItem[] = [
     icon: Package,
     roles: PRODUCTS_ALLOWED_ROLES,
     module: "products",
-    description: "Gestion de productos y acceso a costos, precios e inventario.",
+    description:
+      "Gestion de productos y acceso a costos, precios e inventario.",
     sprint: "Sprint 4",
   },
   {
@@ -82,7 +83,8 @@ export const navigationItems: NavigationItem[] = [
     icon: Boxes,
     roles: INVENTORY_ALLOWED_ROLES,
     module: "inventory",
-    description: "Stock general, detalle por producto y movimientos operativos.",
+    description:
+      "Stock general, detalle por producto y movimientos operativos.",
     sprint: "Sprint 6",
   },
   {

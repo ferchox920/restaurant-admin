@@ -50,7 +50,10 @@ export function MovementTypeBadge({
         {config.label}
       </Badge>
       {config.automatic ? (
-        <Badge variant="outline" className="border-border text-muted-foreground">
+        <Badge
+          variant="outline"
+          className="border-border text-muted-foreground"
+        >
           Automático
         </Badge>
       ) : null}

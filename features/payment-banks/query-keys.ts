@@ -4,4 +4,3 @@ export const paymentBanksQueryKeys = {
   list: (filters?: Record<string, string | number | boolean | undefined>) =>
     [...paymentBanksQueryKeys.lists(), filters ?? {}] as const,
 };
-

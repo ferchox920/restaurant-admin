@@ -136,21 +136,30 @@ export function PaymentBanksPage() {
             <Button
               type="button"
               variant={filter === "all" ? "default" : "outline"}
-              onClick={() => { setFilter("all"); setOffset(0); }}
+              onClick={() => {
+                setFilter("all");
+                setOffset(0);
+              }}
             >
               Todos
             </Button>
             <Button
               type="button"
               variant={filter === "active" ? "default" : "outline"}
-              onClick={() => { setFilter("active"); setOffset(0); }}
+              onClick={() => {
+                setFilter("active");
+                setOffset(0);
+              }}
             >
               Activos
             </Button>
             <Button
               type="button"
               variant={filter === "inactive" ? "default" : "outline"}
-              onClick={() => { setFilter("inactive"); setOffset(0); }}
+              onClick={() => {
+                setFilter("inactive");
+                setOffset(0);
+              }}
             >
               Inactivos
             </Button>
@@ -164,7 +173,13 @@ export function PaymentBanksPage() {
             />
           ) : null}
           {!paymentBanksQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={paymentBanks.length} onOffsetChange={setOffset} disabled={paymentBanksQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={paymentBanks.length}
+              onOffsetChange={setOffset}
+              disabled={paymentBanksQuery.isFetching}
+            />
           ) : null}
 
           {paymentBanksQuery.error ? (

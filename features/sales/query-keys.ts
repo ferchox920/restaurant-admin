@@ -4,5 +4,6 @@ export const saleTicketsQueryKeys = {
   list: (filters?: Record<string, string | number | boolean | undefined>) =>
     [...saleTicketsQueryKeys.lists(), filters ?? {}] as const,
   details: () => [...saleTicketsQueryKeys.all, "detail"] as const,
-  detail: (ticketId: string) => [...saleTicketsQueryKeys.details(), ticketId] as const,
+  detail: (ticketId: string) =>
+    [...saleTicketsQueryKeys.details(), ticketId] as const,
 };

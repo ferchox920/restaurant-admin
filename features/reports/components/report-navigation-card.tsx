@@ -47,7 +47,10 @@ export function ReportNavigationCard({
           <ul className="space-y-1.5">
             {details.map((item) => (
               <li key={item} className="flex items-center gap-2">
-                <CheckCircle2 aria-hidden="true" className="size-4 text-foreground" />
+                <CheckCircle2
+                  aria-hidden="true"
+                  className="size-4 text-foreground"
+                />
                 <span>{item}</span>
               </li>
             ))}

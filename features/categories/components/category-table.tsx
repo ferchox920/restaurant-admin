@@ -45,7 +45,9 @@ export function CategoryTable({
         {categories.map((category) => (
           <TableRow
             key={category.id}
-            className={!category.active ? "bg-muted/30 text-muted-foreground" : ""}
+            className={
+              !category.active ? "bg-muted/30 text-muted-foreground" : ""
+            }
           >
             <TableCell className="font-medium text-foreground">
               {category.name}

@@ -14,7 +14,9 @@ export function useAddTableOrderItem(orderId: string) {
       addTableOrderItem(orderId, {
         productId: payload.productId,
         quantity: toApiQuantityNumber(payload.quantity),
-        ...(payload.expectedVersion ? { expectedVersion: payload.expectedVersion } : {}),
+        ...(payload.expectedVersion
+          ? { expectedVersion: payload.expectedVersion }
+          : {}),
       }),
     onSuccess: (order) => {
       queryClient.setQueryData(tableOrdersQueryKeys.detail(orderId), order);

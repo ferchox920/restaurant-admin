@@ -77,9 +77,7 @@ export function ProductFilters({
         <Select
           value={categoryId ?? "__all__"}
           onValueChange={(value) =>
-            onCategoryChange(
-              !value || value === "__all__" ? undefined : value
-            )
+            onCategoryChange(!value || value === "__all__" ? undefined : value)
           }
         >
           <SelectTrigger className="w-full">

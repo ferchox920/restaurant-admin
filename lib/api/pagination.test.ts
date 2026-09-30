@@ -6,10 +6,15 @@ describe("fetchAllPages", () => {
     const controller = new AbortController();
     const fetchPage = vi.fn(async () => {
       controller.abort();
-      return Array.from({ length: ALL_OPTIONS_PAGE_LIMIT }, (_, index) => index);
+      return Array.from(
+        { length: ALL_OPTIONS_PAGE_LIMIT },
+        (_, index) => index
+      );
     });
 
-    await expect(fetchAllPages(fetchPage, controller.signal)).rejects.toMatchObject({
+    await expect(
+      fetchAllPages(fetchPage, controller.signal)
+    ).rejects.toMatchObject({
       name: "AbortError",
     });
     expect(fetchPage).toHaveBeenCalledTimes(1);
