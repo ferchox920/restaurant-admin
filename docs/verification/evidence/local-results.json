@@ -1,0 +1,255 @@
+{
+  "date": "2026-09-30",
+  "frontendBase": "2982f52136c7929d72b38bda29cbb5aa325a54b3",
+  "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+  "verification": [
+    {
+      "script": "lint",
+      "args": [],
+      "startedAt": "2026-09-30T15:33:37.685Z",
+      "finishedAt": "2026-09-30T15:33:49.555Z",
+      "exitCode": 0
+    },
+    {
+      "script": "format:check",
+      "args": [],
+      "startedAt": "2026-09-30T15:33:49.556Z",
+      "finishedAt": "2026-09-30T15:33:52.362Z",
+      "exitCode": 0
+    },
+    {
+      "script": "typecheck",
+      "args": [],
+      "startedAt": "2026-09-30T15:33:52.362Z",
+      "finishedAt": "2026-09-30T15:33:55.947Z",
+      "exitCode": 0
+    },
+    {
+      "script": "test",
+      "args": [
+        "--",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile=output/playwright/vitest.json"
+      ],
+      "startedAt": "2026-09-30T15:33:55.947Z",
+      "finishedAt": "2026-09-30T15:34:36.085Z",
+      "exitCode": 0
+    },
+    {
+      "script": "build",
+      "args": [],
+      "startedAt": "2026-09-30T15:34:36.085Z",
+      "finishedAt": "2026-09-30T15:34:59.803Z",
+      "exitCode": 0
+    },
+    {
+      "script": "bundle:check",
+      "args": [],
+      "startedAt": "2026-09-30T15:34:59.804Z",
+      "finishedAt": "2026-09-30T15:35:00.207Z",
+      "exitCode": 0
+    }
+  ],
+  "vitest": {
+    "tests": 85,
+    "passed": 85,
+    "failed": 0,
+    "pending": 0,
+    "suites": 34,
+    "reportSha256": "6aa3083ebae8f9942b7b627301c457301479bd51a244ffc98a5b8c4678937703"
+  },
+  "audit": {
+    "info": 0,
+    "low": 1,
+    "moderate": 2,
+    "high": 0,
+    "critical": 0,
+    "total": 3
+  },
+  "productionAudit": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "bundle": {
+    "generatedAt": "2026-09-30T15:36:28.953Z",
+    "results": [
+      {
+        "route": "/dashboard",
+        "gzipKb": 50.1,
+        "budgetKb": 65,
+        "passed": true,
+        "chunks": 7
+      },
+      {
+        "route": "/floor",
+        "gzipKb": 66.5,
+        "budgetKb": 170,
+        "passed": true,
+        "chunks": 9
+      },
+      {
+        "route": "/sales",
+        "gzipKb": 111.4,
+        "budgetKb": 170,
+        "passed": true,
+        "chunks": 11
+      },
+      {
+        "route": "/sales/[ticketId]",
+        "gzipKb": 49.6,
+        "budgetKb": 170,
+        "passed": true,
+        "chunks": 7
+      },
+      {
+        "route": "/table-orders/[id]",
+        "gzipKb": 58.6,
+        "budgetKb": 170,
+        "passed": true,
+        "chunks": 8
+      },
+      {
+        "route": "/products",
+        "gzipKb": 116.4,
+        "budgetKb": 170,
+        "passed": true,
+        "chunks": 11
+      },
+      {
+        "route": "/reports/stock",
+        "gzipKb": 49.6,
+        "budgetKb": 170,
+        "passed": true,
+        "chunks": 7
+      }
+    ]
+  },
+  "fullstack": {
+    "run": "run-1790782524348",
+    "rounds": [
+      {
+        "round": 1,
+        "metadata": {
+          "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+          "startedAt": "2026-09-30T15:36:28.975Z",
+          "finishedAt": "2026-09-30T15:37:40.083Z",
+          "success": true,
+          "cleanupExit": 0,
+          "projects": ["desktop-chromium", "mobile-chromium-emulated"],
+          "retries": 0
+        },
+        "bearer": {
+          "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+          "checks": [
+            "bearer login returns JWT without cookie",
+            "bearer accepted by pinned backend",
+            "legacy bearer remains valid after logout: known backend limitation reproduced",
+            "missing authentication rejected"
+          ],
+          "passed": 4,
+          "browser": false
+        },
+        "reports": [
+          {
+            "project": "desktop-chromium",
+            "stats": {
+              "startTime": "2026-09-30T15:37:03.464Z",
+              "duration": 12415.447,
+              "expected": 1,
+              "skipped": 0,
+              "unexpected": 0,
+              "flaky": 0
+            },
+            "errors": [],
+            "reportSha256": "fc6788f25e8134415d7b26476680fe896b6f17860b0e1bdd51e4434d90cd7e78",
+            "htmlPresent": true
+          },
+          {
+            "project": "mobile-chromium-emulated",
+            "stats": {
+              "startTime": "2026-09-30T15:37:20.433Z",
+              "duration": 14389.566,
+              "expected": 1,
+              "skipped": 0,
+              "unexpected": 0,
+              "flaky": 0
+            },
+            "errors": [],
+            "reportSha256": "7dd0d358d70d9c97601984ece3033fd1863053def66a7932b2e21a4c857503b5",
+            "htmlPresent": true
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "metadata": {
+          "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+          "startedAt": "2026-09-30T15:37:40.084Z",
+          "finishedAt": "2026-09-30T15:38:34.882Z",
+          "success": true,
+          "cleanupExit": 0,
+          "projects": ["desktop-chromium", "mobile-chromium-emulated"],
+          "retries": 0
+        },
+        "bearer": {
+          "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+          "checks": [
+            "bearer login returns JWT without cookie",
+            "bearer accepted by pinned backend",
+            "legacy bearer remains valid after logout: known backend limitation reproduced",
+            "missing authentication rejected"
+          ],
+          "passed": 4,
+          "browser": false
+        },
+        "reports": [
+          {
+            "project": "desktop-chromium",
+            "stats": {
+              "startTime": "2026-09-30T15:37:56.618Z",
+              "duration": 12194.74,
+              "expected": 1,
+              "skipped": 0,
+              "unexpected": 0,
+              "flaky": 0
+            },
+            "errors": [],
+            "reportSha256": "89d0d5e1c42faf4e6b0c3f87a7fdfe3602661f1025074add78487f9da6309143",
+            "htmlPresent": true
+          },
+          {
+            "project": "mobile-chromium-emulated",
+            "stats": {
+              "startTime": "2026-09-30T15:38:12.995Z",
+              "duration": 16474.828,
+              "expected": 1,
+              "skipped": 0,
+              "unexpected": 0,
+              "flaky": 0
+            },
+            "errors": [],
+            "reportSha256": "d6862b9d2c145de598d37c03604a1a90fe1e92480469d0a75ae6beb3b26be266",
+            "htmlPresent": true
+          }
+        ]
+      }
+    ],
+    "journeys": 4,
+    "bearerChecks": 8,
+    "skips": 0,
+    "retries": 0,
+    "commercialApi": "Real pinned API and PostgreSQL; only a fetched response is discarded to induce transport loss",
+    "mobile": "Chromium Pixel 7 emulation; no physical-device or human visual review claim"
+  },
+  "remainingBackend": [
+    "14 dependency advisories: 1 low, 2 moderate, 11 high",
+    "Legacy bearer without jti remains valid after logout",
+    "Incomplete historical idempotency keys require manual reconciliation",
+    "No dedicated table/inventory events, role/owner SSE filtering or explicit replay-window-expired signal"
+  ]
+}

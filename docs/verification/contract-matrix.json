@@ -1,0 +1,4967 @@
+{
+  "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+  "source": "OpenAPI ejecutado + controladores del clon fijado + consumidores frontend; no acredita ejecución de todos los CRUD",
+  "consumers": [
+    {
+      "consumer": "features/audit/api/audit-logs.api.ts",
+      "method": "GET",
+      "route": "/api/audit-logs",
+      "openapiRoute": "/api/audit-logs",
+      "roles": "ADMIN, AUDITOR",
+      "controller": "src/audit/audit.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "userId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+            "type": "string"
+          }
+        },
+        {
+          "name": "action",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "SALE_TICKET_CONFIRMED",
+            "type": "string",
+            "enum": [
+              "USER_CREATED",
+              "USER_UPDATED",
+              "USER_DEACTIVATED",
+              "USER_REACTIVATED",
+              "CATEGORY_CREATED",
+              "CATEGORY_UPDATED",
+              "CATEGORY_DEACTIVATED",
+              "CATEGORY_REACTIVATED",
+              "SALES_CHANNEL_CREATED",
+              "SALES_CHANNEL_UPDATED",
+              "SALES_CHANNEL_DEACTIVATED",
+              "SALES_CHANNEL_REACTIVATED",
+              "PRODUCT_CREATED",
+              "PRODUCT_UPDATED",
+              "PRODUCT_DEACTIVATED",
+              "PRODUCT_REACTIVATED",
+              "PRODUCT_COST_CREATED",
+              "PRODUCT_PRICE_CREATED",
+              "INVENTORY_STOCK_IN",
+              "INVENTORY_MANUAL_ADJUSTMENT",
+              "INVENTORY_WASTE",
+              "INVENTORY_RETURN_IN",
+              "INVENTORY_SALE_OUT",
+              "INVENTORY_VOID_REVERSAL",
+              "INVENTORY_MINIMUM_STOCK_UPDATED",
+              "PAYMENT_BANK_CREATED",
+              "PAYMENT_BANK_UPDATED",
+              "PAYMENT_BANK_DEACTIVATED",
+              "PAYMENT_BANK_REACTIVATED",
+              "SALE_TICKET_CREATED",
+              "SALE_TICKET_UPDATED",
+              "SALE_TICKET_CANCELLED",
+              "SALE_TICKET_ITEM_ADDED",
+              "SALE_TICKET_ITEM_UPDATED",
+              "SALE_TICKET_ITEM_REMOVED",
+              "SALE_TICKET_CONFIRMED",
+              "SALE_TICKET_VOIDED",
+              "RESTAURANT_TABLE_CREATED",
+              "RESTAURANT_TABLE_UPDATED",
+              "RESTAURANT_TABLE_DEACTIVATED",
+              "RESTAURANT_TABLE_REACTIVATED",
+              "TABLE_ORDER_OPENED",
+              "TABLE_ORDER_CANCELLED",
+              "TABLE_ORDER_CLOSED"
+            ]
+          }
+        },
+        {
+          "name": "entityType",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "SALE_TICKET",
+            "type": "string",
+            "enum": [
+              "USER",
+              "CATEGORY",
+              "SALES_CHANNEL",
+              "PRODUCT",
+              "PRODUCT_COST_HISTORY",
+              "PRODUCT_PRICE_HISTORY",
+              "PRODUCT_STOCK",
+              "INVENTORY_MOVEMENT",
+              "PAYMENT_BANK",
+              "SALE_TICKET",
+              "SALE_TICKET_ITEM",
+              "RESTAURANT_TABLE",
+              "TABLE_ORDER",
+              "SYSTEM"
+            ]
+          }
+        },
+        {
+          "name": "entityId",
+          "required": false,
+          "in": "query",
+          "description": "Identificador de la entidad auditada.",
+          "schema": {
+            "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+            "type": "string"
+          }
+        },
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-09T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-10T23:59:59.999Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "default": 50,
+            "example": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "default": 0,
+            "example": 0,
+            "type": "number"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/AuditLogResponseDto\"}}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar auditoria.\""
+      ]
+    },
+    {
+      "consumer": "features/audit/api/audit-logs.api.ts",
+      "method": "GET",
+      "route": "/api/audit-logs/{param}",
+      "openapiRoute": "/api/audit-logs/{id}",
+      "roles": "ADMIN, AUDITOR",
+      "controller": "src/audit/audit.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/AuditLogResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar auditoria.\"",
+        "404: \"Log de auditoria no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/auth/api/auth.api.ts",
+      "method": "POST",
+      "route": "/api/auth/login",
+      "openapiRoute": "/api/auth/login",
+      "roles": "public",
+      "controller": "src/auth/auth.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/LoginDto"
+      },
+      "parameters": [],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/AuthResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Credenciales invalidas o usuario inactivo.\""
+      ]
+    },
+    {
+      "consumer": "features/auth/api/auth.api.ts",
+      "method": "GET",
+      "route": "/api/auth/me",
+      "openapiRoute": "/api/auth/me",
+      "roles": "JWT / ver guard",
+      "controller": "src/auth/auth.controller.ts",
+      "request": null,
+      "parameters": [],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/UserResponseDto\"}",
+        "401: \"Token invalido, ausente o usuario inactivo/no existente.\""
+      ]
+    },
+    {
+      "consumer": "features/auth/api/auth.api.ts",
+      "method": "POST",
+      "route": "/api/auth/logout",
+      "openapiRoute": "/api/auth/logout",
+      "roles": "JWT / ver guard",
+      "controller": "src/auth/auth.controller.ts",
+      "request": null,
+      "parameters": [],
+      "responses": ["204: \"\""]
+    },
+    {
+      "consumer": "features/categories/api/categories.api.ts",
+      "method": "GET",
+      "route": "/api/categories",
+      "openapiRoute": "/api/categories",
+      "roles": "ADMIN, MANAGER, AUDITOR, CASHIER",
+      "controller": "src/categories/categories.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "active",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por estado activo. Si no se envia, devuelve todas las categorias.",
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/CategoryResponseDto\"}}",
+        "400: \"El parametro active debe ser true o false si se envia.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar categorias.\""
+      ]
+    },
+    {
+      "consumer": "features/categories/api/categories.api.ts",
+      "method": "POST",
+      "route": "/api/categories",
+      "openapiRoute": "/api/categories",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/categories/categories.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateCategoryDto"
+      },
+      "parameters": [],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/CategoryResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre categorias.\"",
+        "409: \"Ya existe una categoria con el nombre informado.\""
+      ]
+    },
+    {
+      "consumer": "features/categories/api/categories.api.ts",
+      "method": "PATCH",
+      "route": "/api/categories/{param}",
+      "openapiRoute": "/api/categories/{id}",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/categories/categories.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateCategoryDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/CategoryResponseDto\"}",
+        "400: \"Payload invalido o id no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre categorias.\"",
+        "404: \"Categoria no encontrada.\"",
+        "409: \"Ya existe una categoria con el nombre informado.\""
+      ]
+    },
+    {
+      "consumer": "features/categories/api/categories.api.ts",
+      "method": "PATCH",
+      "route": "/api/categories/{param}/deactivate",
+      "openapiRoute": "/api/categories/{id}/deactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/categories/categories.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/CategoryResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre categorias.\"",
+        "404: \"Categoria no encontrada.\""
+      ]
+    },
+    {
+      "consumer": "features/categories/api/categories.api.ts",
+      "method": "PATCH",
+      "route": "/api/categories/{param}/reactivate",
+      "openapiRoute": "/api/categories/{id}/reactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/categories/categories.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/CategoryResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre categorias.\"",
+        "404: \"Categoria no encontrada.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "GET",
+      "route": "/api/inventory",
+      "openapiRoute": "/api/inventory",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "active",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por estado activo del producto. Si no se envia, devuelve activos e inactivos.",
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "stockStatus",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "LOW_STOCK",
+            "type": "string",
+            "enum": ["OUT_OF_STOCK", "LOW_STOCK", "AVAILABLE"]
+          }
+        },
+        {
+          "name": "search",
+          "required": false,
+          "in": "query",
+          "description": "Busca por texto en productName o productSku.",
+          "schema": {
+            "example": "burger",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/InventoryStockResponseDto\"}}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar inventario.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "GET",
+      "route": "/api/inventory/products/{param}",
+      "openapiRoute": "/api/inventory/products/{productId}",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "productId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/InventoryStockResponseDto\"}",
+        "400: \"El productId informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar inventario.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"El producto no participa en inventario porque es NON_STOCKED o RECIPE_BASED.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "GET",
+      "route": "/api/inventory/products/{param}/movements",
+      "openapiRoute": "/api/inventory/products/{productId}/movements",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "productId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "productId",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por producto.",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "name": "movementType",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "WASTE",
+            "type": "string",
+            "enum": [
+              "STOCK_IN",
+              "SALE_OUT",
+              "MANUAL_ADJUSTMENT",
+              "WASTE",
+              "RETURN_IN",
+              "VOID_REVERSAL"
+            ]
+          }
+        },
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "description": "Fecha inicial inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-09T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "description": "Fecha final inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-10T00:00:00.000Z",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/InventoryMovementResponseDto\"}}",
+        "400: \"productId o filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar movimientos.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"El producto no participa en inventario porque es NON_STOCKED o RECIPE_BASED.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "POST",
+      "route": "/api/inventory/products/{param}/stock-in",
+      "openapiRoute": "/api/inventory/products/{productId}/stock-in",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/StockInDto"
+      },
+      "parameters": [
+        {
+          "name": "productId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/InventoryMovementResponseDto\"}",
+        "400: \"Payload invalido o productId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para agregar stock.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"Producto inactivo o no inventariable.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "POST",
+      "route": "/api/inventory/products/{param}/adjust",
+      "openapiRoute": "/api/inventory/products/{productId}/adjust",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/ManualAdjustmentDto"
+      },
+      "parameters": [
+        {
+          "name": "productId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/InventoryMovementResponseDto\"}",
+        "400: \"Payload invalido o productId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para ajustar stock.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"Producto inactivo, no inventariable, o ajuste sin cambios efectivos.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "POST",
+      "route": "/api/inventory/products/{param}/waste",
+      "openapiRoute": "/api/inventory/products/{productId}/waste",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/WasteDto"
+      },
+      "parameters": [
+        {
+          "name": "productId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/InventoryMovementResponseDto\"}",
+        "400: \"Payload invalido o productId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para registrar merma.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"Producto inactivo, no inventariable o stock insuficiente.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "POST",
+      "route": "/api/inventory/products/{param}/return-in",
+      "openapiRoute": "/api/inventory/products/{productId}/return-in",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/ReturnInDto"
+      },
+      "parameters": [
+        {
+          "name": "productId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/InventoryMovementResponseDto\"}",
+        "400: \"Payload invalido o productId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para registrar reingreso.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"Producto inactivo o no inventariable.\""
+      ]
+    },
+    {
+      "consumer": "features/inventory/api/inventory.api.ts",
+      "method": "PATCH",
+      "route": "/api/inventory/products/{param}/minimum-stock",
+      "openapiRoute": "/api/inventory/products/{productId}/minimum-stock",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/inventory/inventory.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateMinimumStockDto"
+      },
+      "parameters": [
+        {
+          "name": "productId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/InventoryStockResponseDto\"}",
+        "400: \"Payload invalido o productId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para actualizar stock minimo.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"El producto no participa en inventario porque es NON_STOCKED o RECIPE_BASED.\""
+      ]
+    },
+    {
+      "consumer": "features/payment-banks/api/payment-banks.api.ts",
+      "method": "GET",
+      "route": "/api/payment-banks",
+      "openapiRoute": "/api/payment-banks",
+      "roles": "ADMIN, MANAGER, AUDITOR, CASHIER",
+      "controller": "src/payment-banks/payment-banks.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "active",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por estado activo. Si no se envia, devuelve todos.",
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/PaymentBankResponseDto\"}}",
+        "400: \"El parametro active debe ser true o false si se envia.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de lectura.\""
+      ]
+    },
+    {
+      "consumer": "features/payment-banks/api/payment-banks.api.ts",
+      "method": "POST",
+      "route": "/api/payment-banks",
+      "openapiRoute": "/api/payment-banks",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/payment-banks/payment-banks.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreatePaymentBankDto"
+      },
+      "parameters": [],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/PaymentBankResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura.\"",
+        "409: \"Ya existe un banco con el nombre informado.\""
+      ]
+    },
+    {
+      "consumer": "features/payment-banks/api/payment-banks.api.ts",
+      "method": "PATCH",
+      "route": "/api/payment-banks/{param}",
+      "openapiRoute": "/api/payment-banks/{id}",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/payment-banks/payment-banks.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdatePaymentBankDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/PaymentBankResponseDto\"}",
+        "400: \"Payload invalido o id no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura.\"",
+        "404: \"Banco no encontrado.\"",
+        "409: \"Ya existe un banco con el nombre informado.\""
+      ]
+    },
+    {
+      "consumer": "features/payment-banks/api/payment-banks.api.ts",
+      "method": "PATCH",
+      "route": "/api/payment-banks/{param}/deactivate",
+      "openapiRoute": "/api/payment-banks/{id}/deactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/payment-banks/payment-banks.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/PaymentBankResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura.\"",
+        "404: \"Banco no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/payment-banks/api/payment-banks.api.ts",
+      "method": "PATCH",
+      "route": "/api/payment-banks/{param}/reactivate",
+      "openapiRoute": "/api/payment-banks/{id}/reactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/payment-banks/payment-banks.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/PaymentBankResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura.\"",
+        "404: \"Banco no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/pos/api/pos-catalog.api.ts",
+      "method": "GET",
+      "route": "/api/pos/catalog",
+      "openapiRoute": "/api/pos/catalog",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/pos/pos.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "salesChannelId",
+          "required": true,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "name": "search",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "categoryId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "name": "cursor",
+          "required": false,
+          "in": "query",
+          "description": "Cursor opaco versionado.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 50,
+            "default": 50,
+            "type": "number"
+          }
+        }
+      ],
+      "responses": ["200: \"Catalogo POS compacto y paginado.\""]
+    },
+    {
+      "consumer": "features/products/api/products.api.ts",
+      "method": "GET",
+      "route": "/api/products",
+      "openapiRoute": "/api/products",
+      "roles": "ADMIN, MANAGER, AUDITOR, CASHIER",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "active",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por estado activo. Si no se envia, devuelve todos los productos.",
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "categoryId",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por categoria.",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "name": "search",
+          "required": false,
+          "in": "query",
+          "description": "Busca por texto en name o sku.",
+          "schema": {
+            "example": "burger",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/ProductResponseDto\"}}",
+        "400: \"El parametro active debe ser true o false si se envia.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar productos.\""
+      ]
+    },
+    {
+      "consumer": "features/products/api/products.api.ts",
+      "method": "GET",
+      "route": "/api/products/{param}",
+      "openapiRoute": "/api/products/{id}",
+      "roles": "ADMIN, MANAGER, AUDITOR, CASHIER",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/ProductResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar productos.\"",
+        "404: \"Producto no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/api/products.api.ts",
+      "method": "POST",
+      "route": "/api/products",
+      "openapiRoute": "/api/products",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/products/products.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateProductDto"
+      },
+      "parameters": [],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/ProductResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre productos.\"",
+        "409: \"Ya existe un producto con el SKU informado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/api/products.api.ts",
+      "method": "PATCH",
+      "route": "/api/products/{param}",
+      "openapiRoute": "/api/products/{id}",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/products/products.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateProductDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/ProductResponseDto\"}",
+        "400: \"Payload invalido o id no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre productos.\"",
+        "404: \"Producto no encontrado.\"",
+        "409: \"Ya existe un producto con el SKU informado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/api/products.api.ts",
+      "method": "PATCH",
+      "route": "/api/products/{param}/deactivate",
+      "openapiRoute": "/api/products/{id}/deactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/ProductResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre productos.\"",
+        "404: \"Producto no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/api/products.api.ts",
+      "method": "PATCH",
+      "route": "/api/products/{param}/reactivate",
+      "openapiRoute": "/api/products/{id}/reactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/ProductResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre productos.\"",
+        "404: \"Producto no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/costs/api/product-costs.api.ts",
+      "method": "GET",
+      "route": "/api/products/{param}/costs",
+      "openapiRoute": "/api/products/{id}/costs",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/ProductCostResponseDto\"}}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar costos.\"",
+        "404: \"Producto no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/costs/api/product-costs.api.ts",
+      "method": "GET",
+      "route": "/api/products/{param}/costs/current",
+      "openapiRoute": "/api/products/{id}/costs/current",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/ProductCostResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar el costo vigente.\"",
+        "404: \"Producto o costo vigente no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/costs/api/product-costs.api.ts",
+      "method": "POST",
+      "route": "/api/products/{param}/costs",
+      "openapiRoute": "/api/products/{id}/costs",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/products/products.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateProductCostDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/ProductCostResponseDto\"}",
+        "400: \"Payload invalido, id no valido, producto inactivo o intento de enviar un valor no permitido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para registrar costos.\"",
+        "404: \"Producto no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/prices/api/product-prices.api.ts",
+      "method": "GET",
+      "route": "/api/products/{param}/prices",
+      "openapiRoute": "/api/products/{id}/prices",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "channelId",
+          "required": false,
+          "in": "query",
+          "description": "UUID del canal de venta. Si se envia, filtra el historial por producto/canal.",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/ProductPriceResponseDto\"}}",
+        "400: \"El id informado o channelId deben ser UUID validos si se envian.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar historial de precios.\"",
+        "404: \"Producto o canal no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/prices/api/product-prices.api.ts",
+      "method": "GET",
+      "route": "/api/products/{param}/prices/current",
+      "openapiRoute": "/api/products/{id}/prices/current",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/products/products.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "channelId",
+          "required": true,
+          "in": "query",
+          "description": "UUID del canal de venta requerido para resolver el precio.",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/ProductPriceResponseDto\"}",
+        "400: \"El id informado y channelId deben ser UUID validos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar el precio vigente.\"",
+        "404: \"Producto, canal o precio vigente no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/products/prices/api/product-prices.api.ts",
+      "method": "POST",
+      "route": "/api/products/{param}/prices",
+      "openapiRoute": "/api/products/{id}/prices",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/products/products.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateProductPriceDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/ProductPriceResponseDto\"}",
+        "400: \"Payload invalido, id no valido, producto o canal inactivo, o intento de enviar un valor no permitido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para registrar precios.\"",
+        "404: \"Producto o canal no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/reports/api/reports.api.ts",
+      "method": "GET",
+      "route": "/api/reports/stock",
+      "openapiRoute": "/api/reports/stock",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/reports/reports.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "responseMode",
+          "required": false,
+          "in": "query",
+          "description": "Omita para usar el contrato legacy.",
+          "schema": {
+            "type": "string",
+            "enum": ["paged"]
+          }
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "active",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por estado activo del producto. Si no se envia, devuelve activos e inactivos.",
+          "schema": {
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "categoryId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+            "type": "string"
+          }
+        },
+        {
+          "name": "stockStatus",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "LOW_STOCK",
+            "type": "string",
+            "enum": ["AVAILABLE", "LOW_STOCK", "OUT_OF_STOCK", "NOT_TRACKED"]
+          }
+        },
+        {
+          "name": "stockManagementType",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "FINISHED_PRODUCT",
+            "type": "string",
+            "enum": ["FINISHED_PRODUCT", "RECIPE_BASED", "NON_STOCKED"]
+          }
+        },
+        {
+          "name": "search",
+          "required": false,
+          "in": "query",
+          "description": "Busca por texto en productName o productSku.",
+          "schema": {
+            "example": "burger",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/StockReportResponseDto\"}}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar reportes.\""
+      ]
+    },
+    {
+      "consumer": "features/reports/api/reports.api.ts",
+      "method": "GET",
+      "route": "/api/reports/sales-by-channel",
+      "openapiRoute": "/api/reports/sales-by-channel",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/reports/reports.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO inicial inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-01T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO final inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-10T23:59:59.999Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "salesChannelId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/SalesByChannelReportResponseDto\"}}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar reportes.\""
+      ]
+    },
+    {
+      "consumer": "features/reports/api/reports.api.ts",
+      "method": "GET",
+      "route": "/api/reports/sales-by-product",
+      "openapiRoute": "/api/reports/sales-by-product",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/reports/reports.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO inicial inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-01T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO final inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-10T23:59:59.999Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "salesChannelId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+            "type": "string"
+          }
+        },
+        {
+          "name": "productId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/SalesByProductReportResponseDto\"}}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar reportes.\""
+      ]
+    },
+    {
+      "consumer": "features/reports/api/reports.api.ts",
+      "method": "GET",
+      "route": "/api/reports/sales-by-user",
+      "openapiRoute": "/api/reports/sales-by-user",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/reports/reports.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO inicial inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-01T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO final inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-10T23:59:59.999Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "salesChannelId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+            "type": "string"
+          }
+        },
+        {
+          "name": "userId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/SalesByUserReportResponseDto\"}}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar reportes.\""
+      ]
+    },
+    {
+      "consumer": "features/reports/api/reports.api.ts",
+      "method": "GET",
+      "route": "/api/reports/inventory-movements",
+      "openapiRoute": "/api/reports/inventory-movements",
+      "roles": "ADMIN, MANAGER, AUDITOR",
+      "controller": "src/reports/reports.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO inicial inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-01T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "description": "Fecha/hora ISO final inclusive.",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-10T23:59:59.999Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "productId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+            "type": "string"
+          }
+        },
+        {
+          "name": "movementType",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "SALE_OUT",
+            "type": "string",
+            "enum": [
+              "STOCK_IN",
+              "SALE_OUT",
+              "MANUAL_ADJUSTMENT",
+              "WASTE",
+              "RETURN_IN",
+              "VOID_REVERSAL"
+            ]
+          }
+        },
+        {
+          "name": "referenceType",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "SALE_TICKET",
+            "type": "string",
+            "enum": ["MANUAL", "SALE_TICKET", "SALE_VOID", "SYSTEM"]
+          }
+        },
+        {
+          "name": "createdById",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+            "type": "string"
+          }
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "example": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "example": 0,
+            "type": "number"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/InventoryMovementsReportResponseDto\"}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar reportes.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sale-ticket-items.api.ts",
+      "method": "POST",
+      "route": "/api/sales/tickets/{param}/items",
+      "openapiRoute": "/api/sales/tickets/{ticketId}/items",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/AddSaleTicketItemDto"
+      },
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para editar tickets.\"",
+        "404: \"Ticket, producto, costo vigente o precio vigente no encontrado.\"",
+        "409: \"El ticket no esta en DRAFT o el producto esta inactivo.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sale-ticket-items.api.ts",
+      "method": "PATCH",
+      "route": "/api/sales/tickets/{param}/items/{param}",
+      "openapiRoute": "/api/sales/tickets/{ticketId}/items/{itemId}",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateSaleTicketItemDto"
+      },
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "itemId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para editar tickets.\"",
+        "404: \"Ticket o linea no encontrado.\"",
+        "409: \"El ticket no esta en DRAFT.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sale-ticket-items.api.ts",
+      "method": "DELETE",
+      "route": "/api/sales/tickets/{param}/items/{param}",
+      "openapiRoute": "/api/sales/tickets/{ticketId}/items/{itemId}",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "itemId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "expectedVersion",
+          "required": false,
+          "in": "query",
+          "description": "Version visible del agregado.",
+          "schema": {
+            "example": "3",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"ticketId o itemId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para editar tickets.\"",
+        "404: \"Ticket o linea no encontrado.\"",
+        "409: \"El ticket no esta en DRAFT.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sales.api.ts",
+      "method": "GET",
+      "route": "/api/sales/tickets",
+      "openapiRoute": "/api/sales/tickets",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/sales/sales.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "responseMode",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["summary"]
+          }
+        },
+        {
+          "name": "status",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "DRAFT",
+            "type": "string",
+            "enum": ["DRAFT", "CONFIRMED", "CANCELLED", "VOIDED"]
+          }
+        },
+        {
+          "name": "salesChannelId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+            "type": "string"
+          }
+        },
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-09T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-10T23:59:59.999Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "createdById",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+            "type": "string"
+          }
+        },
+        {
+          "name": "search",
+          "required": false,
+          "in": "query",
+          "description": "Busca por ticketNumber exacto o texto en notas.",
+          "schema": {
+            "example": "1001",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}}",
+        "400: \"Filtros de consulta invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar tickets.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sales.api.ts",
+      "method": "GET",
+      "route": "/api/sales/tickets/{param}",
+      "openapiRoute": "/api/sales/tickets/{ticketId}",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/sales/sales.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"El ticketId informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar tickets.\"",
+        "404: \"Ticket no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sales.api.ts",
+      "method": "POST",
+      "route": "/api/sales/tickets",
+      "openapiRoute": "/api/sales/tickets",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateSaleTicketDto"
+      },
+      "parameters": [],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para crear tickets.\"",
+        "404: \"Canal de venta no encontrado.\"",
+        "409: \"Canal de venta inactivo.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sales.api.ts",
+      "method": "PATCH",
+      "route": "/api/sales/tickets/{param}",
+      "openapiRoute": "/api/sales/tickets/{ticketId}",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateSaleTicketDto"
+      },
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para editar tickets.\"",
+        "404: \"Ticket no encontrado.\"",
+        "409: \"El ticket ya no esta en DRAFT y no puede modificarse.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sales.api.ts",
+      "method": "POST",
+      "route": "/api/sales/tickets/{param}/cancel",
+      "openapiRoute": "/api/sales/tickets/{ticketId}/cancel",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CancelSaleTicketDto"
+      },
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"Payload invalido o ticketId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para cancelar tickets.\"",
+        "404: \"Ticket no encontrado.\"",
+        "409: \"El ticket ya no esta en DRAFT y no puede cancelarse.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sales.api.ts",
+      "method": "POST",
+      "route": "/api/sales/tickets/{param}/confirm",
+      "openapiRoute": "/api/sales/tickets/{ticketId}/confirm",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/ConfirmSaleTicketDto"
+      },
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "required": true,
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"Payload invalido o ticketId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para confirmar tickets.\"",
+        "404: \"Ticket no encontrado.\"",
+        "409: \"El ticket no esta en DRAFT, no tiene lineas o no posee stock suficiente para confirmarse.\""
+      ]
+    },
+    {
+      "consumer": "features/sales/api/sales.api.ts",
+      "method": "POST",
+      "route": "/api/sales/tickets/{param}/void",
+      "openapiRoute": "/api/sales/tickets/{ticketId}/void",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/sales/sales.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/VoidSaleTicketDto"
+      },
+      "parameters": [
+        {
+          "name": "ticketId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "required": true,
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SaleTicketResponseDto\"}",
+        "400: \"Payload invalido o ticketId no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para anular ventas.\"",
+        "404: \"Ticket no encontrado.\"",
+        "409: \"El ticket no esta en CONFIRMED y no puede anularse.\""
+      ]
+    },
+    {
+      "consumer": "features/sales-channels/api/sales-channels.api.ts",
+      "method": "GET",
+      "route": "/api/sales-channels",
+      "openapiRoute": "/api/sales-channels",
+      "roles": "ADMIN, MANAGER, AUDITOR, CASHIER",
+      "controller": "src/sales-channels/sales-channels.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "active",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por estado activo. Si no se envia, devuelve todos los canales.",
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/SalesChannelResponseDto\"}}",
+        "400: \"El parametro active debe ser true o false si se envia.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos para consultar canales de venta.\""
+      ]
+    },
+    {
+      "consumer": "features/sales-channels/api/sales-channels.api.ts",
+      "method": "POST",
+      "route": "/api/sales-channels",
+      "openapiRoute": "/api/sales-channels",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/sales-channels/sales-channels.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateSalesChannelDto"
+      },
+      "parameters": [],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/SalesChannelResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre canales de venta.\"",
+        "409: \"Ya existe un canal con el nombre o codigo informado.\""
+      ]
+    },
+    {
+      "consumer": "features/sales-channels/api/sales-channels.api.ts",
+      "method": "PATCH",
+      "route": "/api/sales-channels/{param}",
+      "openapiRoute": "/api/sales-channels/{id}",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/sales-channels/sales-channels.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateSalesChannelDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SalesChannelResponseDto\"}",
+        "400: \"Payload invalido o id no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre canales de venta.\"",
+        "404: \"Canal de venta no encontrado.\"",
+        "409: \"Ya existe un canal con el nombre o codigo informado.\""
+      ]
+    },
+    {
+      "consumer": "features/sales-channels/api/sales-channels.api.ts",
+      "method": "PATCH",
+      "route": "/api/sales-channels/{param}/deactivate",
+      "openapiRoute": "/api/sales-channels/{id}/deactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/sales-channels/sales-channels.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SalesChannelResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre canales de venta.\"",
+        "404: \"Canal de venta no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/sales-channels/api/sales-channels.api.ts",
+      "method": "PATCH",
+      "route": "/api/sales-channels/{param}/reactivate",
+      "openapiRoute": "/api/sales-channels/{id}/reactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/sales-channels/sales-channels.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/SalesChannelResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene permisos de escritura sobre canales de venta.\"",
+        "404: \"Canal de venta no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "POST",
+      "route": "/api/tables/{param}/orders/open",
+      "openapiRoute": "/api/tables/{tableId}/orders/open",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/OpenTableOrderDto"
+      },
+      "parameters": [
+        {
+          "name": "tableId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"Payload o tableId invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"Mesa o canal de venta no encontrado.\"",
+        "409: \"Mesa inactiva u ocupada.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "GET",
+      "route": "/api/tables/{param}/orders/current",
+      "openapiRoute": "/api/tables/{tableId}/orders/current",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "tableId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"tableId invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"La mesa no tiene orden abierta.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "GET",
+      "route": "/api/table-orders",
+      "openapiRoute": "/api/table-orders",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "status",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": ["OPEN", "CANCELLED", "CLOSED"]
+          }
+        },
+        {
+          "name": "tableId",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "name": "openedById",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        {
+          "name": "from",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-30T00:00:00.000Z",
+            "type": "string"
+          }
+        },
+        {
+          "name": "to",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "format": "date-time",
+            "example": "2026-06-30T23:59:59.999Z",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}}",
+        "400: \"Filtros invalidos.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "GET",
+      "route": "/api/table-orders/{param}",
+      "openapiRoute": "/api/table-orders/{id}",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"id invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"Orden no encontrada.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "POST",
+      "route": "/api/table-orders/{param}/items",
+      "openapiRoute": "/api/table-orders/{id}/items",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/AddSaleTicketItemDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"Payload o id invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"Orden, ticket, producto, costo vigente o precio vigente no encontrado.\"",
+        "409: \"La orden no esta abierta o el ticket no esta en DRAFT.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "PATCH",
+      "route": "/api/table-orders/{param}/items/{param}",
+      "openapiRoute": "/api/table-orders/{id}/items/{itemId}",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateSaleTicketItemDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "itemId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"Payload, id o itemId invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"Orden, ticket o item no encontrado.\"",
+        "409: \"La orden no esta abierta o el ticket no esta en DRAFT.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "DELETE",
+      "route": "/api/table-orders/{param}/items/{param}",
+      "openapiRoute": "/api/table-orders/{id}/items/{itemId}",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "itemId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "expectedVersion",
+          "required": false,
+          "in": "query",
+          "description": "Version visible del agregado.",
+          "schema": {
+            "example": "3",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"id o itemId invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"Orden, ticket o item no encontrado.\"",
+        "409: \"La orden no esta abierta o el ticket no esta en DRAFT.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "POST",
+      "route": "/api/table-orders/{param}/cancel",
+      "openapiRoute": "/api/table-orders/{id}/cancel",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CancelTableOrderDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"Payload o id invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"Orden no encontrada.\"",
+        "409: \"La orden no esta abierta.\""
+      ]
+    },
+    {
+      "consumer": "features/table-orders/api/table-orders.api.ts",
+      "method": "POST",
+      "route": "/api/table-orders/{param}/close",
+      "openapiRoute": "/api/table-orders/{id}/close",
+      "roles": "ADMIN, MANAGER, CASHIER",
+      "controller": "src/table-orders/table-orders.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/ConfirmSaleTicketDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "idempotency-key",
+          "required": true,
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/TableOrderResponseDto\"}",
+        "400: \"Payload o id invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "404: \"Orden, ticket o pago no encontrado.\"",
+        "409: \"La orden no esta abierta, el ticket no esta en DRAFT, no tiene items, falta pago o no hay stock suficiente.\""
+      ]
+    },
+    {
+      "consumer": "features/tables/api/tables.api.ts",
+      "method": "GET",
+      "route": "/api/tables",
+      "openapiRoute": "/api/tables",
+      "roles": "ADMIN, MANAGER, CASHIER, AUDITOR",
+      "controller": "src/tables/tables.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        },
+        {
+          "name": "active",
+          "required": false,
+          "in": "query",
+          "description": "Filtra por estado activo. Debe ser true o false si se envia.",
+          "schema": {
+            "example": "true",
+            "type": "boolean"
+          }
+        },
+        {
+          "name": "area",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "example": "Salon principal",
+            "type": "string"
+          }
+        },
+        {
+          "name": "search",
+          "required": false,
+          "in": "query",
+          "description": "Busca por code, name o area.",
+          "schema": {
+            "example": "M01",
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/TableResponseDto\"}}"
+      ]
+    },
+    {
+      "consumer": "features/tables/api/tables.api.ts",
+      "method": "POST",
+      "route": "/api/tables",
+      "openapiRoute": "/api/tables",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/tables/tables.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateTableDto"
+      },
+      "parameters": [],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/TableResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"Rol insuficiente.\"",
+        "409: \"Ya existe una mesa con ese codigo.\""
+      ]
+    },
+    {
+      "consumer": "features/tables/api/tables.api.ts",
+      "method": "PATCH",
+      "route": "/api/tables/{param}",
+      "openapiRoute": "/api/tables/{tableId}",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/tables/tables.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateTableDto"
+      },
+      "parameters": [
+        {
+          "name": "tableId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/TableResponseDto\"}",
+        "400: \"Payload o tableId invalido.\"",
+        "404: \"Mesa no encontrada.\"",
+        "409: \"Ya existe una mesa con ese codigo.\""
+      ]
+    },
+    {
+      "consumer": "features/tables/api/tables.api.ts",
+      "method": "PATCH",
+      "route": "/api/tables/{param}/deactivate",
+      "openapiRoute": "/api/tables/{tableId}/deactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/tables/tables.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "tableId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": ["200: {\"$ref\":\"#/components/schemas/TableResponseDto\"}"]
+    },
+    {
+      "consumer": "features/tables/api/tables.api.ts",
+      "method": "PATCH",
+      "route": "/api/tables/{param}/reactivate",
+      "openapiRoute": "/api/tables/{tableId}/reactivate",
+      "roles": "ADMIN, MANAGER",
+      "controller": "src/tables/tables.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "tableId",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": ["200: {\"$ref\":\"#/components/schemas/TableResponseDto\"}"]
+    },
+    {
+      "consumer": "features/users/api/users.api.ts",
+      "method": "GET",
+      "route": "/api/users",
+      "openapiRoute": "/api/users",
+      "roles": "ADMIN",
+      "controller": "src/users/users.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "limit",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "type": "number"
+          }
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "in": "query",
+          "schema": {
+            "minimum": 0,
+            "default": 0,
+            "type": "number"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/UserResponseDto\"}}",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene rol ADMIN.\""
+      ]
+    },
+    {
+      "consumer": "features/users/api/users.api.ts",
+      "method": "GET",
+      "route": "/api/users/{param}",
+      "openapiRoute": "/api/users/{id}",
+      "roles": "ADMIN",
+      "controller": "src/users/users.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/UserResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene rol ADMIN.\"",
+        "404: \"Usuario no encontrado.\""
+      ]
+    },
+    {
+      "consumer": "features/users/api/users.api.ts",
+      "method": "POST",
+      "route": "/api/users",
+      "openapiRoute": "/api/users",
+      "roles": "ADMIN",
+      "controller": "src/users/users.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/CreateUserDto"
+      },
+      "parameters": [],
+      "responses": [
+        "201: {\"$ref\":\"#/components/schemas/UserResponseDto\"}",
+        "400: \"Payload invalido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene rol ADMIN.\"",
+        "409: \"Ya existe un usuario con el email informado.\""
+      ]
+    },
+    {
+      "consumer": "features/users/api/users.api.ts",
+      "method": "PATCH",
+      "route": "/api/users/{param}",
+      "openapiRoute": "/api/users/{id}",
+      "roles": "ADMIN",
+      "controller": "src/users/users.controller.ts",
+      "request": {
+        "$ref": "#/components/schemas/UpdateUserDto"
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/UserResponseDto\"}",
+        "400: \"Payload invalido o id no valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene rol ADMIN.\"",
+        "404: \"Usuario no encontrado.\"",
+        "409: \"Ya existe un usuario con el email informado.\""
+      ]
+    },
+    {
+      "consumer": "features/users/api/users.api.ts",
+      "method": "PATCH",
+      "route": "/api/users/{param}/deactivate",
+      "openapiRoute": "/api/users/{id}/deactivate",
+      "roles": "ADMIN",
+      "controller": "src/users/users.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/UserResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene rol ADMIN.\"",
+        "404: \"Usuario no encontrado.\"",
+        "409: \"No se puede desactivar el ultimo ADMIN activo.\""
+      ]
+    },
+    {
+      "consumer": "features/users/api/users.api.ts",
+      "method": "PATCH",
+      "route": "/api/users/{param}/reactivate",
+      "openapiRoute": "/api/users/{id}/reactivate",
+      "roles": "ADMIN",
+      "controller": "src/users/users.controller.ts",
+      "request": null,
+      "parameters": [
+        {
+          "name": "id",
+          "required": true,
+          "in": "path",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        "200: {\"$ref\":\"#/components/schemas/UserResponseDto\"}",
+        "400: \"El id informado no es un UUID valido.\"",
+        "401: \"Token ausente o invalido.\"",
+        "403: \"El usuario autenticado no tiene rol ADMIN.\"",
+        "404: \"Usuario no encontrado.\""
+      ]
+    }
+  ],
+  "schemas": {
+    "AuditLogResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "userId": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "USER_CREATED",
+            "USER_UPDATED",
+            "USER_DEACTIVATED",
+            "USER_REACTIVATED",
+            "CATEGORY_CREATED",
+            "CATEGORY_UPDATED",
+            "CATEGORY_DEACTIVATED",
+            "CATEGORY_REACTIVATED",
+            "SALES_CHANNEL_CREATED",
+            "SALES_CHANNEL_UPDATED",
+            "SALES_CHANNEL_DEACTIVATED",
+            "SALES_CHANNEL_REACTIVATED",
+            "PRODUCT_CREATED",
+            "PRODUCT_UPDATED",
+            "PRODUCT_DEACTIVATED",
+            "PRODUCT_REACTIVATED",
+            "PRODUCT_COST_CREATED",
+            "PRODUCT_PRICE_CREATED",
+            "INVENTORY_STOCK_IN",
+            "INVENTORY_MANUAL_ADJUSTMENT",
+            "INVENTORY_WASTE",
+            "INVENTORY_RETURN_IN",
+            "INVENTORY_SALE_OUT",
+            "INVENTORY_VOID_REVERSAL",
+            "INVENTORY_MINIMUM_STOCK_UPDATED",
+            "PAYMENT_BANK_CREATED",
+            "PAYMENT_BANK_UPDATED",
+            "PAYMENT_BANK_DEACTIVATED",
+            "PAYMENT_BANK_REACTIVATED",
+            "SALE_TICKET_CREATED",
+            "SALE_TICKET_UPDATED",
+            "SALE_TICKET_CANCELLED",
+            "SALE_TICKET_ITEM_ADDED",
+            "SALE_TICKET_ITEM_UPDATED",
+            "SALE_TICKET_ITEM_REMOVED",
+            "SALE_TICKET_CONFIRMED",
+            "SALE_TICKET_VOIDED",
+            "RESTAURANT_TABLE_CREATED",
+            "RESTAURANT_TABLE_UPDATED",
+            "RESTAURANT_TABLE_DEACTIVATED",
+            "RESTAURANT_TABLE_REACTIVATED",
+            "TABLE_ORDER_OPENED",
+            "TABLE_ORDER_CANCELLED",
+            "TABLE_ORDER_CLOSED"
+          ],
+          "example": "SALE_TICKET_CONFIRMED"
+        },
+        "entityType": {
+          "type": "string",
+          "enum": [
+            "USER",
+            "CATEGORY",
+            "SALES_CHANNEL",
+            "PRODUCT",
+            "PRODUCT_COST_HISTORY",
+            "PRODUCT_PRICE_HISTORY",
+            "PRODUCT_STOCK",
+            "INVENTORY_MOVEMENT",
+            "PAYMENT_BANK",
+            "SALE_TICKET",
+            "SALE_TICKET_ITEM",
+            "RESTAURANT_TABLE",
+            "TABLE_ORDER",
+            "SYSTEM"
+          ],
+          "example": "SALE_TICKET"
+        },
+        "entityId": {
+          "type": "object",
+          "nullable": true,
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4"
+        },
+        "beforeData": {
+          "type": "object",
+          "nullable": true
+        },
+        "afterData": {
+          "type": "object",
+          "nullable": true
+        },
+        "metadata": {
+          "type": "object",
+          "nullable": true
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        }
+      },
+      "required": ["id", "action", "entityType", "createdAt"]
+    },
+    "InventoryStockResponseDto": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productName": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "productSku": {
+          "type": "object",
+          "example": "BURGER-001",
+          "nullable": true
+        },
+        "unit": {
+          "type": "string",
+          "example": "UNIT"
+        },
+        "stockManagementType": {
+          "type": "string",
+          "enum": ["FINISHED_PRODUCT", "RECIPE_BASED", "NON_STOCKED"],
+          "example": "FINISHED_PRODUCT"
+        },
+        "currentStock": {
+          "type": "string",
+          "example": "18.50",
+          "description": "Stock actual serializado como string decimal para evitar perdida de precision."
+        },
+        "minimumStock": {
+          "type": "string",
+          "example": "10.00",
+          "description": "Stock minimo serializado como string decimal para evitar perdida de precision."
+        },
+        "stockStatus": {
+          "type": "string",
+          "enum": ["OUT_OF_STOCK", "LOW_STOCK", "AVAILABLE"],
+          "example": "AVAILABLE"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        }
+      },
+      "required": [
+        "productId",
+        "productName",
+        "productSku",
+        "unit",
+        "stockManagementType",
+        "currentStock",
+        "minimumStock",
+        "stockStatus",
+        "updatedAt"
+      ]
+    },
+    "InventoryMovementResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productName": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "movementType": {
+          "type": "string",
+          "enum": [
+            "STOCK_IN",
+            "SALE_OUT",
+            "MANUAL_ADJUSTMENT",
+            "WASTE",
+            "RETURN_IN",
+            "VOID_REVERSAL"
+          ],
+          "example": "STOCK_IN"
+        },
+        "quantity": {
+          "type": "string",
+          "example": "12.00",
+          "description": "Cantidad serializada como string decimal para evitar perdida de precision."
+        },
+        "previousStock": {
+          "type": "string",
+          "example": "8.00",
+          "description": "Stock anterior serializado como string decimal para evitar perdida de precision."
+        },
+        "newStock": {
+          "type": "string",
+          "example": "20.00",
+          "description": "Stock nuevo serializado como string decimal para evitar perdida de precision."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Reposicion de produccion."
+        },
+        "referenceType": {
+          "type": "string",
+          "enum": ["MANUAL", "SALE_TICKET", "SALE_VOID", "SYSTEM"],
+          "example": "MANUAL"
+        },
+        "referenceId": {
+          "type": "object",
+          "nullable": true,
+          "example": "ref-123"
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        }
+      },
+      "required": [
+        "id",
+        "productId",
+        "productName",
+        "movementType",
+        "quantity",
+        "previousStock",
+        "newStock",
+        "reason",
+        "referenceType",
+        "createdAt"
+      ]
+    },
+    "StockInDto": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "number",
+          "example": 24,
+          "minimum": 0.01,
+          "description": "Cantidad a ingresar. Debe ser mayor que 0."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Produccion terminada del turno noche.",
+          "description": "Motivo operativo del ingreso de stock."
+        }
+      },
+      "required": ["quantity", "reason"]
+    },
+    "ManualAdjustmentDto": {
+      "type": "object",
+      "properties": {
+        "newStock": {
+          "type": "number",
+          "example": 12,
+          "minimum": 0,
+          "description": "Stock final deseado luego del ajuste. El servidor calcula la diferencia."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Correccion por conteo fisico.",
+          "description": "Motivo administrativo del ajuste."
+        }
+      },
+      "required": ["newStock", "reason"]
+    },
+    "WasteDto": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "number",
+          "example": 3,
+          "minimum": 0.01,
+          "description": "Cantidad descartada. Debe ser mayor que 0."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Producto vencido.",
+          "description": "Motivo de la merma o descarte."
+        }
+      },
+      "required": ["quantity", "reason"]
+    },
+    "ReturnInDto": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "number",
+          "example": 2,
+          "minimum": 0.01,
+          "description": "Cantidad que reingresa al stock. Debe ser mayor que 0."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Devolucion interna de producto en buen estado.",
+          "description": "Motivo del reingreso manual."
+        }
+      },
+      "required": ["quantity", "reason"]
+    },
+    "UpdateMinimumStockDto": {
+      "type": "object",
+      "properties": {
+        "minimumStock": {
+          "type": "number",
+          "example": 10,
+          "minimum": 0,
+          "description": "Stock minimo deseado para alertas operativas."
+        }
+      },
+      "required": ["minimumStock"]
+    },
+    "CreatePaymentBankDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Banco Galicia"
+        },
+        "description": {
+          "type": "string",
+          "example": "Cuenta principal para transferencias."
+        }
+      },
+      "required": ["name"]
+    },
+    "PaymentBankResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "example": "Banco Galicia"
+        },
+        "description": {
+          "type": "object",
+          "example": "Cuenta principal para transferencias.",
+          "nullable": true
+        },
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-14T18:00:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-14T18:00:00.000Z"
+        }
+      },
+      "required": ["id", "name", "active", "createdAt", "updatedAt"]
+    },
+    "UpdatePaymentBankDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Banco Galicia"
+        },
+        "description": {
+          "type": "string",
+          "example": "Cuenta principal para transferencias."
+        }
+      }
+    },
+    "CreateUserDto": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "admin@restaurant.local"
+        },
+        "password": {
+          "type": "string",
+          "minLength": 8,
+          "example": "change_me_123"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Ana"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Gomez"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["ADMIN", "MANAGER", "CASHIER", "AUDITOR"],
+          "example": "ADMIN"
+        }
+      },
+      "required": ["email", "password", "firstName", "lastName", "role"]
+    },
+    "UserResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "email": {
+          "type": "string",
+          "example": "admin@restaurant.local"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Ana"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Gomez"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["ADMIN", "MANAGER", "CASHIER", "AUDITOR"],
+          "example": "ADMIN"
+        },
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "lastLoginAt": {
+          "type": "object",
+          "example": "2026-06-08T23:15:00.000Z",
+          "nullable": true
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-08T23:00:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-08T23:10:00.000Z"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "role",
+        "active",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UpdateUserDto": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "manager@restaurant.local"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Ana"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Gomez"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["ADMIN", "MANAGER", "CASHIER", "AUDITOR"],
+          "example": "MANAGER"
+        }
+      }
+    },
+    "LoginDto": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "admin@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "password123",
+          "minLength": 8
+        }
+      },
+      "required": ["email", "password"]
+    },
+    "AuthResponseDto": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string",
+          "example": "JWT_TOKEN"
+        },
+        "user": {
+          "$ref": "#/components/schemas/UserResponseDto"
+        }
+      },
+      "required": ["accessToken", "user"]
+    },
+    "CreateCategoryDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Bebidas"
+        },
+        "description": {
+          "type": "string",
+          "example": "Productos frios, calientes y embotellados."
+        }
+      },
+      "required": ["name"]
+    },
+    "CategoryResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "example": "Bebidas"
+        },
+        "description": {
+          "type": "object",
+          "example": "Productos frios, calientes y embotellados.",
+          "nullable": true
+        },
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T01:30:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T01:30:00.000Z"
+        }
+      },
+      "required": ["id", "name", "active", "createdAt", "updatedAt"]
+    },
+    "UpdateCategoryDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Bebidas"
+        },
+        "description": {
+          "type": "string",
+          "example": "Productos frios, calientes y embotellados."
+        }
+      }
+    },
+    "SalesChannelSubTaxInputDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "IVA"
+        },
+        "percentage": {
+          "type": "number",
+          "example": 21,
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": ["name", "percentage"]
+    },
+    "CreateSalesChannelDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Mostrador"
+        },
+        "code": {
+          "type": "string",
+          "example": "COUNTER"
+        },
+        "description": {
+          "type": "string",
+          "example": "Ventas directas en caja o salón."
+        },
+        "commissionType": {
+          "type": "string",
+          "enum": ["NONE", "PERCENTAGE", "FIXED"],
+          "example": "NONE",
+          "default": "NONE"
+        },
+        "commissionValue": {
+          "type": "number",
+          "example": 0,
+          "default": 0,
+          "minimum": 0
+        },
+        "subTaxes": {
+          "example": [
+            {
+              "name": "IVA",
+              "percentage": 21
+            }
+          ],
+          "default": [],
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SalesChannelSubTaxInputDto"
+          }
+        }
+      },
+      "required": ["name", "code"]
+    },
+    "SalesChannelSubTaxResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "example": "IVA"
+        },
+        "percentage": {
+          "type": "number",
+          "example": 21
+        }
+      },
+      "required": ["id", "name", "percentage"]
+    },
+    "SalesChannelResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "example": "PedidosYa"
+        },
+        "code": {
+          "type": "string",
+          "example": "PEDIDOS_YA"
+        },
+        "description": {
+          "type": "object",
+          "example": "Canal de marketplace con comision porcentual.",
+          "nullable": true
+        },
+        "commissionType": {
+          "type": "string",
+          "enum": ["NONE", "PERCENTAGE", "FIXED"],
+          "example": "PERCENTAGE"
+        },
+        "commissionValue": {
+          "type": "number",
+          "example": 18
+        },
+        "subTaxes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SalesChannelSubTaxResponseDto"
+          }
+        },
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T01:45:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T01:45:00.000Z"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "code",
+        "commissionType",
+        "commissionValue",
+        "subTaxes",
+        "active",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UpdateSalesChannelDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Mostrador"
+        },
+        "code": {
+          "type": "string",
+          "example": "COUNTER"
+        },
+        "description": {
+          "type": "string",
+          "example": "Ventas directas en caja o salón."
+        },
+        "commissionType": {
+          "type": "string",
+          "enum": ["NONE", "PERCENTAGE", "FIXED"],
+          "example": "PERCENTAGE"
+        },
+        "commissionValue": {
+          "type": "number",
+          "example": 18,
+          "minimum": 0
+        },
+        "subTaxes": {
+          "example": [
+            {
+              "name": "IVA",
+              "percentage": 21
+            }
+          ],
+          "description": "Si se envia, reemplaza la lista completa de subtaxes del canal.",
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SalesChannelSubTaxInputDto"
+          }
+        }
+      }
+    },
+    "CreateProductDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "description": {
+          "type": "string",
+          "example": "Medallon, pan, queso y vegetales."
+        },
+        "sku": {
+          "type": "string",
+          "example": "BURG-001"
+        },
+        "categoryId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4"
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["UNIT", "PORTION", "SERVICE"],
+          "example": "UNIT"
+        },
+        "stockManagementType": {
+          "type": "string",
+          "enum": ["FINISHED_PRODUCT", "RECIPE_BASED", "NON_STOCKED"],
+          "example": "FINISHED_PRODUCT",
+          "default": "FINISHED_PRODUCT"
+        }
+      },
+      "required": ["name", "unit"]
+    },
+    "ProductResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "description": {
+          "type": "object",
+          "example": "Medallon, pan, queso y vegetales.",
+          "nullable": true
+        },
+        "sku": {
+          "type": "object",
+          "example": "BURG-001",
+          "nullable": true
+        },
+        "categoryId": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4"
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["UNIT", "PORTION", "SERVICE"],
+          "example": "UNIT"
+        },
+        "stockManagementType": {
+          "type": "string",
+          "enum": ["FINISHED_PRODUCT", "RECIPE_BASED", "NON_STOCKED"],
+          "example": "FINISHED_PRODUCT"
+        },
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T02:00:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T02:00:00.000Z"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "unit",
+        "stockManagementType",
+        "active",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CreateProductCostDto": {
+      "type": "object",
+      "properties": {
+        "cost": {
+          "type": "number",
+          "example": 3500.5,
+          "minimum": 0,
+          "description": "Costo del producto. El servidor asigna validFrom y no admite validTo ni createdById en el payload."
+        }
+      },
+      "required": ["cost"]
+    },
+    "ProductCostResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "cost": {
+          "type": "string",
+          "example": "3500.50",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "validFrom": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        },
+        "validTo": {
+          "type": "object",
+          "example": "2026-06-10T03:00:00.000Z",
+          "nullable": true
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        },
+        "isCurrent": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "required": [
+        "id",
+        "productId",
+        "cost",
+        "validFrom",
+        "createdAt",
+        "isCurrent"
+      ]
+    },
+    "CreateProductPriceDto": {
+      "type": "object",
+      "properties": {
+        "salesChannelId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4"
+        },
+        "price": {
+          "type": "number",
+          "example": 5999.99,
+          "minimum": 0,
+          "description": "Precio del producto para el canal. El servidor asigna validFrom y no admite validTo ni createdById en el payload."
+        }
+      },
+      "required": ["salesChannelId", "price"]
+    },
+    "ProductPriceResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "salesChannelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "salesChannelName": {
+          "type": "object",
+          "example": "PedidosYa",
+          "nullable": true
+        },
+        "price": {
+          "type": "string",
+          "example": "5999.99",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "validFrom": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        },
+        "validTo": {
+          "type": "object",
+          "example": "2026-06-10T03:00:00.000Z",
+          "nullable": true
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        },
+        "isCurrent": {
+          "type": "boolean",
+          "example": true
+        }
+      },
+      "required": [
+        "id",
+        "productId",
+        "salesChannelId",
+        "price",
+        "validFrom",
+        "createdAt",
+        "isCurrent"
+      ]
+    },
+    "UpdateProductDto": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "description": {
+          "type": "string",
+          "example": "Medallon, pan, queso y vegetales."
+        },
+        "sku": {
+          "type": "object",
+          "example": "BURG-001"
+        },
+        "categoryId": {
+          "type": "object",
+          "format": "uuid",
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+          "nullable": true
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["UNIT", "PORTION", "SERVICE"],
+          "example": "SERVICE"
+        },
+        "stockManagementType": {
+          "type": "string",
+          "enum": ["FINISHED_PRODUCT", "RECIPE_BASED", "NON_STOCKED"],
+          "example": "NON_STOCKED"
+        }
+      }
+    },
+    "CreateSaleTicketDto": {
+      "type": "object",
+      "properties": {
+        "salesChannelId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4"
+        },
+        "notes": {
+          "type": "string",
+          "example": "Mesa 4 - cliente frecuente."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["CASH", "TRANSFER"],
+          "example": "CASH"
+        },
+        "paymentBankId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "5b4c0bb0-5a94-4fe0-838b-6c809aaf65af",
+          "description": "Obligatorio cuando paymentMethod es TRANSFER."
+        }
+      },
+      "required": ["salesChannelId"]
+    },
+    "SaleTicketItemResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "ticketId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productNameSnapshot": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "productSkuSnapshot": {
+          "type": "object",
+          "example": "BURGER-001",
+          "nullable": true
+        },
+        "productUnitSnapshot": {
+          "type": "string",
+          "enum": ["UNIT", "PORTION", "SERVICE"],
+          "example": "UNIT"
+        },
+        "quantity": {
+          "type": "string",
+          "example": "2",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "unitPriceSnapshot": {
+          "type": "string",
+          "example": "5999.99",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "unitCostSnapshot": {
+          "type": "string",
+          "example": "2500.00",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "subtotal": {
+          "type": "string",
+          "example": "11999.98",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:05:00.000Z"
+        }
+      },
+      "required": [
+        "id",
+        "ticketId",
+        "productId",
+        "productNameSnapshot",
+        "productUnitSnapshot",
+        "quantity",
+        "unitPriceSnapshot",
+        "unitCostSnapshot",
+        "subtotal",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SaleTicketResponseDto": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "example": "1",
+          "description": "Version optimista del agregado."
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "ticketNumber": {
+          "type": "number",
+          "example": 1001
+        },
+        "salesChannelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "salesChannelName": {
+          "type": "object",
+          "example": "PedidosYa",
+          "nullable": true
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "CONFIRMED", "CANCELLED", "VOIDED"],
+          "example": "DRAFT"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["CASH", "TRANSFER"],
+          "example": "CASH",
+          "nullable": true
+        },
+        "paymentBankId": {
+          "type": "object",
+          "format": "uuid",
+          "example": "5b4c0bb0-5a94-4fe0-838b-6c809aaf65af",
+          "nullable": true
+        },
+        "paymentBankName": {
+          "type": "object",
+          "example": "Banco Galicia",
+          "nullable": true
+        },
+        "paymentBankNameSnapshot": {
+          "type": "object",
+          "example": "Banco Galicia",
+          "nullable": true
+        },
+        "subtotal": {
+          "type": "string",
+          "example": "11999.98",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "discountTotal": {
+          "type": "string",
+          "example": "0",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "commissionTotal": {
+          "type": "string",
+          "example": "0",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "total": {
+          "type": "string",
+          "example": "11999.98",
+          "description": "Valor decimal serializado como string para evitar perdida de precision."
+        },
+        "notes": {
+          "type": "object",
+          "example": "Mesa 4 - cliente frecuente.",
+          "nullable": true
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+          "nullable": true
+        },
+        "confirmedById": {
+          "type": "object",
+          "format": "uuid",
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+          "nullable": true
+        },
+        "cancelledById": {
+          "type": "object",
+          "format": "uuid",
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+          "nullable": true
+        },
+        "voidedById": {
+          "type": "object",
+          "format": "uuid",
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+          "nullable": true
+        },
+        "cancellationReason": {
+          "type": "object",
+          "example": "Cliente desistio de la compra.",
+          "nullable": true
+        },
+        "voidReason": {
+          "type": "object",
+          "example": "Venta anulada por error de carga.",
+          "nullable": true
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:05:00.000Z"
+        },
+        "confirmedAt": {
+          "type": "object",
+          "example": "2026-06-09T03:07:00.000Z",
+          "nullable": true
+        },
+        "cancelledAt": {
+          "type": "object",
+          "example": "2026-06-09T03:10:00.000Z",
+          "nullable": true
+        },
+        "voidedAt": {
+          "type": "object",
+          "example": "2026-06-09T03:20:00.000Z",
+          "nullable": true
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SaleTicketItemResponseDto"
+          }
+        }
+      },
+      "required": [
+        "version",
+        "id",
+        "ticketNumber",
+        "salesChannelId",
+        "status",
+        "subtotal",
+        "discountTotal",
+        "commissionTotal",
+        "total",
+        "createdAt",
+        "updatedAt",
+        "items"
+      ]
+    },
+    "UpdateSaleTicketDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "notes": {
+          "type": "string",
+          "example": "Cliente solicita sin cebolla."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["CASH", "TRANSFER"],
+          "example": "TRANSFER"
+        },
+        "paymentBankId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "5b4c0bb0-5a94-4fe0-838b-6c809aaf65af"
+        }
+      }
+    },
+    "AddSaleTicketItemDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "productId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4"
+        },
+        "quantity": {
+          "type": "number",
+          "example": 2,
+          "description": "Cantidad decimal mayor que 0."
+        }
+      },
+      "required": ["productId", "quantity"]
+    },
+    "UpdateSaleTicketItemDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "quantity": {
+          "type": "number",
+          "example": 3,
+          "description": "Cantidad decimal mayor que 0."
+        }
+      },
+      "required": ["quantity"]
+    },
+    "CancelSaleTicketDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Cliente desistio de la compra."
+        }
+      },
+      "required": ["reason"]
+    },
+    "ConfirmSaleTicketDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["CASH", "TRANSFER"],
+          "example": "CASH",
+          "description": "Si se envia, reemplaza el medio de pago cargado en el ticket antes de confirmar."
+        },
+        "paymentBankId": {
+          "type": "string",
+          "format": "uuid",
+          "example": "5b4c0bb0-5a94-4fe0-838b-6c809aaf65af",
+          "description": "Obligatorio cuando el medio de pago final es TRANSFER."
+        }
+      }
+    },
+    "VoidSaleTicketDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Cliente solicito anular la venta confirmada.",
+          "description": "Motivo operativo de la anulacion de la venta confirmada."
+        }
+      },
+      "required": ["reason"]
+    },
+    "CreateTableDto": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "M01"
+        },
+        "name": {
+          "type": "string",
+          "example": "Mesa 1"
+        },
+        "area": {
+          "type": "string",
+          "example": "Salon principal"
+        },
+        "capacity": {
+          "type": "number",
+          "example": 4
+        }
+      },
+      "required": ["code"]
+    },
+    "TableOpenOrderSummaryDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "saleTicketId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "openedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-30T18:00:00.000Z"
+        },
+        "notes": {
+          "type": "object",
+          "example": "Cliente frecuente.",
+          "nullable": true
+        }
+      },
+      "required": ["id", "saleTicketId", "openedAt"]
+    },
+    "TableResponseDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "code": {
+          "type": "string",
+          "example": "M01"
+        },
+        "name": {
+          "type": "object",
+          "example": "Mesa 1",
+          "nullable": true
+        },
+        "area": {
+          "type": "object",
+          "example": "Salon principal",
+          "nullable": true
+        },
+        "capacity": {
+          "type": "object",
+          "example": 4,
+          "nullable": true
+        },
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "status": {
+          "type": "string",
+          "enum": ["AVAILABLE", "OCCUPIED", "INACTIVE"]
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-29T22:30:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-29T22:30:00.000Z"
+        },
+        "openOrder": {
+          "nullable": true,
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/TableOpenOrderSummaryDto"
+            }
+          ]
+        }
+      },
+      "required": ["id", "code", "active", "status", "createdAt", "updatedAt"]
+    },
+    "UpdateTableDto": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "M01"
+        },
+        "name": {
+          "type": "string",
+          "example": "Mesa 1"
+        },
+        "area": {
+          "type": "string",
+          "example": "Salon principal"
+        },
+        "capacity": {
+          "type": "number",
+          "example": 4
+        }
+      }
+    },
+    "TableOrderResponseDto": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "example": "1"
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "restaurantTableId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "tableCode": {
+          "type": "string",
+          "example": "M01"
+        },
+        "tableName": {
+          "type": "object",
+          "example": "Mesa 1",
+          "nullable": true
+        },
+        "tableArea": {
+          "type": "object",
+          "example": "Salon",
+          "nullable": true
+        },
+        "saleTicketId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["OPEN", "CANCELLED", "CLOSED"]
+        },
+        "openedById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true
+        },
+        "cancelledById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true
+        },
+        "closedById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true
+        },
+        "notes": {
+          "type": "object",
+          "example": "Cliente frecuente.",
+          "nullable": true
+        },
+        "cancelReason": {
+          "type": "object",
+          "example": "Cliente se retiro.",
+          "nullable": true
+        },
+        "openedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-30T18:00:00.000Z"
+        },
+        "cancelledAt": {
+          "type": "object",
+          "example": "2026-06-30T18:20:00.000Z",
+          "nullable": true
+        },
+        "closedAt": {
+          "type": "object",
+          "example": "2026-06-30T19:00:00.000Z",
+          "nullable": true
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-30T18:00:00.000Z"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-30T18:00:00.000Z"
+        },
+        "saleTicket": {
+          "$ref": "#/components/schemas/SaleTicketResponseDto"
+        }
+      },
+      "required": [
+        "version",
+        "id",
+        "restaurantTableId",
+        "tableCode",
+        "saleTicketId",
+        "status",
+        "openedAt",
+        "createdAt",
+        "updatedAt",
+        "saleTicket"
+      ]
+    },
+    "OpenTableOrderDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "salesChannelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "notes": {
+          "type": "string",
+          "example": "Cliente frecuente."
+        }
+      },
+      "required": ["salesChannelId"]
+    },
+    "CancelTableOrderDto": {
+      "type": "object",
+      "properties": {
+        "expectedVersion": {
+          "type": "string",
+          "example": "3",
+          "description": "Version visible del agregado."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Cliente se retiro antes de consumir."
+        }
+      },
+      "required": ["reason"]
+    },
+    "StockReportResponseDto": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productName": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "productSku": {
+          "type": "object",
+          "example": "BURGER-001",
+          "nullable": true
+        },
+        "categoryId": {
+          "type": "object",
+          "format": "uuid",
+          "example": "0f91a8fe-0e06-4f9c-8e8d-18a4f4d0a2b4",
+          "nullable": true
+        },
+        "categoryName": {
+          "type": "object",
+          "example": "Hamburguesas",
+          "nullable": true
+        },
+        "unit": {
+          "type": "string",
+          "example": "UNIT"
+        },
+        "stockManagementType": {
+          "type": "string",
+          "enum": ["FINISHED_PRODUCT", "RECIPE_BASED", "NON_STOCKED"],
+          "example": "FINISHED_PRODUCT"
+        },
+        "active": {
+          "type": "boolean",
+          "example": true
+        },
+        "currentStock": {
+          "type": "string",
+          "example": "10.00",
+          "description": "Stock actual serializado como string decimal para evitar perdida de precision."
+        },
+        "minimumStock": {
+          "type": "string",
+          "example": "3.00",
+          "description": "Stock minimo serializado como string decimal para evitar perdida de precision."
+        },
+        "stockStatus": {
+          "type": "string",
+          "enum": ["AVAILABLE", "LOW_STOCK", "OUT_OF_STOCK", "NOT_TRACKED"],
+          "example": "AVAILABLE"
+        },
+        "updatedAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-10T03:00:00.000Z"
+        }
+      },
+      "required": [
+        "productId",
+        "productName",
+        "unit",
+        "stockManagementType",
+        "active",
+        "currentStock",
+        "minimumStock",
+        "stockStatus",
+        "updatedAt"
+      ]
+    },
+    "SalesByChannelReportResponseDto": {
+      "type": "object",
+      "properties": {
+        "salesChannelId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "salesChannelName": {
+          "type": "string",
+          "example": "PedidosYa"
+        },
+        "salesChannelCode": {
+          "type": "string",
+          "example": "PEDIDOSYA"
+        },
+        "ticketsCount": {
+          "type": "number",
+          "example": 3
+        },
+        "itemsCount": {
+          "type": "number",
+          "example": 8
+        },
+        "quantitySold": {
+          "type": "string",
+          "example": "12.00",
+          "description": "Cantidad vendida serializada como string decimal para evitar perdida de precision."
+        },
+        "grossSales": {
+          "type": "string",
+          "example": "12000.00",
+          "description": "Venta bruta serializada como string decimal para evitar perdida de precision."
+        },
+        "historicalCost": {
+          "type": "string",
+          "example": "5000.00",
+          "description": "Costo historico serializado como string decimal para evitar perdida de precision."
+        },
+        "grossProfit": {
+          "type": "string",
+          "example": "7000.00",
+          "description": "Margen bruto serializado como string decimal para evitar perdida de precision."
+        },
+        "averageTicket": {
+          "type": "string",
+          "example": "4000.00",
+          "description": "Ticket promedio serializado como string decimal para evitar perdida de precision."
+        }
+      },
+      "required": [
+        "salesChannelId",
+        "salesChannelName",
+        "salesChannelCode",
+        "ticketsCount",
+        "itemsCount",
+        "quantitySold",
+        "grossSales",
+        "historicalCost",
+        "grossProfit",
+        "averageTicket"
+      ]
+    },
+    "SalesByProductReportResponseDto": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productNameSnapshot": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "productSkuSnapshot": {
+          "type": "object",
+          "example": "BURGER-001",
+          "nullable": true
+        },
+        "productUnitSnapshot": {
+          "type": "string",
+          "example": "UNIT"
+        },
+        "quantitySold": {
+          "type": "string",
+          "example": "12.00",
+          "description": "Cantidad vendida serializada como string decimal para evitar perdida de precision."
+        },
+        "grossSales": {
+          "type": "string",
+          "example": "12000.00",
+          "description": "Venta bruta serializada como string decimal para evitar perdida de precision."
+        },
+        "historicalCost": {
+          "type": "string",
+          "example": "5000.00",
+          "description": "Costo historico serializado como string decimal para evitar perdida de precision."
+        },
+        "grossProfit": {
+          "type": "string",
+          "example": "7000.00",
+          "description": "Margen bruto serializado como string decimal para evitar perdida de precision."
+        },
+        "ticketsCount": {
+          "type": "number",
+          "example": 3
+        }
+      },
+      "required": [
+        "productId",
+        "productNameSnapshot",
+        "productUnitSnapshot",
+        "quantitySold",
+        "grossSales",
+        "historicalCost",
+        "grossProfit",
+        "ticketsCount"
+      ]
+    },
+    "SalesByUserReportResponseDto": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "object",
+          "format": "uuid",
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29",
+          "nullable": true
+        },
+        "userEmail": {
+          "type": "object",
+          "example": "manager@example.com",
+          "nullable": true
+        },
+        "userFullName": {
+          "type": "object",
+          "example": "Ada Lovelace",
+          "nullable": true
+        },
+        "ticketsCount": {
+          "type": "number",
+          "example": 3
+        },
+        "itemsCount": {
+          "type": "number",
+          "example": 8
+        },
+        "quantitySold": {
+          "type": "string",
+          "example": "12.00",
+          "description": "Cantidad vendida serializada como string decimal para evitar perdida de precision."
+        },
+        "grossSales": {
+          "type": "string",
+          "example": "12000.00",
+          "description": "Venta bruta serializada como string decimal para evitar perdida de precision."
+        },
+        "historicalCost": {
+          "type": "string",
+          "example": "5000.00",
+          "description": "Costo historico serializado como string decimal para evitar perdida de precision."
+        },
+        "grossProfit": {
+          "type": "string",
+          "example": "7000.00",
+          "description": "Margen bruto serializado como string decimal para evitar perdida de precision."
+        }
+      },
+      "required": [
+        "ticketsCount",
+        "itemsCount",
+        "quantitySold",
+        "grossSales",
+        "historicalCost",
+        "grossProfit"
+      ]
+    },
+    "InventoryMovementsReportItemResponseDto": {
+      "type": "object",
+      "properties": {
+        "movementId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productName": {
+          "type": "string",
+          "example": "Hamburguesa clasica"
+        },
+        "productSku": {
+          "type": "object",
+          "example": "BURGER-001",
+          "nullable": true
+        },
+        "movementType": {
+          "type": "string",
+          "enum": [
+            "STOCK_IN",
+            "SALE_OUT",
+            "MANUAL_ADJUSTMENT",
+            "WASTE",
+            "RETURN_IN",
+            "VOID_REVERSAL"
+          ],
+          "example": "STOCK_IN"
+        },
+        "quantity": {
+          "type": "string",
+          "example": "12.00",
+          "description": "Cantidad serializada como string decimal para evitar perdida de precision."
+        },
+        "previousStock": {
+          "type": "string",
+          "example": "8.00",
+          "description": "Stock anterior serializado como string decimal para evitar perdida de precision."
+        },
+        "newStock": {
+          "type": "string",
+          "example": "20.00",
+          "description": "Stock nuevo serializado como string decimal para evitar perdida de precision."
+        },
+        "reason": {
+          "type": "string",
+          "example": "Reposicion de produccion."
+        },
+        "referenceType": {
+          "type": "string",
+          "enum": ["MANUAL", "SALE_TICKET", "SALE_VOID", "SYSTEM"],
+          "example": "MANUAL"
+        },
+        "referenceId": {
+          "type": "object",
+          "nullable": true,
+          "example": "ref-123"
+        },
+        "createdById": {
+          "type": "object",
+          "format": "uuid",
+          "nullable": true,
+          "example": "c690b6a5-5bec-4b85-98a6-3e5f8318dd29"
+        },
+        "createdByEmail": {
+          "type": "object",
+          "nullable": true,
+          "example": "manager@example.com"
+        },
+        "createdByName": {
+          "type": "object",
+          "nullable": true,
+          "example": "Ada Lovelace"
+        },
+        "createdAt": {
+          "format": "date-time",
+          "type": "string",
+          "example": "2026-06-09T03:00:00.000Z"
+        }
+      },
+      "required": [
+        "movementId",
+        "productId",
+        "productName",
+        "movementType",
+        "quantity",
+        "previousStock",
+        "newStock",
+        "reason",
+        "referenceType",
+        "createdAt"
+      ]
+    },
+    "InventoryMovementsReportResponseDto": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/InventoryMovementsReportItemResponseDto"
+          }
+        },
+        "limit": {
+          "type": "number",
+          "example": 50
+        },
+        "offset": {
+          "type": "number",
+          "example": 0
+        },
+        "total": {
+          "type": "number",
+          "example": 125
+        }
+      },
+      "required": ["items", "limit", "offset", "total"]
+    }
+  }
+}
