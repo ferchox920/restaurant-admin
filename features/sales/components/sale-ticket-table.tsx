@@ -16,7 +16,11 @@ import {
   formatTicketReadableId,
 } from "@/features/sales/utils/sale-ticket";
 
-export function SaleTicketTable({ tickets }: { tickets: SaleTicketListItem[] }) {
+export function SaleTicketTable({
+  tickets,
+}: {
+  tickets: SaleTicketListItem[];
+}) {
   return (
     <Table className="min-w-[720px]">
       <TableHeader>
@@ -62,7 +66,7 @@ export function SaleTicketTable({ tickets }: { tickets: SaleTicketListItem[] }) 
                   <span className="text-muted-foreground">Confirmó: </span>
                   {formatSaleTicketActor(
                     ticket.confirmedBy,
-                    ticket.confirmedById,
+                    ticket.confirmedById
                   )}
                 </p>
               ) : null}

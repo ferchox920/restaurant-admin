@@ -22,11 +22,7 @@ function formatInventoryUnit(unit: string) {
     : unit;
 }
 
-export function InventoryTable({
-  items,
-}: {
-  items: InventoryStockItem[];
-}) {
+export function InventoryTable({ items }: { items: InventoryStockItem[] }) {
   return (
     <Table className="min-w-[680px]">
       <TableHeader>

@@ -18,10 +18,17 @@ function toCreateProductCostRequest(
   };
 }
 
-export function getProductCosts(productId: string, pagination?: PaginationParams, signal?: AbortSignal) {
+export function getProductCosts(
+  productId: string,
+  pagination?: PaginationParams,
+  signal?: AbortSignal
+) {
   const params = withDefaultPagination(pagination);
   const queryString = buildQueryString(params);
-  return apiClient.get<ProductCostHistoryItem[]>(`/api/products/${productId}/costs${queryString}`, signal);
+  return apiClient.get<ProductCostHistoryItem[]>(
+    `/api/products/${productId}/costs${queryString}`,
+    signal
+  );
 }
 
 export function getCurrentProductCost(productId: string) {

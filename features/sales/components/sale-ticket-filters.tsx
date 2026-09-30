@@ -42,14 +42,14 @@ export function SaleTicketFilters({
 }: SaleTicketFiltersProps) {
   const hasFilters = Boolean(
     values.status ||
-      values.channelId ||
-      values.createdById.trim() ||
-      values.search.trim() ||
-      values.from ||
-      values.to,
+    values.channelId ||
+    values.createdById.trim() ||
+    values.search.trim() ||
+    values.from ||
+    values.to
   );
   const hasInvalidDateRange = Boolean(
-    values.from && values.to && values.from > values.to,
+    values.from && values.to && values.from > values.to
   );
 
   return (
@@ -61,7 +61,8 @@ export function SaleTicketFilters({
           onValueChange={(value) =>
             onChange({
               ...values,
-              status: value === "__all__" ? undefined : (value as SaleTicketStatus),
+              status:
+                value === "__all__" ? undefined : (value as SaleTicketStatus),
             })
           }
         >
@@ -124,8 +125,19 @@ export function SaleTicketFilters({
       <div className="space-y-2">
         <Label htmlFor="sale-ticket-search">Buscar</Label>
         <div className="relative">
-          <Search aria-hidden="true" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input id="sale-ticket-search" value={values.search} onChange={(event) => onChange({ ...values, search: event.target.value })} placeholder="Numero, nota o referencia" className="pl-9" />
+          <Search
+            aria-hidden="true"
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            id="sale-ticket-search"
+            value={values.search}
+            onChange={(event) =>
+              onChange({ ...values, search: event.target.value })
+            }
+            placeholder="Numero, nota o referencia"
+            className="pl-9"
+          />
         </div>
       </div>
 
@@ -165,7 +177,11 @@ export function SaleTicketFilters({
             value={values.from}
             onChange={(event) => {
               const from = event.target.value;
-              onChange({ ...values, from, to: values.to && from > values.to ? "" : values.to });
+              onChange({
+                ...values,
+                from,
+                to: values.to && from > values.to ? "" : values.to,
+              });
             }}
           />
         </div>

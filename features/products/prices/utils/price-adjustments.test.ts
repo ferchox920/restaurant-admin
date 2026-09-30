@@ -8,7 +8,7 @@ describe("calculateChannelPrice", () => {
         id: "channel-1",
         name: "Mostrador",
         subTaxes: [],
-      }),
+      })
     ).toBe("1000");
   });
 
@@ -21,7 +21,7 @@ describe("calculateChannelPrice", () => {
           { id: "tax-1", name: "IVA", percentage: 21 },
           { id: "tax-2", name: "Comision marketplace", percentage: 15 },
         ],
-      }),
+      })
     ).toBe("1360");
   });
 
@@ -31,7 +31,7 @@ describe("calculateChannelPrice", () => {
         id: "channel-2",
         name: "Salon",
         subTaxes: [{ id: "tax-1", name: "Ingresos Brutos", percentage: 3.5 }],
-      }),
+      })
     ).toBe("1035");
   });
 });

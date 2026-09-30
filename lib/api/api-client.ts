@@ -135,17 +135,18 @@ async function request<T>(
         const { clearAccessToken } = await import("@/lib/auth/token-storage");
         clearAccessToken();
       }
-      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
-        window.location.assign("/login");
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/login"
+      ) {
+        window.dispatchEvent(new Event("restaurant:session-expired"));
       }
     }
 
     throw new ApiError({
       statusCode: response.status,
       message:
-        errorPayload?.message ||
-        response.statusText ||
-        "Unexpected API error.",
+        errorPayload?.message || response.statusText || "Unexpected API error.",
       error: errorPayload?.error,
       raw: payload,
       retryAfter: parseRetryAfter(response.headers.get("Retry-After")),
@@ -160,9 +161,17 @@ export const apiClient = {
     return request<T>(path, { method: "GET", signal });
   },
   getOrNullOnNotFound<T>(path: string, signal?: AbortSignal) {
-    return request<T | null>(path, { method: "GET", signal }, { notFoundAsNull: true });
+    return request<T | null>(
+      path,
+      { method: "GET", signal },
+      { notFoundAsNull: true }
+    );
   },
-  post<T>(path: string, body?: unknown, init?: Omit<RequestInit, "method" | "body">) {
+  post<T>(
+    path: string,
+    body?: unknown,
+    init?: Omit<RequestInit, "method" | "body">
+  ) {
     return request<T>(path, {
       ...init,
       method: "POST",

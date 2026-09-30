@@ -22,11 +22,7 @@ const stockStatusConfig: Record<
   },
 };
 
-export function StockStatusBadge({
-  status,
-}: {
-  status: InventoryStockStatus;
-}) {
+export function StockStatusBadge({ status }: { status: InventoryStockStatus }) {
   const config = stockStatusConfig[status];
 
   return (

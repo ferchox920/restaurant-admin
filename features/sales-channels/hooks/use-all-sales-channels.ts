@@ -1,7 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getAllSalesChannels, type SalesChannelsFilters } from "@/features/sales-channels/api/sales-channels.api";
+import {
+  getAllSalesChannels,
+  type SalesChannelsFilters,
+} from "@/features/sales-channels/api/sales-channels.api";
 import { salesChannelsQueryKeys } from "@/features/sales-channels/query-keys";
 import {
   QUERY_STALE_TIME,

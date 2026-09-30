@@ -163,7 +163,9 @@ export function SalesChannelsPage() {
               </span>
               <div>
                 <p className="text-sm text-muted-foreground">Inactivos</p>
-                <p className="text-2xl font-semibold">{channelCounts.inactive}</p>
+                <p className="text-2xl font-semibold">
+                  {channelCounts.inactive}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -189,7 +191,10 @@ export function SalesChannelsPage() {
                 size="sm"
                 variant={filter === "all" ? "default" : "outline"}
                 aria-pressed={filter === "all"}
-                onClick={() => { setFilter("all"); setOffset(0); }}
+                onClick={() => {
+                  setFilter("all");
+                  setOffset(0);
+                }}
               >
                 Todos ({channelCounts.total})
               </Button>
@@ -198,7 +203,10 @@ export function SalesChannelsPage() {
                 size="sm"
                 variant={filter === "active" ? "default" : "outline"}
                 aria-pressed={filter === "active"}
-                onClick={() => { setFilter("active"); setOffset(0); }}
+                onClick={() => {
+                  setFilter("active");
+                  setOffset(0);
+                }}
               >
                 Activos ({channelCounts.active})
               </Button>
@@ -207,7 +215,10 @@ export function SalesChannelsPage() {
                 size="sm"
                 variant={filter === "inactive" ? "default" : "outline"}
                 aria-pressed={filter === "inactive"}
-                onClick={() => { setFilter("inactive"); setOffset(0); }}
+                onClick={() => {
+                  setFilter("inactive");
+                  setOffset(0);
+                }}
               >
                 Inactivos ({channelCounts.inactive})
               </Button>
@@ -222,7 +233,13 @@ export function SalesChannelsPage() {
             />
           ) : null}
           {!salesChannelsQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={salesChannels.length} onOffsetChange={setOffset} disabled={salesChannelsQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={salesChannels.length}
+              onOffsetChange={setOffset}
+              disabled={salesChannelsQuery.isFetching}
+            />
           ) : null}
 
           {salesChannelsQuery.error ? (
@@ -302,7 +319,7 @@ export function SalesChannelsPage() {
                   (subTax) => ({
                     name: subTax.name,
                     percentage: subTax.percentage,
-                  }),
+                  })
                 ),
               }
             : undefined

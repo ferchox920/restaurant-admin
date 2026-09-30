@@ -4,9 +4,7 @@ type NoCurrentPriceStateProps = {
   channelName?: string | null;
 };
 
-export function NoCurrentPriceState({
-  channelName,
-}: NoCurrentPriceStateProps) {
+export function NoCurrentPriceState({ channelName }: NoCurrentPriceStateProps) {
   return (
     <EmptyState
       title="Sin precio vigente"

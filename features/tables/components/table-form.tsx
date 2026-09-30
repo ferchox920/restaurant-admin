@@ -20,7 +20,10 @@ import {
   createTableSchema,
   updateTableSchema,
 } from "@/features/tables/schemas/table.schema";
-import type { CreateTableInput, UpdateTableInput } from "@/features/tables/types/table.types";
+import type {
+  CreateTableInput,
+  UpdateTableInput,
+} from "@/features/tables/types/table.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
@@ -37,7 +40,9 @@ type TableFormProps = {
   initialValues?: Partial<CreateTableInput>;
   isPending?: boolean;
   error?: unknown;
-  onSubmit: (values: CreateTableInput | UpdateTableInput) => Promise<void> | void;
+  onSubmit: (
+    values: CreateTableInput | UpdateTableInput
+  ) => Promise<void> | void;
 };
 
 export function TableForm({
@@ -142,7 +147,8 @@ export function TableForm({
 
           <div className="space-y-2">
             <Label htmlFor="table-capacity">
-              Capacidad <span className="text-muted-foreground">(opcional)</span>
+              Capacidad{" "}
+              <span className="text-muted-foreground">(opcional)</span>
             </Label>
             <Input
               id="table-capacity"
@@ -161,7 +167,10 @@ export function TableForm({
           </div>
 
           {error ? (
-            <ErrorMessage title={errorTitle} messages={getApiErrorMessages(error)} />
+            <ErrorMessage
+              title={errorTitle}
+              messages={getApiErrorMessages(error)}
+            />
           ) : null}
 
           <DialogFooter>

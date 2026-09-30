@@ -19,7 +19,13 @@ export class ApiError extends Error {
   raw?: unknown;
   retryAfter?: number;
 
-  constructor({ statusCode, message, error, raw, retryAfter }: ApiErrorOptions) {
+  constructor({
+    statusCode,
+    message,
+    error,
+    raw,
+    retryAfter,
+  }: ApiErrorOptions) {
     super(normalizeMessage(message));
     this.name = "ApiError";
     this.statusCode = statusCode;

@@ -21,7 +21,9 @@ export function useUpdateSaleTicket() {
         saleTicketsQueryKeys.detail(variables.ticketId),
         ticket
       );
-      void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
+      void queryClient.invalidateQueries({
+        queryKey: saleTicketsQueryKeys.lists(),
+      });
     },
   });
 }

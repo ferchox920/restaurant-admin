@@ -28,11 +28,10 @@ import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
 
 type ProductFilterValue = "all" | "active" | "inactive";
 
-const ProductForm = dynamic(
-  () =>
-    import("@/features/products/components/product-form").then(
-      (module) => module.ProductForm
-    )
+const ProductForm = dynamic(() =>
+  import("@/features/products/components/product-form").then(
+    (module) => module.ProductForm
+  )
 );
 
 export function ProductsPage() {
@@ -68,7 +67,10 @@ export function ProductsPage() {
   const categoryNamesById = useMemo(
     () =>
       Object.fromEntries(
-        (categoriesQuery.data ?? []).map((category) => [category.id, category.name])
+        (categoriesQuery.data ?? []).map((category) => [
+          category.id,
+          category.name,
+        ])
       ),
     [categoriesQuery.data]
   );
@@ -186,9 +188,7 @@ export function ProductsPage() {
               </span>
               <div>
                 <p className="text-sm text-muted-foreground">Activos</p>
-                <p className="text-2xl font-semibold">
-                  {productCounts.active}
-                </p>
+                <p className="text-2xl font-semibold">{productCounts.active}</p>
               </div>
             </CardContent>
           </Card>
@@ -212,11 +212,20 @@ export function ProductsPage() {
         <CardContent className="space-y-4 pt-5">
           <ProductFilters
             filter={filter}
-            onFilterChange={(value) => { setFilter(value); setOffset(0); }}
+            onFilterChange={(value) => {
+              setFilter(value);
+              setOffset(0);
+            }}
             search={search}
-            onSearchChange={(value) => { setSearch(value); setOffset(0); }}
+            onSearchChange={(value) => {
+              setSearch(value);
+              setOffset(0);
+            }}
             categoryId={categoryId}
-            onCategoryChange={(value) => { setCategoryId(value); setOffset(0); }}
+            onCategoryChange={(value) => {
+              setCategoryId(value);
+              setOffset(0);
+            }}
             categories={categoriesQuery.data ?? []}
             counts={productCounts}
           />
@@ -286,50 +295,60 @@ export function ProductsPage() {
             />
           ) : null}
           {!productsQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={products.length} onOffsetChange={setOffset} disabled={productsQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={products.length}
+              onOffsetChange={setOffset}
+              disabled={productsQuery.isFetching}
+            />
           ) : null}
         </CardContent>
       </Card>
 
-      {isCreateOpen ? <ProductForm
-        open={isCreateOpen}
-        onOpenChange={setIsCreateOpen}
-        title="Nuevo producto"
-        description="Registra un producto del catalogo. Luego podras gestionar sus costos, precios e inventario cuando corresponda."
-        submitLabel="Crear producto"
-        categories={categoriesQuery.data ?? []}
-        isPending={createProductMutation.isPending}
-        error={createProductMutation.error}
-        onSubmit={handleCreateProduct}
-      /> : null}
+      {isCreateOpen ? (
+        <ProductForm
+          open={isCreateOpen}
+          onOpenChange={setIsCreateOpen}
+          title="Nuevo producto"
+          description="Registra un producto del catalogo. Luego podras gestionar sus costos, precios e inventario cuando corresponda."
+          submitLabel="Crear producto"
+          categories={categoriesQuery.data ?? []}
+          isPending={createProductMutation.isPending}
+          error={createProductMutation.error}
+          onSubmit={handleCreateProduct}
+        />
+      ) : null}
 
-      {editingProduct ? <ProductForm
-        open={Boolean(editingProduct)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setEditingProduct(null);
+      {editingProduct ? (
+        <ProductForm
+          open={Boolean(editingProduct)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setEditingProduct(null);
+            }
+          }}
+          title="Editar producto"
+          description="Actualiza la informacion comercial y operativa del producto."
+          submitLabel="Guardar cambios"
+          categories={categoriesQuery.data ?? []}
+          initialValues={
+            editingProduct
+              ? {
+                  name: editingProduct.name,
+                  description: editingProduct.description ?? undefined,
+                  sku: editingProduct.sku ?? undefined,
+                  categoryId: editingProduct.categoryId ?? undefined,
+                  unit: editingProduct.unit,
+                  stockManagementType: editingProduct.stockManagementType,
+                }
+              : undefined
           }
-        }}
-        title="Editar producto"
-        description="Actualiza la informacion comercial y operativa del producto."
-        submitLabel="Guardar cambios"
-        categories={categoriesQuery.data ?? []}
-        initialValues={
-          editingProduct
-            ? {
-                name: editingProduct.name,
-                description: editingProduct.description ?? undefined,
-                sku: editingProduct.sku ?? undefined,
-                categoryId: editingProduct.categoryId ?? undefined,
-                unit: editingProduct.unit,
-                stockManagementType: editingProduct.stockManagementType,
-              }
-            : undefined
-        }
-        isPending={updateProductMutation.isPending}
-        error={updateProductMutation.error}
-        onSubmit={handleUpdateProduct}
-      /> : null}
+          isPending={updateProductMutation.isPending}
+          error={updateProductMutation.error}
+          onSubmit={handleUpdateProduct}
+        />
+      ) : null}
     </section>
   );
 }

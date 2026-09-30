@@ -10,7 +10,11 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "format:check": "prettier --check .",
+    "test:fullstack": "node scripts/fullstack.mjs",
+    "verify": "node scripts/verify.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -19,7 +23,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
-    "next": "16.2.9",
+    "next": "^16.3.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.78.0",
@@ -29,6 +33,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -36,10 +41,16 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.9",
+    "eslint-config-next": "^16.3.7",
     "jsdom": "^29.1.1",
+    "prettier": "^3.8.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.4"
-  }
+  },
+  "engines": {
+    "node": "24.19.0",
+    "npm": "11.6.2"
+  },
+  "packageManager": "npm@11.6.2"
 }

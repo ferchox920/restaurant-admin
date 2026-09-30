@@ -118,15 +118,16 @@ export function UserDetailPage({ userId }: { userId: string }) {
         title={`${user.firstName} ${user.lastName}`}
         description="Detalle administrativo con edicion de datos basicos y cambios explicitos de estado."
         actions={
-          <Link href="/users" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+          <Link
+            href="/users"
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          >
             Volver al listado
           </Link>
         }
       />
 
-      {successMessage ? (
-        <SuccessMessage message={successMessage} />
-      ) : null}
+      {successMessage ? <SuccessMessage message={successMessage} /> : null}
 
       <UserProfileCard user={user} />
       <UserSecurityNotice />

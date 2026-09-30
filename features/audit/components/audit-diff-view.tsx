@@ -37,7 +37,10 @@ function formatSimpleValue(value: unknown) {
   }
 }
 
-function buildDiff(beforeValue: unknown, afterValue: unknown): DiffRow[] | null {
+function buildDiff(
+  beforeValue: unknown,
+  afterValue: unknown
+): DiffRow[] | null {
   const sanitizedBefore = sanitizeAuditData(beforeValue);
   const sanitizedAfter = sanitizeAuditData(afterValue);
 
@@ -53,7 +56,10 @@ function buildDiff(beforeValue: unknown, afterValue: unknown): DiffRow[] | null 
   const rows: DiffRow[] = [];
 
   keys.forEach((key) => {
-    const hasBefore = Object.prototype.hasOwnProperty.call(sanitizedBefore, key);
+    const hasBefore = Object.prototype.hasOwnProperty.call(
+      sanitizedBefore,
+      key
+    );
     const hasAfter = Object.prototype.hasOwnProperty.call(sanitizedAfter, key);
     const beforeEntry = sanitizedBefore[key];
     const afterEntry = sanitizedAfter[key];
@@ -109,10 +115,7 @@ type AuditDiffViewProps = {
   afterValue: unknown;
 };
 
-export function AuditDiffView({
-  beforeValue,
-  afterValue,
-}: AuditDiffViewProps) {
+export function AuditDiffView({ beforeValue, afterValue }: AuditDiffViewProps) {
   const rows = buildDiff(beforeValue, afterValue);
 
   return (
@@ -122,7 +125,8 @@ export function AuditDiffView({
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         <p className="text-muted-foreground">
-          Vista derivada en frontend sobre datos ya sanitizados. No proviene del backend.
+          Vista derivada en frontend sobre datos ya sanitizados. No proviene del
+          backend.
         </p>
 
         {!rows ? (
@@ -131,14 +135,21 @@ export function AuditDiffView({
           </p>
         ) : rows.length === 0 ? (
           <p className="text-muted-foreground">
-            No se detectaron cambios representables entre el estado anterior y posterior.
+            No se detectaron cambios representables entre el estado anterior y
+            posterior.
           </p>
         ) : (
           <div className="space-y-2">
             {rows.map((row) => (
-              <div key={row.key} className="rounded-lg border border-border bg-muted/30 px-3 py-3">
+              <div
+                key={row.key}
+                className="rounded-lg border border-border bg-muted/30 px-3 py-3"
+              >
                 <div className="mb-2 flex flex-wrap items-center gap-2">
-                  <Badge variant="outline" className={diffBadgeTone[row.change]}>
+                  <Badge
+                    variant="outline"
+                    className={diffBadgeTone[row.change]}
+                  >
                     {diffLabel[row.change]}
                   </Badge>
                   <span className="font-medium">{row.key}</span>

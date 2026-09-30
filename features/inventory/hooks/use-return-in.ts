@@ -16,7 +16,9 @@ export function useReturnIn(productId: string) {
         reason: payload.reason.trim(),
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.lists() });
+      void queryClient.invalidateQueries({
+        queryKey: inventoryQueryKeys.lists(),
+      });
       void queryClient.invalidateQueries({
         queryKey: inventoryQueryKeys.detail(productId),
       });

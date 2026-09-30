@@ -1,3 +1,4 @@
+import { commercialIntent } from "@/lib/api/commercial-intent";
 import { apiClient } from "@/lib/api/api-client";
 import { buildQueryString } from "@/lib/api/build-query-string";
 import type {
@@ -11,12 +12,11 @@ import type {
 } from "@/features/table-orders/types/table-order.types";
 import { withDefaultPagination } from "@/lib/api/pagination";
 
-function idempotencyHeaders() {
-  return { headers: { "Idempotency-Key": crypto.randomUUID() } };
-}
-
 export function openTableOrder(tableId: string, payload: OpenTableOrderInput) {
-  return apiClient.post<TableOrder>(`/api/tables/${tableId}/orders/open`, payload);
+  return apiClient.post<TableOrder>(
+    `/api/tables/${tableId}/orders/open`,
+    payload
+  );
 }
 
 export function getCurrentTableOrder(tableId: string) {
@@ -25,7 +25,10 @@ export function getCurrentTableOrder(tableId: string) {
   );
 }
 
-export function getTableOrders(filters?: TableOrderFilters, signal?: AbortSignal) {
+export function getTableOrders(
+  filters?: TableOrderFilters,
+  signal?: AbortSignal
+) {
   const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     status: filters?.status,
@@ -48,7 +51,10 @@ export function addTableOrderItem(
   orderId: string,
   payload: AddTableOrderItemInput
 ) {
-  return apiClient.post<TableOrder>(`/api/table-orders/${orderId}/items`, payload);
+  return apiClient.post<TableOrder>(
+    `/api/table-orders/${orderId}/items`,
+    payload
+  );
 }
 
 export function updateTableOrderItem(
@@ -62,18 +68,38 @@ export function updateTableOrderItem(
   );
 }
 
-export function removeTableOrderItem(orderId: string, itemId: string) {
-  return apiClient.delete<TableOrder>(`/api/table-orders/${orderId}/items/${itemId}`);
+export function removeTableOrderItem(
+  orderId: string,
+  itemId: string,
+  expectedVersion?: string
+) {
+  return apiClient.delete<TableOrder>(
+    `/api/table-orders/${orderId}/items/${itemId}${expectedVersion ? `?expectedVersion=${encodeURIComponent(expectedVersion)}` : ""}`
+  );
 }
 
-export function cancelTableOrder(orderId: string, payload: CancelTableOrderInput) {
-  return apiClient.post<TableOrder>(`/api/table-orders/${orderId}/cancel`, payload);
-}
-
-export function closeTableOrder(orderId: string, payload: CloseTableOrderInput) {
+export function cancelTableOrder(
+  orderId: string,
+  payload: CancelTableOrderInput
+) {
   return apiClient.post<TableOrder>(
+    `/api/table-orders/${orderId}/cancel`,
+    payload
+  );
+}
+
+export function closeTableOrder(
+  orderId: string,
+  payload: CloseTableOrderInput
+) {
+  return commercialIntent(
     `/api/table-orders/${orderId}/close`,
     payload,
-    idempotencyHeaders()
+    (key) =>
+      apiClient.post<TableOrder>(
+        `/api/table-orders/${orderId}/close`,
+        payload,
+        { headers: { "Idempotency-Key": key } }
+      )
   );
 }

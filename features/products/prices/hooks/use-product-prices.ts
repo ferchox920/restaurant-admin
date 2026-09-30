@@ -12,8 +12,12 @@ export function useProductPrices(
   pagination?: PaginationParams
 ) {
   return useQuery({
-    queryKey: [...productPricesQueryKeys.history(productId ?? "", channelId), pagination ?? {}],
-    queryFn: ({ signal }) => getProductPrices(productId as string, channelId, pagination, signal),
+    queryKey: [
+      ...productPricesQueryKeys.history(productId ?? "", channelId),
+      pagination ?? {},
+    ],
+    queryFn: ({ signal }) =>
+      getProductPrices(productId as string, channelId, pagination, signal),
     enabled: Boolean(productId),
     retry: shouldRetryQuery,
   });

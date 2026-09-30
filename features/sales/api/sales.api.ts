@@ -1,3 +1,4 @@
+import { commercialIntent } from "@/lib/api/commercial-intent";
 import { apiClient } from "@/lib/api/api-client";
 import { buildQueryString } from "@/lib/api/build-query-string";
 import type {
@@ -12,11 +13,10 @@ import type {
 } from "@/features/sales/types/sale-ticket.types";
 import { withDefaultPagination } from "@/lib/api/pagination";
 
-function idempotencyHeaders() {
-  return { headers: { "Idempotency-Key": crypto.randomUUID() } };
-}
-
-export function getSaleTickets(filters?: SaleTicketFilters, signal?: AbortSignal) {
+export function getSaleTickets(
+  filters?: SaleTicketFilters,
+  signal?: AbortSignal
+) {
   const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     responseMode: "summary",
@@ -30,7 +30,10 @@ export function getSaleTickets(filters?: SaleTicketFilters, signal?: AbortSignal
     offset: pagination.offset,
   });
 
-  return apiClient.get<SaleTicketListItem[]>(`/api/sales/tickets${queryString}`, signal);
+  return apiClient.get<SaleTicketListItem[]>(
+    `/api/sales/tickets${queryString}`,
+    signal
+  );
 }
 
 export function getSaleTicket(ticketId: string) {
@@ -41,29 +44,51 @@ export function createSaleTicket(payload: CreateSaleTicketInput) {
   return apiClient.post<SaleTicketDetail>("/api/sales/tickets", payload);
 }
 
-export function updateSaleTicket(ticketId: string, payload: UpdateSaleTicketInput) {
-  return apiClient.patch<SaleTicketDetail>(`/api/sales/tickets/${ticketId}`, payload);
+export function updateSaleTicket(
+  ticketId: string,
+  payload: UpdateSaleTicketInput
+) {
+  return apiClient.patch<SaleTicketDetail>(
+    `/api/sales/tickets/${ticketId}`,
+    payload
+  );
 }
 
-export function cancelSaleTicket(ticketId: string, payload: CancelSaleTicketInput) {
-  return apiClient.post<SaleTicketDetail>(`/api/sales/tickets/${ticketId}/cancel`, payload);
+export function cancelSaleTicket(
+  ticketId: string,
+  payload: CancelSaleTicketInput
+) {
+  return apiClient.post<SaleTicketDetail>(
+    `/api/sales/tickets/${ticketId}/cancel`,
+    payload
+  );
 }
 
 export function confirmSaleTicket(
   ticketId: string,
   payload: ConfirmSaleTicketInput
 ) {
-  return apiClient.post<SaleTicketDetail>(
+  return commercialIntent(
     `/api/sales/tickets/${ticketId}/confirm`,
     payload,
-    idempotencyHeaders()
+    (key) =>
+      apiClient.post<SaleTicketDetail>(
+        `/api/sales/tickets/${ticketId}/confirm`,
+        payload,
+        { headers: { "Idempotency-Key": key } }
+      )
   );
 }
 
 export function voidSaleTicket(ticketId: string, payload: VoidSaleTicketInput) {
-  return apiClient.post<SaleTicketDetail>(
+  return commercialIntent(
     `/api/sales/tickets/${ticketId}/void`,
     payload,
-    idempotencyHeaders()
+    (key) =>
+      apiClient.post<SaleTicketDetail>(
+        `/api/sales/tickets/${ticketId}/void`,
+        payload,
+        { headers: { "Idempotency-Key": key } }
+      )
   );
 }

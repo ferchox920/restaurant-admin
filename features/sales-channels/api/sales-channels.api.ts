@@ -12,7 +12,10 @@ export type SalesChannelsFilters = PaginationParams & {
   active?: boolean;
 };
 
-export function getSalesChannels(filters?: SalesChannelsFilters, signal?: AbortSignal) {
+export function getSalesChannels(
+  filters?: SalesChannelsFilters,
+  signal?: AbortSignal
+) {
   const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     active: filters?.active,
@@ -20,7 +23,10 @@ export function getSalesChannels(filters?: SalesChannelsFilters, signal?: AbortS
     offset: pagination.offset,
   });
 
-  return apiClient.get<SalesChannel[]>(`/api/sales-channels${queryString}`, signal);
+  return apiClient.get<SalesChannel[]>(
+    `/api/sales-channels${queryString}`,
+    signal
+  );
 }
 
 export function getAllSalesChannels(

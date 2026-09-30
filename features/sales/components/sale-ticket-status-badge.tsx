@@ -13,7 +13,11 @@ const statusStyles: Record<SaleTicketStatus, string> = {
     "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300",
 };
 
-export function SaleTicketStatusBadge({ status }: { status: SaleTicketStatus }) {
+export function SaleTicketStatusBadge({
+  status,
+}: {
+  status: SaleTicketStatus;
+}) {
   return (
     <Badge variant="outline" className={statusStyles[status]}>
       {getTicketStatusLabel(status)}

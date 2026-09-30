@@ -22,5 +22,8 @@ export function getPosCatalog(
     ),
   });
 
-  return apiClient.get<PosCatalogResponse>(`/api/pos/catalog${queryString}`, signal);
+  return apiClient.get<PosCatalogResponse>(
+    `/api/pos/catalog${queryString}`,
+    signal
+  );
 }

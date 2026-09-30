@@ -16,24 +16,48 @@ describe("inventory mutation cache", () => {
   );
 
   beforeEach(() => {
-    queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+    queryClient = new QueryClient({
+      defaultOptions: { mutations: { retry: false } },
+    });
     vi.mocked(stockIn).mockReset();
   });
 
   it("invalidates stock detail, lists and movements after stock-in", async () => {
-    vi.mocked(stockIn).mockResolvedValue({ id: "movement-id" } as InventoryMovement);
+    vi.mocked(stockIn).mockResolvedValue({
+      id: "movement-id",
+    } as InventoryMovement);
     queryClient.setQueryData(inventoryQueryKeys.list(), []);
     queryClient.setQueryData(inventoryQueryKeys.detail("product-id"), {});
     queryClient.setQueryData(inventoryQueryKeys.movementList(), []);
-    queryClient.setQueryData(inventoryQueryKeys.productMovementList("product-id"), []);
+    queryClient.setQueryData(
+      inventoryQueryKeys.productMovementList("product-id"),
+      []
+    );
     const { result } = renderHook(() => useStockIn("product-id"), { wrapper });
 
-    await act(() => result.current.mutateAsync({ quantity: "1.5", reason: "Compra" }));
+    await act(() =>
+      result.current.mutateAsync({ quantity: "1.5", reason: "Compra" })
+    );
 
-    expect(stockIn).toHaveBeenCalledWith("product-id", { quantity: 1.5, reason: "Compra" });
-    expect(queryClient.getQueryState(inventoryQueryKeys.list())?.isInvalidated).toBe(true);
-    expect(queryClient.getQueryState(inventoryQueryKeys.detail("product-id"))?.isInvalidated).toBe(true);
-    expect(queryClient.getQueryState(inventoryQueryKeys.movementList())?.isInvalidated).toBe(true);
-    expect(queryClient.getQueryState(inventoryQueryKeys.productMovementList("product-id"))?.isInvalidated).toBe(true);
+    expect(stockIn).toHaveBeenCalledWith("product-id", {
+      quantity: 1.5,
+      reason: "Compra",
+    });
+    expect(
+      queryClient.getQueryState(inventoryQueryKeys.list())?.isInvalidated
+    ).toBe(true);
+    expect(
+      queryClient.getQueryState(inventoryQueryKeys.detail("product-id"))
+        ?.isInvalidated
+    ).toBe(true);
+    expect(
+      queryClient.getQueryState(inventoryQueryKeys.movementList())
+        ?.isInvalidated
+    ).toBe(true);
+    expect(
+      queryClient.getQueryState(
+        inventoryQueryKeys.productMovementList("product-id")
+      )?.isInvalidated
+    ).toBe(true);
   });
 });

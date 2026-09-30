@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { CircleCheck, CircleOff, LayoutGrid, Plus, Search, X } from "lucide-react";
+import {
+  CircleCheck,
+  CircleOff,
+  LayoutGrid,
+  Plus,
+  Search,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,7 +33,11 @@ import { useDeactivateTable } from "@/features/tables/hooks/use-deactivate-table
 import { useReactivateTable } from "@/features/tables/hooks/use-reactivate-table";
 import { useTables } from "@/features/tables/hooks/use-tables";
 import { useUpdateTable } from "@/features/tables/hooks/use-update-table";
-import type { CreateTableInput, RestaurantTable, UpdateTableInput } from "@/features/tables/types/table.types";
+import type {
+  CreateTableInput,
+  RestaurantTable,
+  UpdateTableInput,
+} from "@/features/tables/types/table.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
@@ -45,9 +56,13 @@ export function TablesPage() {
   const deferredSearch = useDebouncedValue(search.trim(), 300);
   const [offset, setOffset] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingTable, setEditingTable] = useState<RestaurantTable | null>(null);
+  const [editingTable, setEditingTable] = useState<RestaurantTable | null>(
+    null
+  );
   const [pendingTableId, setPendingTableId] = useState<string | null>(null);
-  const [pendingAction, setPendingAction] = useState<"deactivate" | "reactivate" | null>(null);
+  const [pendingAction, setPendingAction] = useState<
+    "deactivate" | "reactivate" | null
+  >(null);
 
   const tablesQuery = useTables({
     active: active === "all" ? undefined : active === "active",
@@ -206,7 +221,10 @@ export function TablesPage() {
                 <Input
                   id="table-search"
                   value={search}
-                  onChange={(event) => { setSearch(event.target.value); setOffset(0); }}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setOffset(0);
+                  }}
                   className="pr-9 pl-9"
                 />
                 {search ? (
@@ -216,7 +234,10 @@ export function TablesPage() {
                     size="icon-sm"
                     className="absolute top-1/2 right-2 -translate-y-1/2"
                     aria-label="Limpiar búsqueda"
-                    onClick={() => { setSearch(""); setOffset(0); }}
+                    onClick={() => {
+                      setSearch("");
+                      setOffset(0);
+                    }}
                   >
                     <X aria-hidden="true" />
                   </Button>
@@ -227,7 +248,10 @@ export function TablesPage() {
               <Label>Área</Label>
               <Select
                 value={area || "all"}
-                onValueChange={(value) => { setArea(!value || value === "all" ? "" : value); setOffset(0); }}
+                onValueChange={(value) => {
+                  setArea(!value || value === "all" ? "" : value);
+                  setOffset(0);
+                }}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Todas" />
@@ -248,18 +272,23 @@ export function TablesPage() {
                 role="group"
                 aria-label="Filtrar mesas por estado"
               >
-                {([
-                  ["all", "Todas", tableCounts.total],
-                  ["active", "Activas", tableCounts.active],
-                  ["inactive", "Inactivas", tableCounts.inactive],
-                ] as const).map(([value, label, count]) => (
+                {(
+                  [
+                    ["all", "Todas", tableCounts.total],
+                    ["active", "Activas", tableCounts.active],
+                    ["inactive", "Inactivas", tableCounts.inactive],
+                  ] as const
+                ).map(([value, label, count]) => (
                   <Button
                     key={value}
                     type="button"
                     size="sm"
                     variant={active === value ? "default" : "outline"}
                     aria-pressed={active === value}
-                    onClick={() => { setActive(value); setOffset(0); }}
+                    onClick={() => {
+                      setActive(value);
+                      setOffset(0);
+                    }}
                   >
                     {label} ({count})
                   </Button>
@@ -293,14 +322,17 @@ export function TablesPage() {
           {tablesQuery.error ? (
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
-              title={isForbidden ? "Acceso restringido" : "No se pudo cargar mesas"}
+              title={
+                isForbidden ? "Acceso restringido" : "No se pudo cargar mesas"
+              }
               messages={getApiErrorMessages(tablesQuery.error)}
             />
           ) : null}
 
           {!tablesQuery.isLoading && !tablesQuery.error ? (
             <p className="text-sm text-muted-foreground" aria-live="polite">
-              {tables.length} {tables.length === 1 ? "mesa encontrada" : "mesas encontradas"}
+              {tables.length}{" "}
+              {tables.length === 1 ? "mesa encontrada" : "mesas encontradas"}
             </p>
           ) : null}
 
@@ -318,9 +350,7 @@ export function TablesPage() {
             />
           ) : null}
 
-          {!tablesQuery.isLoading &&
-          !tablesQuery.error &&
-          tables.length > 0 ? (
+          {!tablesQuery.isLoading && !tablesQuery.error && tables.length > 0 ? (
             <TablesTable
               tables={tables}
               canMutate={canMutate}
@@ -345,7 +375,13 @@ export function TablesPage() {
             />
           ) : null}
           {!tablesQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={tables.length} onOffsetChange={setOffset} disabled={tablesQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={tables.length}
+              onOffsetChange={setOffset}
+              disabled={tablesQuery.isFetching}
+            />
           ) : null}
         </CardContent>
       </Card>

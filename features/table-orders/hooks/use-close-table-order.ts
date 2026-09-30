@@ -25,7 +25,7 @@ export function useCloseTableOrder(orderId: string) {
         reportsQueryKeys.all,
       ];
       staleKeys.forEach((queryKey) => {
-        void queryClient.invalidateQueries({ queryKey, refetchType: "none" });
+        void queryClient.invalidateQueries({ queryKey, refetchType: "active" });
       });
     },
   });

@@ -35,10 +35,12 @@ const initialFilters = {
 } as const;
 
 export function StockReportPage() {
-  const [activeFilter, setActiveFilter] = useState<"__all__" | "active" | "inactive">(
-    initialFilters.activeFilter
+  const [activeFilter, setActiveFilter] = useState<
+    "__all__" | "active" | "inactive"
+  >(initialFilters.activeFilter);
+  const [categoryId, setCategoryId] = useState<string>(
+    initialFilters.categoryId
   );
-  const [categoryId, setCategoryId] = useState<string>(initialFilters.categoryId);
   const [stockStatus, setStockStatus] = useState<ReportStockStatus | "__all__">(
     initialFilters.stockStatus
   );
@@ -66,7 +68,14 @@ export function StockReportPage() {
         ? { limit: DEFAULT_PAGE_LIMIT, offset }
         : {}),
     }),
-    [activeFilter, categoryId, deferredSearch, offset, stockManagementType, stockStatus]
+    [
+      activeFilter,
+      categoryId,
+      deferredSearch,
+      offset,
+      stockManagementType,
+      stockStatus,
+    ]
   );
 
   const categoriesQuery = useCategories({ active: true });
@@ -131,7 +140,8 @@ export function StockReportPage() {
           />
 
           <p className="text-xs text-muted-foreground">
-            Los productos NON_STOCKED y RECIPE_BASED se muestran como no controlados y no como agotados.
+            Los productos NON_STOCKED y RECIPE_BASED se muestran como no
+            controlados y no como agotados.
           </p>
 
           {!validation.success ? (
@@ -153,15 +163,15 @@ export function StockReportPage() {
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
               title={
-                isForbidden ? "Acceso restringido" : "No se pudo cargar el reporte"
+                isForbidden
+                  ? "Acceso restringido"
+                  : "No se pudo cargar el reporte"
               }
               messages={getApiErrorMessages(stockQuery.error)}
             />
           ) : null}
 
-          {!stockQuery.isLoading &&
-          !stockQuery.error &&
-          items.length === 0 ? (
+          {!stockQuery.isLoading && !stockQuery.error && items.length === 0 ? (
             <EmptyState
               title="Sin resultados"
               message={getReportEmptyMessage("stock")}
@@ -169,9 +179,7 @@ export function StockReportPage() {
             />
           ) : null}
 
-          {!stockQuery.isLoading &&
-          !stockQuery.error &&
-          items.length > 0 ? (
+          {!stockQuery.isLoading && !stockQuery.error && items.length > 0 ? (
             <>
               <StockReportSummary
                 items={items}

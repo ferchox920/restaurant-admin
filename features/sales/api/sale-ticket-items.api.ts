@@ -5,7 +5,10 @@ import type {
   UpdateSaleTicketItemInput,
 } from "@/features/sales/types/sale-ticket.types";
 
-export function addSaleTicketItem(ticketId: string, payload: AddSaleTicketItemInput) {
+export function addSaleTicketItem(
+  ticketId: string,
+  payload: AddSaleTicketItemInput
+) {
   return apiClient.post<SaleTicketDetail>(
     `/api/sales/tickets/${ticketId}/items`,
     payload
@@ -23,8 +26,12 @@ export function updateSaleTicketItem(
   );
 }
 
-export function removeSaleTicketItem(ticketId: string, itemId: string) {
+export function removeSaleTicketItem(
+  ticketId: string,
+  itemId: string,
+  expectedVersion?: string
+) {
   return apiClient.delete<SaleTicketDetail>(
-    `/api/sales/tickets/${ticketId}/items/${itemId}`
+    `/api/sales/tickets/${ticketId}/items/${itemId}${expectedVersion ? `?expectedVersion=${encodeURIComponent(expectedVersion)}` : ""}`
   );
 }

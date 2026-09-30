@@ -42,7 +42,10 @@ export function UsersPage() {
   const [offset, setOffset] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const deferredSearch = useDebouncedValue(filters.search.trim().toLowerCase(), 300);
+  const deferredSearch = useDebouncedValue(
+    filters.search.trim().toLowerCase(),
+    300
+  );
 
   const usersQuery = useUsers({ limit: DEFAULT_PAGE_LIMIT, offset });
   const createUserMutation = useCreateUser();
@@ -83,7 +86,9 @@ export function UsersPage() {
     role: User["role"];
   }) {
     const createdUser = await createUserMutation.mutateAsync(values);
-    setSuccessMessage(`Se creo ${createdUser.firstName} ${createdUser.lastName} correctamente.`);
+    setSuccessMessage(
+      `Se creo ${createdUser.firstName} ${createdUser.lastName} correctamente.`
+    );
     setIsCreateOpen(false);
   }
 
@@ -105,7 +110,17 @@ export function UsersPage() {
 
       <Card>
         <CardContent className="space-y-4 pt-5">
-          <UserFilters values={filters} onChange={(values) => { setFilters(values); setOffset(0); }} onReset={() => { setFilters(defaultFilters); setOffset(0); }} />
+          <UserFilters
+            values={filters}
+            onChange={(values) => {
+              setFilters(values);
+              setOffset(0);
+            }}
+            onReset={() => {
+              setFilters(defaultFilters);
+              setOffset(0);
+            }}
+          />
 
           {successMessage ? (
             <SuccessMessage title="Usuario creado" message={successMessage} />
@@ -122,12 +137,18 @@ export function UsersPage() {
           {usersQuery.error ? (
             <ErrorMessage
               variant={isForbiddenQuery ? "forbidden" : "general"}
-              title={isForbiddenQuery ? "Acceso restringido" : "No se pudo cargar el listado"}
+              title={
+                isForbiddenQuery
+                  ? "Acceso restringido"
+                  : "No se pudo cargar el listado"
+              }
               messages={getApiErrorMessages(usersQuery.error)}
             />
           ) : null}
 
-          {!usersQuery.isLoading && !usersQuery.error && visibleUsers.length === 0 ? (
+          {!usersQuery.isLoading &&
+          !usersQuery.error &&
+          visibleUsers.length === 0 ? (
             <EmptyState
               title="Sin usuarios"
               message="No hay usuarios para mostrar con los filtros aplicados."
@@ -135,11 +156,19 @@ export function UsersPage() {
             />
           ) : null}
 
-          {!usersQuery.isLoading && !usersQuery.error && visibleUsers.length > 0 ? (
+          {!usersQuery.isLoading &&
+          !usersQuery.error &&
+          visibleUsers.length > 0 ? (
             <UsersTable users={visibleUsers} canMutate={canMutate} />
           ) : null}
           {!usersQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={usersQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={usersQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={usersQuery.data?.length ?? 0}
+              onOffsetChange={setOffset}
+              disabled={usersQuery.isFetching}
+            />
           ) : null}
         </CardContent>
       </Card>

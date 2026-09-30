@@ -32,7 +32,10 @@ export function ProductCostsPage({ productId }: ProductCostsPageProps) {
 
   const productQuery = useProduct(productId);
   const currentCostQuery = useCurrentProductCost(productId);
-  const costsQuery = useProductCosts(productId, { limit: DEFAULT_PAGE_LIMIT, offset });
+  const costsQuery = useProductCosts(productId, {
+    limit: DEFAULT_PAGE_LIMIT,
+    offset,
+  });
   const createCostMutation = useCreateProductCost(productId);
 
   const isCurrentCostMissing =
@@ -100,7 +103,9 @@ export function ProductCostsPage({ productId }: ProductCostsPageProps) {
         onSubmit={async (values) => {
           setSuccessMessage(undefined);
           await createCostMutation.mutateAsync(values);
-          setSuccessMessage("El costo vigente se actualizo y el historial se refresco.");
+          setSuccessMessage(
+            "El costo vigente se actualizo y el historial se refresco."
+          );
         }}
       />
 
@@ -130,7 +135,13 @@ export function ProductCostsPage({ productId }: ProductCostsPageProps) {
             <ProductCostHistoryTable items={costsQuery.data ?? []} />
           )}
           {!costsQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={costsQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={costsQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={costsQuery.data?.length ?? 0}
+              onOffsetChange={setOffset}
+              disabled={costsQuery.isFetching}
+            />
           ) : null}
         </CardContent>
       </Card>

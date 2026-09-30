@@ -55,12 +55,16 @@ export function ProductTable({
         {products.map((product) => {
           const categoryName =
             product.category?.name ??
-            (product.categoryId ? categoryNamesById[product.categoryId] : undefined);
+            (product.categoryId
+              ? categoryNamesById[product.categoryId]
+              : undefined);
 
           return (
             <TableRow
               key={product.id}
-              className={!product.active ? "bg-muted/30 text-muted-foreground" : ""}
+              className={
+                !product.active ? "bg-muted/30 text-muted-foreground" : ""
+              }
             >
               <TableCell className="max-w-72 whitespace-normal">
                 <Link
@@ -82,7 +86,11 @@ export function ProductTable({
                   ) : null}
                 </div>
               </TableCell>
-              <TableCell>{formatCategoryName(categoryName ? { name: categoryName } : null)}</TableCell>
+              <TableCell>
+                {formatCategoryName(
+                  categoryName ? { name: categoryName } : null
+                )}
+              </TableCell>
               <TableCell>{formatProductUnit(product.unit)}</TableCell>
               <TableCell>
                 <ProductStatusBadges product={product} />

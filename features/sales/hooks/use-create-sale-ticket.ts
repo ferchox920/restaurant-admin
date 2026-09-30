@@ -9,9 +9,12 @@ export function useCreateSaleTicket() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateSaleTicketFormValues) => createSaleTicket(payload),
+    mutationFn: (payload: CreateSaleTicketFormValues) =>
+      createSaleTicket(payload),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: saleTicketsQueryKeys.lists() });
+      void queryClient.invalidateQueries({
+        queryKey: saleTicketsQueryKeys.lists(),
+      });
     },
   });
 }

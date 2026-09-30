@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { XCircle } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,12 @@ type Props = {
   onCancel: (values: CancelTableOrderFormValues) => Promise<void> | void;
 };
 
-export function CancelTableOrderDialog({ isPending = false, error, onCancel }: Props) {
+export function CancelTableOrderDialog({
+  isPending = false,
+  error,
+  onCancel,
+}: Props) {
+  const submitting = useRef(false);
   const [open, setOpen] = useState(false);
   const form = useForm<CancelTableOrderFormValues>({
     resolver: zodResolver(cancelTableOrderSchema),
@@ -35,8 +40,16 @@ export function CancelTableOrderDialog({ isPending = false, error, onCancel }: P
   });
 
   async function handleSubmit(values: CancelTableOrderFormValues) {
-    await onCancel(values);
-    setOpen(false);
+    if (submitting.current) return;
+    submitting.current = true;
+    try {
+      await onCancel(values);
+      setOpen(false);
+    } catch {
+      return;
+    } finally {
+      submitting.current = false;
+    }
     form.reset({ reason: "" });
   }
 
@@ -72,7 +85,12 @@ export function CancelTableOrderDialog({ isPending = false, error, onCancel }: P
             disponible la mesa.
           </DialogDescription>
         </DialogHeader>
-        <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
+        <form
+          className="space-y-4"
+          onSubmit={(event) => {
+            void form.handleSubmit(handleSubmit)(event);
+          }}
+        >
           <div className="space-y-2">
             <Label htmlFor="cancel-table-order-reason">Motivo</Label>
             <Textarea

@@ -27,7 +27,9 @@ export function SaleTicketSummary({
       <CardContent className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Identificador</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Identificador
+            </p>
             <p>{formatTicketReadableId(ticket.id)}</p>
           </div>
           <div className="space-y-1">
@@ -35,7 +37,9 @@ export function SaleTicketSummary({
             <p>{ticket.salesChannel?.name ?? "Sin canal"}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Creado por</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Creado por
+            </p>
             <p>{formatSaleTicketActor(ticket.createdBy, ticket.createdById)}</p>
           </div>
           <div className="space-y-1">
@@ -43,11 +47,15 @@ export function SaleTicketSummary({
             <p>{formatDateTime(ticket.createdAt)}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Actualizado</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Actualizado
+            </p>
             <p>{formatDateTime(ticket.updatedAt)}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Subtotal</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Subtotal
+            </p>
             <p>{formatMoney(ticket.subtotal)}</p>
           </div>
           <div className="space-y-1">
@@ -64,24 +72,35 @@ export function SaleTicketSummary({
             <p className="text-sm font-medium text-muted-foreground">Banco</p>
             <p>
               {ticket.paymentMethod === "TRANSFER"
-                ? ticket.paymentBankNameSnapshot ?? ticket.paymentBankName ?? "-"
+                ? (ticket.paymentBankNameSnapshot ??
+                  ticket.paymentBankName ??
+                  "-")
                 : "-"}
             </p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Confirmado por</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Confirmado por
+            </p>
             <p>
               {ticket.confirmedAt
-                ? formatSaleTicketActor(ticket.confirmedBy, ticket.confirmedById)
+                ? formatSaleTicketActor(
+                    ticket.confirmedBy,
+                    ticket.confirmedById
+                  )
                 : "-"}
             </p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Confirmado</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Confirmado
+            </p>
             <p>{formatDateTime(ticket.confirmedAt)}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Anulado por</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Anulado por
+            </p>
             <p>
               {ticket.voidedAt
                 ? formatSaleTicketActor(ticket.voidedBy, ticket.voidedById)
@@ -93,7 +112,9 @@ export function SaleTicketSummary({
             <p>{formatDateTime(ticket.voidedAt)}</p>
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-muted-foreground">Motivo de void</p>
+            <p className="text-sm font-medium text-muted-foreground">
+              Motivo de void
+            </p>
             <p>{ticket.voidReason || "-"}</p>
           </div>
         </div>
@@ -105,7 +126,10 @@ export function SaleTicketSummary({
 
         <div className="rounded-xl bg-muted/40 p-4 text-sm text-muted-foreground">
           La venta conserva los productos, cantidades e importes registrados al
-          momento del cierre. {canViewCosts ? "Los costos se muestran segun el rol." : "Los costos quedan ocultos para este rol."}
+          momento del cierre.{" "}
+          {canViewCosts
+            ? "Los costos se muestran segun el rol."
+            : "Los costos quedan ocultos para este rol."}
         </div>
       </CardContent>
     </Card>

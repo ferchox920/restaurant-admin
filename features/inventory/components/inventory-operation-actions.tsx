@@ -69,7 +69,8 @@ export function InventoryOperationActions({
           <CardTitle>Operaciones manuales</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          Este tipo de producto no admite operaciones manuales de inventario en el MVP.
+          Este tipo de producto no admite operaciones manuales de inventario en
+          el MVP.
         </CardContent>
       </Card>
     );
@@ -117,7 +118,9 @@ export function InventoryOperationActions({
               onSubmit={async (values) => {
                 setSuccessMessage(null);
                 await stockInMutation.mutateAsync(values);
-                setSuccessMessage("El ingreso de stock se registró correctamente.");
+                setSuccessMessage(
+                  "El ingreso de stock se registró correctamente."
+                );
                 setOpenDialog(null);
               }}
             />
@@ -151,9 +154,7 @@ export function InventoryOperationActions({
               onSubmit={async (values) => {
                 setSuccessMessage(null);
                 await manualAdjustmentMutation.mutateAsync(values);
-                setSuccessMessage(
-                  "El stock actual se ajustó correctamente."
-                );
+                setSuccessMessage("El stock actual se ajustó correctamente.");
                 setOpenDialog(null);
               }}
             />
@@ -223,7 +224,9 @@ export function InventoryOperationActions({
 
           <InventoryOperationDialog
             open={openDialog === "minimum-stock"}
-            onOpenChange={(open) => setOpenDialog(open ? "minimum-stock" : null)}
+            onOpenChange={(open) =>
+              setOpenDialog(open ? "minimum-stock" : null)
+            }
             isPending={minimumStockMutation.isPending}
             title="Actualizar stock minimo"
             description="Configura el umbral minimo sin modificar el stock actual."
@@ -242,13 +245,17 @@ export function InventoryOperationActions({
               onSubmit={async (values) => {
                 setSuccessMessage(null);
                 await minimumStockMutation.mutateAsync(values);
-                setSuccessMessage("El stock mínimo se actualizó correctamente.");
+                setSuccessMessage(
+                  "El stock mínimo se actualizó correctamente."
+                );
                 setOpenDialog(null);
               }}
             />
           </InventoryOperationDialog>
         </div>
-        {successMessage ? <InventoryOperationSuccess message={successMessage} /> : null}
+        {successMessage ? (
+          <InventoryOperationSuccess message={successMessage} />
+        ) : null}
       </CardContent>
     </Card>
   );

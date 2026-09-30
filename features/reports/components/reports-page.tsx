@@ -1,6 +1,12 @@
 "use client";
 
-import { Boxes, ChartColumn, PackageSearch, ScanSearch, Users } from "lucide-react";
+import {
+  Boxes,
+  ChartColumn,
+  PackageSearch,
+  ScanSearch,
+  Users,
+} from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { ReportNavigationCard } from "@/features/reports/components/report-navigation-card";
 import { ReportScopeNotice } from "@/features/reports/components/report-scope-notice";

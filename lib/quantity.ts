@@ -28,6 +28,12 @@ export function toApiQuantityNumber(value: string) {
 
   const parsed = Number(normalized);
 
+  const decimalPlaces = normalized.split(".")[1]?.length ?? 0;
+  if (decimalPlaces > 2 || parsed > 99999999.99) {
+    throw new Error(
+      "Cantidad fuera del contrato decimal(10,2). Usa como maximo dos decimales."
+    );
+  }
   if (!Number.isFinite(parsed)) {
     throw new Error("Cantidad invalida. No se pudo convertir el valor.");
   }

@@ -70,13 +70,7 @@ export function CurrentStockCard({
   );
 }
 
-function Metric({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="space-y-1">
       <p className="text-sm font-medium text-muted-foreground">{label}</p>

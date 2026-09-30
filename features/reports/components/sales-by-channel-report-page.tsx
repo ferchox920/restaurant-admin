@@ -12,7 +12,12 @@ import { SalesReportFilters } from "@/features/reports/components/sales-report-f
 import { useSalesByChannelReport } from "@/features/reports/hooks/use-sales-by-channel-report";
 import { salesReportFiltersSchema } from "@/features/reports/schemas/report-filters.schema";
 import type { SalesReportFilters as SalesReportQueryFilters } from "@/features/reports/types/report.types";
-import { toReportDateRange, formatReportDateRange, getDefaultSalesDateRange, getReportEmptyMessage } from "@/features/reports/utils/report-formatters";
+import {
+  toReportDateRange,
+  formatReportDateRange,
+  getDefaultSalesDateRange,
+  getReportEmptyMessage,
+} from "@/features/reports/utils/report-formatters";
 import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
@@ -101,7 +106,9 @@ export function SalesByChannelReportPage() {
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
               title={
-                isForbidden ? "Acceso restringido" : "No se pudo cargar el reporte"
+                isForbidden
+                  ? "Acceso restringido"
+                  : "No se pudo cargar el reporte"
               }
               messages={getApiErrorMessages(reportQuery.error)}
             />

@@ -39,7 +39,7 @@ const salesChannelFormSchema = z
             })
             .min(0, "No puede ser negativo.")
             .max(100, "No puede superar 100."),
-        }),
+        })
       )
       .default([]),
   })
@@ -188,7 +188,8 @@ export function SalesChannelForm({
 
           <div className="space-y-2">
             <Label htmlFor="sales-channel-description">
-              Descripción <span className="text-muted-foreground">(opcional)</span>
+              Descripción{" "}
+              <span className="text-muted-foreground">(opcional)</span>
             </Label>
             <Textarea
               id="sales-channel-description"

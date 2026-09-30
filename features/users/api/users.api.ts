@@ -15,10 +15,7 @@ export function getUsers(pagination?: PaginationParams, signal?: AbortSignal) {
 }
 
 export function getAllUsers(signal?: AbortSignal) {
-  return fetchAllPages(
-    (pagination) => getUsers(pagination, signal),
-    signal
-  );
+  return fetchAllPages((pagination) => getUsers(pagination, signal), signal);
 }
 
 export function getUser(userId: string) {
@@ -26,7 +23,10 @@ export function getUser(userId: string) {
 }
 
 export function createUser(payload: CreateUserInput) {
-  return apiClient.post<User>("/api/users", { ...payload, email: payload.email.trim().toLowerCase() });
+  return apiClient.post<User>("/api/users", {
+    ...payload,
+    email: payload.email.trim().toLowerCase(),
+  });
 }
 
 export function updateUser(userId: string, payload: UpdateUserInput) {

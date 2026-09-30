@@ -15,11 +15,10 @@ import { formatDateTime } from "@/lib/formatters";
 import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
 
-const OpenTableOrderDialog = dynamic(
-  () =>
-    import("@/features/tables/components/open-table-order-dialog").then(
-      (module) => module.OpenTableOrderDialog
-    )
+const OpenTableOrderDialog = dynamic(() =>
+  import("@/features/tables/components/open-table-order-dialog").then(
+    (module) => module.OpenTableOrderDialog
+  )
 );
 
 type Props = {
@@ -54,12 +53,13 @@ export function FloorTableCard({
 
   return (
     <Card
+      role="article"
+      aria-label={`Mesa ${table.code}`}
       className={cn(
         "border-muted/70 shadow-sm transition-colors",
         table.status === "INACTIVE" && "opacity-65",
         table.status === "AVAILABLE" && "border-emerald-500/30",
-        table.status === "OCCUPIED" &&
-          "border-amber-500/40 bg-amber-500/[0.03]",
+        table.status === "OCCUPIED" && "border-amber-500/40 bg-amber-500/[0.03]"
       )}
     >
       <CardHeader className="space-y-2">

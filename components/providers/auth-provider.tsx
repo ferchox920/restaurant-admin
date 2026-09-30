@@ -1,5 +1,7 @@
 "use client";
 
+import { clearCommercialIntents } from "@/lib/api/commercial-intent";
+
 import {
   createContext,
   ReactNode,
@@ -11,7 +13,10 @@ import {
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, logout as logoutRequest } from "@/features/auth/api/auth.api";
+import {
+  getCurrentUser,
+  logout as logoutRequest,
+} from "@/features/auth/api/auth.api";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import type {
   AuthenticatedUser,
@@ -63,7 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const authErrorStatus =
     currentUserQuery.error && isApiError(currentUserQuery.error)
-      ? currentUserQuery.error.statusCode ?? null
+      ? (currentUserQuery.error.statusCode ?? null)
       : null;
 
   const user = (currentUserQuery.data ?? null) as AuthenticatedUser | null;
@@ -80,8 +85,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const clearSession = useCallback(() => {
     clearAccessToken();
+    clearCommercialIntents();
     queryClient.clear();
   }, [queryClient]);
+
+  useEffect(() => {
+    const expire = () => {
+      clearSession();
+      router.replace("/login");
+    };
+    window.addEventListener("restaurant:session-expired", expire);
+    return () =>
+      window.removeEventListener("restaurant:session-expired", expire);
+  }, [clearSession, router]);
 
   const refreshCurrentUser = useCallback(async () => {
     if (sessionMode === "bearer" && !getAccessToken()) {
@@ -117,9 +133,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useCallback(async () => {
     try {
-      if (sessionMode === "cookie") {
-        await logoutRequest();
-      }
+      await logoutRequest();
     } finally {
       clearSession();
       router.replace("/login");

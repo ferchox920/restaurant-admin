@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { UserActions } from "@/features/users/components/user-actions";
 import { UserRoleBadge } from "@/features/users/components/user-role-badge";
 import { UserStatusBadge } from "@/features/users/components/user-status-badge";
@@ -36,7 +43,10 @@ export function UsersTable({ users, canMutate }: UsersTableProps) {
             className={!user.active ? "bg-muted/30 text-muted-foreground" : ""}
           >
             <TableCell className="font-medium text-foreground">
-              <Link href={`/users/${user.id}`} className="underline-offset-4 hover:underline">
+              <Link
+                href={`/users/${user.id}`}
+                className="underline-offset-4 hover:underline"
+              >
                 {user.firstName} {user.lastName}
               </Link>
             </TableCell>

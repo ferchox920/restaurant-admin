@@ -38,7 +38,9 @@ export function UserMenu({ user }: UserMenuProps) {
           <p className="text-sm font-semibold">
             {user.firstName} {user.lastName}
           </p>
-          <p className="break-all text-xs text-muted-foreground">{user.email}</p>
+          <p className="break-all text-xs text-muted-foreground">
+            {user.email}
+          </p>
         </div>
         <div className="mt-4 flex items-center gap-2 rounded-xl bg-muted px-3 py-2 text-xs font-medium text-muted-foreground">
           <ShieldCheck aria-hidden="true" className="size-4" />

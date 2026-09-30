@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -48,6 +48,7 @@ export function OpenTableOrderDialog({
   initialOpen = false,
   onSubmit,
 }: Props) {
+  const submitting = useRef(false);
   const [open, setOpen] = useState(initialOpen);
   const defaultChannelId = useMemo(() => channels[0]?.id ?? "", [channels]);
   const form = useForm<OpenTableOrderFormValues>({
@@ -65,8 +66,16 @@ export function OpenTableOrderDialog({
   }, [defaultChannelId, form, open]);
 
   async function handleSubmit(values: OpenTableOrderFormValues) {
-    await onSubmit(values);
-    setOpen(false);
+    if (submitting.current) return;
+    submitting.current = true;
+    try {
+      await onSubmit(values);
+      setOpen(false);
+    } catch {
+      return;
+    } finally {
+      submitting.current = false;
+    }
   }
 
   return (
@@ -90,7 +99,12 @@ export function OpenTableOrderDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
+        <form
+          className="space-y-4"
+          onSubmit={(event) => {
+            void form.handleSubmit(handleSubmit)(event);
+          }}
+        >
           <div className="space-y-2">
             <Label htmlFor={`table-order-channel-${table.id}`}>
               Canal de venta
@@ -107,14 +121,12 @@ export function OpenTableOrderDialog({
                   <SelectTrigger
                     id={`table-order-channel-${table.id}`}
                     className="w-full"
-                    aria-invalid={Boolean(
-                      form.formState.errors.salesChannelId,
-                    )}
+                    aria-invalid={Boolean(form.formState.errors.salesChannelId)}
                   >
                     <SelectValue placeholder="Selecciona un canal">
                       {(value) =>
-                        channels.find((channel) => channel.id === value)?.name ??
-                        "Selecciona un canal"
+                        channels.find((channel) => channel.id === value)
+                          ?.name ?? "Selecciona un canal"
                       }
                     </SelectValue>
                   </SelectTrigger>

@@ -4,6 +4,26 @@ import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 
 describe("getApiErrorMessages", () => {
+  it("asks for review after a stale version and preserves reconciliation conflicts", () => {
+    expect(
+      getApiErrorMessages(
+        new ApiError({
+          statusCode: 409,
+          message: "stale",
+          raw: { code: "STALE_VERSION" },
+        })
+      )[0]
+    ).toContain("revisa los consumos");
+    expect(
+      getApiErrorMessages(
+        new ApiError({
+          statusCode: 409,
+          message: "pending",
+          raw: { code: "IDEMPOTENCY_RECOVERY_REQUIRED" },
+        })
+      )[0]
+    ).toContain("reconciliacion");
+  });
   it("sanitizes technical prisma-like messages", () => {
     const error = new ApiError({
       statusCode: 500,
@@ -52,20 +72,30 @@ describe("getApiErrorMessages", () => {
 
   it("returns connection messaging for network failures", () => {
     expect(getApiErrorMessages(new TypeError("Failed to fetch"))).toEqual([
-      "No se pudo conectar con la API. Verifica tu red o el backend.",
+      expect.stringContaining(
+        "El resultado de una mutacion puede ser incierto"
+      ),
     ]);
   });
 
   it("hides server details and uses the rate-limit message", () => {
     expect(
       getApiErrorMessages(
-        new ApiError({ statusCode: HTTP_STATUS.internalServerError, message: "database detail" })
+        new ApiError({
+          statusCode: HTTP_STATUS.internalServerError,
+          message: "database detail",
+        })
       )
     ).toEqual(["Ocurrio un error inesperado. Intenta nuevamente."]);
     expect(
       getApiErrorMessages(
-        new ApiError({ statusCode: HTTP_STATUS.tooManyRequests, message: "throttled" })
+        new ApiError({
+          statusCode: HTTP_STATUS.tooManyRequests,
+          message: "throttled",
+        })
       )
-    ).toEqual(["Demasiadas solicitudes. Espera unos segundos e intenta nuevamente."]);
+    ).toEqual([
+      "Demasiadas solicitudes. Espera unos segundos e intenta nuevamente.",
+    ]);
   });
 });

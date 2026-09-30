@@ -46,7 +46,10 @@ export function getTicketStatusLabel(status: SaleTicketStatus) {
   return saleTicketStatusLabels[status];
 }
 
-export function formatSaleTicketActor(actor?: SaleTicketActor | null, fallbackId?: string | null) {
+export function formatSaleTicketActor(
+  actor?: SaleTicketActor | null,
+  fallbackId?: string | null
+) {
   if (!actor && !fallbackId) {
     return "-";
   }
@@ -55,7 +58,10 @@ export function formatSaleTicketActor(actor?: SaleTicketActor | null, fallbackId
     return fallbackId ?? "-";
   }
 
-  const fullName = [actor.firstName, actor.lastName].filter(Boolean).join(" ").trim();
+  const fullName = [actor.firstName, actor.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
 
   if (fullName) {
     return fullName;
@@ -68,7 +74,9 @@ export function formatTicketReadableId(ticketId: string) {
   return ticketId.length > 8 ? `#${ticketId.slice(0, 8)}` : ticketId;
 }
 
-export function formatSaleTicketUnit(value: ProductUnit | string | null | undefined) {
+export function formatSaleTicketUnit(
+  value: ProductUnit | string | null | undefined
+) {
   if (!value) {
     return "-";
   }

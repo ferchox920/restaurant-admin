@@ -5,8 +5,7 @@ const DEFAULT_ERROR_MESSAGE =
   "Ocurrio un error inesperado. Intenta nuevamente.";
 const UNAUTHORIZED_ERROR_MESSAGE =
   "Tu sesion no es valida o expiro. Inicia sesion nuevamente.";
-const FORBIDDEN_ERROR_MESSAGE =
-  "No tienes permisos para realizar esta accion.";
+const FORBIDDEN_ERROR_MESSAGE = "No tienes permisos para realizar esta accion.";
 const CONFLICT_ERROR_MESSAGE =
   "No se pudo completar la operacion porque existe un conflicto de negocio.";
 const CONNECTION_ERROR_MESSAGE =
@@ -103,15 +102,20 @@ function normalizeMessages(messages: string | string[] | undefined) {
     return [];
   }
 
-  return (Array.isArray(messages) ? messages : [messages]).flatMap((message) => {
-    const sanitized = sanitizeMessage(message);
-    return sanitized ? [sanitized] : [];
-  });
+  return (Array.isArray(messages) ? messages : [messages]).flatMap(
+    (message) => {
+      const sanitized = sanitizeMessage(message);
+      return sanitized ? [sanitized] : [];
+    }
+  );
 }
 
 export function getApiErrorMessages(error: unknown) {
   if (error instanceof TypeError) {
-    return [CONNECTION_ERROR_MESSAGE];
+    return [
+      CONNECTION_ERROR_MESSAGE +
+        " El resultado de una mutacion puede ser incierto. Consulta el estado o reintenta sin cambiar los datos; conservamos la misma clave para cerrar, confirmar o anular.",
+    ];
   }
 
   if (!isApiError(error)) {
@@ -126,13 +130,30 @@ export function getApiErrorMessages(error: unknown) {
     return [DEFAULT_ERROR_MESSAGE];
   }
 
+  const code =
+    error.raw && typeof error.raw === "object" && "code" in error.raw
+      ? error.raw.code
+      : undefined;
+  if (code === "STALE_VERSION")
+    return [
+      "Otra sesion modifico este recurso. Los datos se actualizaron; revisa los consumos y vuelve a confirmar tu decision.",
+    ];
+  if (
+    code === "IDEMPOTENCY_RECOVERY_REQUIRED" ||
+    code === "IDEMPOTENCY_IN_PROGRESS"
+  )
+    return [
+      "Operacion pendiente de reconciliacion. Conservamos la clave; consulta el estado y solicita revision antes de iniciar otra operacion.",
+    ];
   const normalizedMessages = normalizeMessages(
     getRawMessage(error.raw) ?? error.message
   );
 
   const shouldPreferStatusFallback =
     normalizedMessages.length === 0 ||
-    normalizedMessages.every((message) => message === INTERNAL_DEFAULT_API_MESSAGE);
+    normalizedMessages.every(
+      (message) => message === INTERNAL_DEFAULT_API_MESSAGE
+    );
 
   if (!shouldPreferStatusFallback && normalizedMessages.length > 0) {
     return normalizedMessages;

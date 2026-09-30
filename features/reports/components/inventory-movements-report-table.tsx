@@ -22,7 +22,9 @@ export function InventoryMovementsReportTable({
   items: InventoryMovementReportItem[];
 }) {
   const { user } = useAuth();
-  const canOpenInventory = user ? canAccessRoute(user.role, "/inventory") : false;
+  const canOpenInventory = user
+    ? canAccessRoute(user.role, "/inventory")
+    : false;
 
   return (
     <Table>
@@ -63,7 +65,10 @@ export function InventoryMovementsReportTable({
             <TableCell>{item.previousStock}</TableCell>
             <TableCell>{item.newStock}</TableCell>
             <TableCell>
-              {item.createdByName || item.createdByEmail || item.createdById || "-"}
+              {item.createdByName ||
+                item.createdByEmail ||
+                item.createdById ||
+                "-"}
             </TableCell>
             <TableCell>
               <MovementReference
@@ -71,7 +76,9 @@ export function InventoryMovementsReportTable({
                 referenceId={item.referenceId}
               />
             </TableCell>
-            <TableCell className="max-w-xs whitespace-normal">{item.reason}</TableCell>
+            <TableCell className="max-w-xs whitespace-normal">
+              {item.reason}
+            </TableCell>
             <TableCell>{formatDateTime(item.createdAt)}</TableCell>
           </TableRow>
         ))}

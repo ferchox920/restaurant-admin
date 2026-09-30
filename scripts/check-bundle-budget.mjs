@@ -6,7 +6,11 @@ const routeBudgets = [
   { route: "/dashboard", manifest: "dashboard/page", budgetKb: 65 },
   { route: "/floor", manifest: "floor/page", budgetKb: 170 },
   { route: "/sales", manifest: "sales/page", budgetKb: 170 },
-  { route: "/sales/[ticketId]", manifest: "sales/[ticketId]/page", budgetKb: 170 },
+  {
+    route: "/sales/[ticketId]",
+    manifest: "sales/[ticketId]/page",
+    budgetKb: 170,
+  },
   {
     route: "/table-orders/[id]",
     manifest: "table-orders/[id]/page",
@@ -71,6 +75,9 @@ if (outputIndex >= 0 && process.argv[outputIndex + 1]) {
 
 console.table(results);
 
-if (process.argv.includes("--enforce") && results.some((result) => !result.passed)) {
+if (
+  process.argv.includes("--enforce") &&
+  results.some((result) => !result.passed)
+) {
   process.exitCode = 1;
 }

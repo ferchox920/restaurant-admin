@@ -24,7 +24,10 @@ export function getInventory(filters?: InventoryFilters, signal?: AbortSignal) {
     offset: pagination.offset,
   });
 
-  return apiClient.get<InventoryStockItem[]>(`/api/inventory${queryString}`, signal);
+  return apiClient.get<InventoryStockItem[]>(
+    `/api/inventory${queryString}`,
+    signal
+  );
 }
 
 export function getAllInventory(
@@ -58,7 +61,8 @@ export function getProductInventoryMovements(
   });
 
   return apiClient.get<InventoryMovement[]>(
-    `/api/inventory/products/${productId}/movements${queryString}`, signal
+    `/api/inventory/products/${productId}/movements${queryString}`,
+    signal
   );
 }
 
@@ -69,7 +73,10 @@ export function stockIn(productId: string, payload: StockInInput) {
   );
 }
 
-export function manualAdjust(productId: string, payload: ManualAdjustmentInput) {
+export function manualAdjust(
+  productId: string,
+  payload: ManualAdjustmentInput
+) {
   return apiClient.post<InventoryMovement>(
     `/api/inventory/products/${productId}/adjust`,
     payload

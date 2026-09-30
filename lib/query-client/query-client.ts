@@ -31,6 +31,7 @@ function makeQueryClient() {
   const queryClient = new QueryClient({
     mutationCache,
     defaultOptions: {
+      mutations: { retry: false },
       queries: {
         staleTime: 30_000,
         refetchOnWindowFocus: false,

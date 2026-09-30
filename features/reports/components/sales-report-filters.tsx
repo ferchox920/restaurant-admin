@@ -4,7 +4,13 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { SalesChannel } from "@/features/sales-channels/types/sales-channel.types";
 import type { Product } from "@/features/products/types/product.types";
 
@@ -36,11 +42,14 @@ export function SalesReportFilters({
   onProductIdChange,
   onReset,
 }: SalesReportFiltersProps) {
-  const hasProductFilter = Array.isArray(products) && typeof onProductIdChange === "function";
+  const hasProductFilter =
+    Array.isArray(products) && typeof onProductIdChange === "function";
 
   return (
     <>
-      <div className={`grid gap-4 md:grid-cols-2 ${hasProductFilter ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}>
+      <div
+        className={`grid gap-4 md:grid-cols-2 ${hasProductFilter ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}
+      >
         <div className="space-y-2">
           <Label htmlFor="sales-report-from">Desde</Label>
           <Input
@@ -71,7 +80,9 @@ export function SalesReportFilters({
           <Label>Canal</Label>
           <Select
             value={values.salesChannelId}
-            onValueChange={(value) => onSalesChannelIdChange(value ?? "__all__")}
+            onValueChange={(value) =>
+              onSalesChannelIdChange(value ?? "__all__")
+            }
           >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Todos los canales">

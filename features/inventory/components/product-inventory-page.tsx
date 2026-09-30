@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, PackageSearch } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { ForbiddenState } from "@/components/feedback/forbidden-state";
 import { LoadingState } from "@/components/feedback/loading-state";
@@ -24,15 +19,13 @@ import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 
-export function ProductInventoryPage({
-  productId,
-}: {
-  productId: string;
-}) {
+export function ProductInventoryPage({ productId }: { productId: string }) {
   const { user } = useAuth();
   const canMutate = user?.role === "ADMIN" || user?.role === "MANAGER";
   const canReadMovements =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "AUDITOR";
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "AUDITOR";
 
   const productQuery = useProduct(productId);
   const inventoryQuery = useProductInventory(productId);
@@ -96,7 +89,8 @@ export function ProductInventoryPage({
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-muted-foreground">
               <p>
-                Este producto no participa en inventario porque su tipo actual es{" "}
+                Este producto no participa en inventario porque su tipo actual
+                es{" "}
                 <span className="font-medium text-foreground">
                   {formatStockManagementType(product.stockManagementType)}
                 </span>
@@ -119,7 +113,9 @@ export function ProductInventoryPage({
             messages={
               productNotFound
                 ? "El producto solicitado no existe o ya no esta disponible."
-                : getApiErrorMessages(inventoryQuery.error ?? productQuery.error)
+                : getApiErrorMessages(
+                    inventoryQuery.error ?? productQuery.error
+                  )
             }
           />
         )}
@@ -175,7 +171,10 @@ export function ProductInventoryPage({
         isActive={product.active}
       />
 
-      <ProductMovementHistory productId={productId} canRead={canReadMovements} />
+      <ProductMovementHistory
+        productId={productId}
+        canRead={canReadMovements}
+      />
     </section>
   );
 }

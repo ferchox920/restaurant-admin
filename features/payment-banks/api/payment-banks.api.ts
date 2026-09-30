@@ -12,7 +12,10 @@ export type PaymentBanksFilters = PaginationParams & {
   active?: boolean;
 };
 
-export function getPaymentBanks(filters?: PaymentBanksFilters, signal?: AbortSignal) {
+export function getPaymentBanks(
+  filters?: PaymentBanksFilters,
+  signal?: AbortSignal
+) {
   const pagination = withDefaultPagination(filters);
   const queryString = buildQueryString({
     active: filters?.active,
@@ -20,7 +23,10 @@ export function getPaymentBanks(filters?: PaymentBanksFilters, signal?: AbortSig
     offset: pagination.offset,
   });
 
-  return apiClient.get<PaymentBank[]>(`/api/payment-banks${queryString}`, signal);
+  return apiClient.get<PaymentBank[]>(
+    `/api/payment-banks${queryString}`,
+    signal
+  );
 }
 
 export function getAllPaymentBanks(

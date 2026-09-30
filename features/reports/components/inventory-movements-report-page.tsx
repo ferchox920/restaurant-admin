@@ -15,7 +15,11 @@ import { ReportPagination } from "@/features/reports/components/report-paginatio
 import { useInventoryMovementsReport } from "@/features/reports/hooks/use-inventory-movements-report";
 import { inventoryMovementReportFiltersSchema } from "@/features/reports/schemas/report-filters.schema";
 import type { InventoryMovementReportFilters } from "@/features/reports/types/report.types";
-import { formatReportDateRange, getReportEmptyMessage, toReportDateRange } from "@/features/reports/utils/report-formatters";
+import {
+  formatReportDateRange,
+  getReportEmptyMessage,
+  toReportDateRange,
+} from "@/features/reports/utils/report-formatters";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
 import { isApiError } from "@/lib/api/is-api-error";
@@ -62,7 +66,10 @@ export function InventoryMovementsReportPage() {
   const parsedLimit = Number(limitParam);
   const parsedOffset = Number(offsetParam);
   const limit =
-    limitParam && Number.isInteger(parsedLimit) && parsedLimit >= 1 && parsedLimit <= 100
+    limitParam &&
+    Number.isInteger(parsedLimit) &&
+    parsedLimit >= 1 &&
+    parsedLimit <= 100
       ? parsedLimit
       : Number(DEFAULT_LIMIT);
   const offset =
@@ -146,10 +153,12 @@ export function InventoryMovementsReportPage() {
       <PageHeader
         eyebrow="Reportes"
         title="Movimientos de inventario"
-        description={`Consulta paginada de movimientos. ${formatReportDateRange({
-          from,
-          to,
-        })}.`}
+        description={`Consulta paginada de movimientos. ${formatReportDateRange(
+          {
+            from,
+            to,
+          }
+        )}.`}
       />
 
       <Card>
@@ -169,19 +178,31 @@ export function InventoryMovementsReportPage() {
               limit: String(limit),
             }}
             onFromChange={(value) =>
-              replaceSearchParams({ from: value || undefined }, { resetOffset: true })
+              replaceSearchParams(
+                { from: value || undefined },
+                { resetOffset: true }
+              )
             }
             onToChange={(value) =>
-              replaceSearchParams({ to: value || undefined }, { resetOffset: true })
+              replaceSearchParams(
+                { to: value || undefined },
+                { resetOffset: true }
+              )
             }
             onProductIdChange={(value) =>
               replaceSearchParams({ productId: value }, { resetOffset: true })
             }
             onMovementTypeChange={(value) =>
-              replaceSearchParams({ movementType: value }, { resetOffset: true })
+              replaceSearchParams(
+                { movementType: value },
+                { resetOffset: true }
+              )
             }
             onReferenceTypeChange={(value) =>
-              replaceSearchParams({ referenceType: value }, { resetOffset: true })
+              replaceSearchParams(
+                { referenceType: value },
+                { resetOffset: true }
+              )
             }
             onCreatedByIdChange={(value) =>
               replaceSearchParams(
@@ -244,7 +265,9 @@ export function InventoryMovementsReportPage() {
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
               title={
-                isForbidden ? "Acceso restringido" : "No se pudo cargar el reporte"
+                isForbidden
+                  ? "Acceso restringido"
+                  : "No se pudo cargar el reporte"
               }
               messages={getApiErrorMessages(reportQuery.error)}
             />
@@ -274,7 +297,9 @@ export function InventoryMovementsReportPage() {
           !reportQuery.error &&
           (reportQuery.data?.items.length ?? 0) > 0 ? (
             <>
-              <InventoryMovementsReportTable items={reportQuery.data?.items ?? []} />
+              <InventoryMovementsReportTable
+                items={reportQuery.data?.items ?? []}
+              />
               <ReportPagination
                 count={reportQuery.data?.items.length ?? 0}
                 limit={resolvedLimit}
@@ -282,7 +307,9 @@ export function InventoryMovementsReportPage() {
                 total={total}
                 onPrevious={() =>
                   replaceSearchParams({
-                    offset: String(Math.max(DEFAULT_OFFSET, resolvedOffset - resolvedLimit)),
+                    offset: String(
+                      Math.max(DEFAULT_OFFSET, resolvedOffset - resolvedLimit)
+                    ),
                   })
                 }
                 onNext={() =>

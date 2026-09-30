@@ -8,7 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ErrorMessage } from "@/components/feedback/error-message";
-import { SalesChannelSelector, type SelectableSalesChannel } from "@/features/sales/components/sales-channel-selector";
+import {
+  SalesChannelSelector,
+  type SelectableSalesChannel,
+} from "@/features/sales/components/sales-channel-selector";
 import { createSaleTicketSchema } from "@/features/sales/schemas/sale-ticket.schema";
 import type { CreateSaleTicketFormValues } from "@/features/sales/types/sale-ticket.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
@@ -91,7 +94,12 @@ export function CreateSaleTicketForm({
         <Button type="submit" disabled={isPending || channels.length === 0}>
           {isPending ? "Creando..." : "Crear borrador"}
         </Button>
-        <Input type="hidden" value={String(channels.length)} readOnly aria-hidden="true" />
+        <Input
+          type="hidden"
+          value={String(channels.length)}
+          readOnly
+          aria-hidden="true"
+        />
       </div>
     </form>
   );

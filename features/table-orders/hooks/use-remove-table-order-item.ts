@@ -8,7 +8,13 @@ export function useRemoveTableOrderItem(orderId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (itemId: string) => removeTableOrderItem(orderId, itemId),
+    mutationFn: ({
+      itemId,
+      expectedVersion,
+    }: {
+      itemId: string;
+      expectedVersion?: string;
+    }) => removeTableOrderItem(orderId, itemId, expectedVersion),
     onSuccess: (order) => {
       queryClient.setQueryData(tableOrdersQueryKeys.detail(orderId), order);
       void queryClient.invalidateQueries({

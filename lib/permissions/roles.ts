@@ -61,7 +61,11 @@ export const TABLE_ORDERS_ALLOWED_ROLES: UserRole[] = [
   "AUDITOR",
 ];
 
-export const REPORTS_ALLOWED_ROLES: UserRole[] = ["ADMIN", "MANAGER", "AUDITOR"];
+export const REPORTS_ALLOWED_ROLES: UserRole[] = [
+  "ADMIN",
+  "MANAGER",
+  "AUDITOR",
+];
 
 export const AUDIT_LOGS_ALLOWED_ROLES: UserRole[] = ["ADMIN", "AUDITOR"];
 
