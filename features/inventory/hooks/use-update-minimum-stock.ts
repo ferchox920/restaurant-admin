@@ -15,7 +15,9 @@ export function useUpdateMinimumStock(productId: string) {
         minimumStock: toApiQuantityNumber(payload.minimumStock),
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.lists() });
+      void queryClient.invalidateQueries({
+        queryKey: inventoryQueryKeys.lists(),
+      });
       void queryClient.invalidateQueries({
         queryKey: inventoryQueryKeys.detail(productId),
       });

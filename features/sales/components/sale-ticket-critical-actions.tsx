@@ -4,7 +4,11 @@ import type {
   SaleTicketDetail,
   VoidSaleTicketFormValues,
 } from "@/features/sales/types/sale-ticket.types";
-import { canCancelTicket, canConfirmTicket, canVoidTicket } from "@/features/sales/utils/sale-ticket";
+import {
+  canCancelTicket,
+  canConfirmTicket,
+  canVoidTicket,
+} from "@/features/sales/utils/sale-ticket";
 import { CancelSaleTicketDialog } from "@/features/sales/components/cancel-sale-ticket-dialog";
 import { ConfirmSaleTicketDialog } from "@/features/sales/components/confirm-sale-ticket-dialog";
 import { VoidSaleTicketDialog } from "@/features/sales/components/void-sale-ticket-dialog";

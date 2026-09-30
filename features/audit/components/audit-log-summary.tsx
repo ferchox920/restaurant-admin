@@ -27,7 +27,9 @@ export function AuditLogSummary({ log }: AuditLogSummaryProps) {
       </CardHeader>
       <CardContent className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">ID del log</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            ID del log
+          </p>
           <p className="break-all">{log.id}</p>
         </div>
         <div className="space-y-1">

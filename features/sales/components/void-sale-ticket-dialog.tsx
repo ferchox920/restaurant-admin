@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Undo2 } from "lucide-react";
@@ -40,6 +40,7 @@ export function VoidSaleTicketDialog({
   success = false,
   onVoid,
 }: VoidSaleTicketDialogProps) {
+  const submitting = useRef(false);
   const [open, setOpen] = useState(false);
   const form = useForm<VoidSaleTicketFormValues>({
     resolver: zodResolver(voidSaleTicketSchema),
@@ -78,18 +79,27 @@ export function VoidSaleTicketDialog({
           <DialogHeader>
             <DialogTitle>Anular venta confirmada</DialogTitle>
             <DialogDescription>
-              La anulacion no elimina la venta. Conserva los movimientos
-              `SALE_OUT`, genera `VOID_REVERSAL` y restituye stock de productos
-              inventariables.
+              La anulacion conserva la venta y restituye el stock de los
+              productos inventariables mediante un movimiento de reversion.
             </DialogDescription>
           </DialogHeader>
 
           <form
             className="space-y-4"
-            onSubmit={form.handleSubmit(async (values) => {
-              await onVoid(values);
-              setOpen(false);
-            })}
+            onSubmit={(event) => {
+              void form.handleSubmit(async (values) => {
+                if (submitting.current) return;
+                submitting.current = true;
+                try {
+                  await onVoid(values);
+                  setOpen(false);
+                } catch {
+                  return;
+                } finally {
+                  submitting.current = false;
+                }
+              })(event);
+            }}
           >
             <div className="space-y-2">
               <Label htmlFor="sale-ticket-void-reason">Motivo</Label>
@@ -124,7 +134,7 @@ export function VoidSaleTicketDialog({
                 Cancelar
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Anulando..." : "Registrar void"}
+                {isPending ? "Anulando..." : "Confirmar anulacion"}
               </Button>
             </DialogFooter>
           </form>

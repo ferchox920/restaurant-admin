@@ -19,12 +19,18 @@ function toCreateProductPriceRequest(
   };
 }
 
-export function getProductPrices(productId: string, channelId?: string, pagination?: PaginationParams, signal?: AbortSignal) {
+export function getProductPrices(
+  productId: string,
+  channelId?: string,
+  pagination?: PaginationParams,
+  signal?: AbortSignal
+) {
   const params = withDefaultPagination(pagination);
   const queryString = buildQueryString({ channelId, ...params });
 
   return apiClient.get<ProductPriceHistoryItem[]>(
-    `/api/products/${productId}/prices${queryString}`, signal
+    `/api/products/${productId}/prices${queryString}`,
+    signal
   );
 }
 

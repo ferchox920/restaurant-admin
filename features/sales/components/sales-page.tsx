@@ -2,7 +2,13 @@
 
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { Clock, History, Play, ReceiptText, SlidersHorizontal } from "lucide-react";
+import {
+  Clock,
+  History,
+  Play,
+  ReceiptText,
+  SlidersHorizontal,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +17,10 @@ import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { SaleTicketFilters, type SaleTicketFilterValues } from "@/features/sales/components/sale-ticket-filters";
+import {
+  SaleTicketFilters,
+  type SaleTicketFilterValues,
+} from "@/features/sales/components/sale-ticket-filters";
 import { SaleTicketTable } from "@/features/sales/components/sale-ticket-table";
 import { useCreateSaleTicket } from "@/features/sales/hooks/use-create-sale-ticket";
 import { useSaleTickets } from "@/features/sales/hooks/use-sale-tickets";
@@ -55,12 +64,18 @@ const SaleTicketPage = dynamic(
 export function SalesPage() {
   const { user } = useAuth();
   const canCreate =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "CASHIER";
-  const [filters, setFilters] = useState<SaleTicketFilterValues>(initialFilters);
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "CASHIER";
+  const [filters, setFilters] =
+    useState<SaleTicketFilterValues>(initialFilters);
   const [selectedChannelId, setSelectedChannelId] = useState<string>("");
   const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
   const [offset, setOffset] = useState(0);
-  const deferredCreatedById = useDebouncedValue(filters.createdById.trim(), 300);
+  const deferredCreatedById = useDebouncedValue(
+    filters.createdById.trim(),
+    300
+  );
   const deferredSearch = useDebouncedValue(filters.search.trim(), 300);
   const validRange = isValidDateRange(filters.from, filters.to);
 
@@ -69,16 +84,19 @@ export function SalesPage() {
   const draftTicketsQuery = useSaleTickets({
     status: "DRAFT",
   });
-  const saleTicketsQuery = useSaleTickets({
-    status: filters.status,
-    channelId: filters.channelId,
-    createdById: deferredCreatedById || undefined,
-    search: deferredSearch || undefined,
-    from: validRange ? toIsoDateBoundary(filters.from, "start") : undefined,
-    to: validRange ? toIsoDateBoundary(filters.to, "end") : undefined,
-    limit: DEFAULT_PAGE_LIMIT,
-    offset,
-  }, validRange);
+  const saleTicketsQuery = useSaleTickets(
+    {
+      status: filters.status,
+      channelId: filters.channelId,
+      createdById: deferredCreatedById || undefined,
+      search: deferredSearch || undefined,
+      from: validRange ? toIsoDateBoundary(filters.from, "start") : undefined,
+      to: validRange ? toIsoDateBoundary(filters.to, "end") : undefined,
+      limit: DEFAULT_PAGE_LIMIT,
+      offset,
+    },
+    validRange
+  );
 
   const channelOptions = useMemo(
     () =>
@@ -202,7 +220,9 @@ export function SalesPage() {
                 {createSaleTicketMutation.error ? (
                   <ErrorMessage
                     title="No se pudo iniciar la venta"
-                    messages={getApiErrorMessages(createSaleTicketMutation.error)}
+                    messages={getApiErrorMessages(
+                      createSaleTicketMutation.error
+                    )}
                   />
                 ) : null}
 
@@ -282,7 +302,9 @@ export function SalesPage() {
                 className="w-full rounded-2xl border bg-background p-3 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <p className="font-medium">{formatTicketReadableId(ticket.id)}</p>
+                  <p className="font-medium">
+                    {formatTicketReadableId(ticket.id)}
+                  </p>
                   <span className="text-sm font-medium">
                     {formatMoney(ticket.total)}
                   </span>
@@ -332,8 +354,14 @@ export function SalesPage() {
           <SaleTicketFilters
             channels={channelOptions}
             values={filters}
-            onChange={(values) => { setFilters(values); setOffset(0); }}
-            onReset={() => { setFilters(initialFilters); setOffset(0); }}
+            onChange={(values) => {
+              setFilters(values);
+              setOffset(0);
+            }}
+            onReset={() => {
+              setFilters(initialFilters);
+              setOffset(0);
+            }}
           />
 
           {!saleTicketsQuery.isLoading && !saleTicketsQuery.error ? (
@@ -381,7 +409,13 @@ export function SalesPage() {
             <SaleTicketTable tickets={saleTicketsQuery.data ?? []} />
           ) : null}
           {!saleTicketsQuery.error && validRange ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={saleTicketsQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={saleTicketsQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={saleTicketsQuery.data?.length ?? 0}
+              onOffsetChange={setOffset}
+              disabled={saleTicketsQuery.isFetching}
+            />
           ) : null}
         </CardContent>
       </Card>

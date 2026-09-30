@@ -34,7 +34,9 @@ export function UserProfileCard({ user }: { user: User }) {
           <p>{user.email}</p>
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">Ultimo login</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            Ultimo login
+          </p>
           <p>{formatLastLogin(user.lastLoginAt)}</p>
         </div>
         <div className="space-y-1">
@@ -42,7 +44,9 @@ export function UserProfileCard({ user }: { user: User }) {
           <p>{formatDateTime(user.createdAt)}</p>
         </div>
         <div className="space-y-1">
-          <p className="text-sm font-medium text-muted-foreground">Actualizado</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            Actualizado
+          </p>
           <p>{formatDateTime(user.updatedAt)}</p>
         </div>
       </CardContent>

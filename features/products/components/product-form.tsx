@@ -31,10 +31,7 @@ import {
   stockManagementTypes,
   type CreateProductInput,
 } from "@/features/products/types/product.types";
-import {
-  formatProductUnit,
-  formatStockManagementType,
-} from "@/lib/formatters";
+import { formatProductUnit, formatStockManagementType } from "@/lib/formatters";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
@@ -215,7 +212,9 @@ export function ProductForm({
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecciona una unidad">
                         {(value) =>
-                          value ? formatProductUnit(value) : "Selecciona una unidad"
+                          value
+                            ? formatProductUnit(value)
+                            : "Selecciona una unidad"
                         }
                       </SelectValue>
                     </SelectTrigger>
@@ -296,7 +295,10 @@ export function ProductForm({
           </div>
 
           {error ? (
-            <ErrorMessage title={errorTitle} messages={getApiErrorMessages(error)} />
+            <ErrorMessage
+              title={errorTitle}
+              messages={getApiErrorMessages(error)}
+            />
           ) : null}
 
           <DialogFooter>

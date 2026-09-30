@@ -28,10 +28,9 @@ describe("table order item cache", () => {
     const order = { id: "order-id", status: "OPEN" } as TableOrder;
     vi.mocked(updateTableOrderItem).mockResolvedValue(order);
     queryClient.setQueryData(tableOrdersQueryKeys.list(), []);
-    const { result } = renderHook(
-      () => useUpdateTableOrderItem("order-id"),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useUpdateTableOrderItem("order-id"), {
+      wrapper,
+    });
 
     await act(() =>
       result.current.mutateAsync({
@@ -41,11 +40,11 @@ describe("table order item cache", () => {
     );
 
     expect(updateTableOrderItem).toHaveBeenCalledTimes(1);
-    expect(queryClient.getQueryData(tableOrdersQueryKeys.detail("order-id"))).toBe(
-      order
-    );
-    expect(queryClient.getQueryState(tableOrdersQueryKeys.list())?.isInvalidated).toBe(
-      true
-    );
+    expect(
+      queryClient.getQueryData(tableOrdersQueryKeys.detail("order-id"))
+    ).toBe(order);
+    expect(
+      queryClient.getQueryState(tableOrdersQueryKeys.list())?.isInvalidated
+    ).toBe(true);
   });
 });

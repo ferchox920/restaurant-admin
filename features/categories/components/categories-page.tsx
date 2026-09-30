@@ -39,7 +39,9 @@ export function CategoriesPage() {
   const [offset, setOffset] = useState(0);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [pendingCategoryId, setPendingCategoryId] = useState<string | null>(null);
+  const [pendingCategoryId, setPendingCategoryId] = useState<string | null>(
+    null
+  );
   const [pendingAction, setPendingAction] = useState<
     "deactivate" | "reactivate" | null
   >(null);
@@ -133,21 +135,30 @@ export function CategoriesPage() {
             <Button
               type="button"
               variant={filter === "all" ? "default" : "outline"}
-              onClick={() => { setFilter("all"); setOffset(0); }}
+              onClick={() => {
+                setFilter("all");
+                setOffset(0);
+              }}
             >
               Todas
             </Button>
             <Button
               type="button"
               variant={filter === "active" ? "default" : "outline"}
-              onClick={() => { setFilter("active"); setOffset(0); }}
+              onClick={() => {
+                setFilter("active");
+                setOffset(0);
+              }}
             >
               Activas
             </Button>
             <Button
               type="button"
               variant={filter === "inactive" ? "default" : "outline"}
-              onClick={() => { setFilter("inactive"); setOffset(0); }}
+              onClick={() => {
+                setFilter("inactive");
+                setOffset(0);
+              }}
             >
               Inactivas
             </Button>
@@ -161,7 +172,13 @@ export function CategoriesPage() {
             />
           ) : null}
           {!categoriesQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={categories.length} onOffsetChange={setOffset} disabled={categoriesQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={categories.length}
+              onOffsetChange={setOffset}
+              disabled={categoriesQuery.isFetching}
+            />
           ) : null}
 
           {categoriesQuery.error ? (

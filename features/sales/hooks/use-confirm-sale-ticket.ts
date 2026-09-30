@@ -1,5 +1,8 @@
 "use client";
 
+import { tableOrdersQueryKeys } from "@/features/table-orders/query-keys";
+import { tablesQueryKeys } from "@/features/tables/query-keys";
+import { reportsQueryKeys } from "@/features/reports/query-keys";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { confirmSaleTicket } from "@/features/sales/api/sales.api";
 import { inventoryQueryKeys } from "@/features/inventory/query-keys";
@@ -15,6 +18,9 @@ export function useConfirmSaleTicket(ticketId: string) {
     onSuccess: (ticket) => {
       queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
       const staleKeys = [
+        tableOrdersQueryKeys.all,
+        tablesQueryKeys.all,
+        reportsQueryKeys.all,
         saleTicketsQueryKeys.lists(),
         inventoryQueryKeys.lists(),
         inventoryQueryKeys.details(),
@@ -22,7 +28,7 @@ export function useConfirmSaleTicket(ticketId: string) {
         inventoryQueryKeys.productMovements(),
       ];
       staleKeys.forEach((queryKey) => {
-        void queryClient.invalidateQueries({ queryKey, refetchType: "none" });
+        void queryClient.invalidateQueries({ queryKey, refetchType: "active" });
       });
     },
   });

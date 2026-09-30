@@ -1,6 +1,12 @@
 "use client";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { UserOptionLabel } from "@/features/users/components/user-option-label";
 import { useUserOptions } from "@/features/users/hooks/use-user-options";
 
@@ -30,7 +36,10 @@ export function UserSelector({
   }
 
   return (
-    <Select value={value} onValueChange={(nextValue) => onValueChange(nextValue ?? "")}>
+    <Select
+      value={value}
+      onValueChange={(nextValue) => onValueChange(nextValue ?? "")}
+    >
       <SelectTrigger className="w-full" disabled={disabled}>
         <SelectValue placeholder={placeholder}>
           {(selectedValue) => {
@@ -47,7 +56,9 @@ export function UserSelector({
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {includeAllOption ? <SelectItem value="__all__">{allLabel}</SelectItem> : null}
+        {includeAllOption ? (
+          <SelectItem value="__all__">{allLabel}</SelectItem>
+        ) : null}
         {data.map((option) => (
           <SelectItem key={option.id} value={option.id}>
             <UserOptionLabel option={option} />

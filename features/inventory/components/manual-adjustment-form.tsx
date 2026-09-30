@@ -14,7 +14,9 @@ import { manualAdjustmentOperationSchema } from "@/features/inventory/schemas/in
 import type { ManualAdjustmentFormValue } from "@/features/inventory/types/inventory.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 
-type ManualAdjustmentFormValues = z.input<typeof manualAdjustmentOperationSchema>;
+type ManualAdjustmentFormValues = z.input<
+  typeof manualAdjustmentOperationSchema
+>;
 
 type ManualAdjustmentFormProps = {
   currentStock: string;
@@ -76,7 +78,9 @@ export function ManualAdjustmentForm({
           messages={getApiErrorMessages(error)}
         />
       ) : null}
-      {successMessage ? <InventoryOperationSuccess message={successMessage} /> : null}
+      {successMessage ? (
+        <InventoryOperationSuccess message={successMessage} />
+      ) : null}
       <Button type="submit" disabled={isPending}>
         {isPending ? "Guardando..." : "Fijar stock actual"}
       </Button>

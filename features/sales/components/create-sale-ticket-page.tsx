@@ -19,7 +19,9 @@ export function CreateSaleTicketPage() {
   const router = useRouter();
   const { user } = useAuth();
   const canCreate =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "CASHIER";
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "CASHIER";
 
   const channelsQuery = useSalesChannels({ active: true });
   const createSaleTicketMutation = useCreateSaleTicket();
@@ -96,7 +98,8 @@ export function CreateSaleTicketPage() {
               isPending={createSaleTicketMutation.isPending}
               error={createSaleTicketMutation.error}
               onSubmit={async (values) => {
-                const ticket = await createSaleTicketMutation.mutateAsync(values);
+                const ticket =
+                  await createSaleTicketMutation.mutateAsync(values);
                 router.replace(`/sales/${ticket.id}`);
               }}
             />

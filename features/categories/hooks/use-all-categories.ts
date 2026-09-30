@@ -1,7 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getAllCategories, type CategoriesFilters } from "@/features/categories/api/categories.api";
+import {
+  getAllCategories,
+  type CategoriesFilters,
+} from "@/features/categories/api/categories.api";
 import { categoriesQueryKeys } from "@/features/categories/query-keys";
 import {
   QUERY_STALE_TIME,

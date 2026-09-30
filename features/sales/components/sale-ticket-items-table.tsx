@@ -12,7 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { ConfirmActionDialog } from "@/components/common/confirm-action-dialog";
 import { UpdateSaleTicketItemForm } from "@/features/sales/components/update-sale-ticket-item-form";
-import type { SaleTicketItem, UpdateSaleTicketItemFormValues } from "@/features/sales/types/sale-ticket.types";
+import type {
+  SaleTicketItem,
+  UpdateSaleTicketItemFormValues,
+} from "@/features/sales/types/sale-ticket.types";
 import { formatSaleTicketUnit } from "@/features/sales/utils/sale-ticket";
 import { formatMoney } from "@/lib/money";
 
@@ -53,7 +56,9 @@ export function SaleTicketItemsTable({
           <TableHead>Precio unitario</TableHead>
           {canViewCosts ? <TableHead>Costo unitario</TableHead> : null}
           <TableHead>Subtotal</TableHead>
-          {canEdit ? <TableHead className="text-right">Acciones</TableHead> : null}
+          {canEdit ? (
+            <TableHead className="text-right">Acciones</TableHead>
+          ) : null}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -66,12 +71,16 @@ export function SaleTicketItemsTable({
                 {item.productNameSnapshot}
               </TableCell>
               <TableCell>{item.productSkuSnapshot || "-"}</TableCell>
-              <TableCell>{formatSaleTicketUnit(item.productUnitSnapshot)}</TableCell>
+              <TableCell>
+                {formatSaleTicketUnit(item.productUnitSnapshot)}
+              </TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>{formatMoney(item.unitPriceSnapshot)}</TableCell>
               {canViewCosts ? (
                 <TableCell>
-                  {item.unitCostSnapshot ? formatMoney(item.unitCostSnapshot) : "-"}
+                  {item.unitCostSnapshot
+                    ? formatMoney(item.unitCostSnapshot)
+                    : "-"}
                 </TableCell>
               ) : null}
               <TableCell>{formatMoney(item.subtotal)}</TableCell>
@@ -111,8 +120,8 @@ export function SaleTicketItemsTable({
               colSpan={canViewCosts ? 8 : 7}
               className="text-sm text-destructive"
             >
-              No se pudo quitar una de las lineas. Revisa el estado del ticket e intenta
-              nuevamente.
+              No se pudo quitar una de las lineas. Revisa el estado del ticket e
+              intenta nuevamente.
             </TableCell>
           </TableRow>
         ) : null}

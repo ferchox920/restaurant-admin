@@ -1,11 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  Clock3,
-  Sparkles,
-} from "lucide-react";
+import { ArrowRight, Clock3, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -84,8 +80,8 @@ export default function DashboardPage() {
   );
   const priorityHrefs = new Set(priorityActions.map((item) => item.href));
   const orderedNavigation = [
-    ...priorityActions.flatMap((priority) =>
-      navigation.find((item) => item.href === priority.href) ?? []
+    ...priorityActions.flatMap(
+      (priority) => navigation.find((item) => item.href === priority.href) ?? []
     ),
     ...navigation.filter((item) => !priorityHrefs.has(item.href)),
   ];
@@ -157,37 +153,38 @@ export default function DashboardPage() {
             </p>
           </CardHeader>
           <CardContent className="space-y-3">
-            {(nextActions.length > 0 ? nextActions : orderedNavigation.slice(0, 3)).map(
-              (item) => {
-                const Icon = item.icon;
+            {(nextActions.length > 0
+              ? nextActions
+              : orderedNavigation.slice(0, 3)
+            ).map((item) => {
+              const Icon = item.icon;
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="group flex items-center justify-between gap-3 rounded-xl border bg-background/80 p-3 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-                  >
-                    <span className="flex min-w-0 items-center gap-3">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
-                        <Icon aria-hidden="true" className="size-4" />
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group flex items-center justify-between gap-3 rounded-xl border bg-background/80 p-3 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                >
+                  <span className="flex min-w-0 items-center gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
+                      <Icon aria-hidden="true" className="size-4" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium">
+                        {item.label}
                       </span>
-                      <span className="min-w-0">
-                        <span className="block truncate font-medium">
-                          {item.label}
-                        </span>
-                        <span className="mt-0.5 block line-clamp-1 text-xs text-muted-foreground">
-                          {item.description}
-                        </span>
+                      <span className="mt-0.5 block line-clamp-1 text-xs text-muted-foreground">
+                        {item.description}
                       </span>
                     </span>
-                    <ArrowRight
-                      aria-hidden="true"
-                      className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                    />
-                  </Link>
-                );
-              }
-            )}
+                  </span>
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                  />
+                </Link>
+              );
+            })}
           </CardContent>
         </Card>
       </div>

@@ -13,7 +13,12 @@ import { SalesByProductReportTable } from "@/features/reports/components/sales-b
 import { useSalesByProductReport } from "@/features/reports/hooks/use-sales-by-product-report";
 import { salesReportFiltersSchema } from "@/features/reports/schemas/report-filters.schema";
 import type { SalesReportFilters as SalesReportQueryFilters } from "@/features/reports/types/report.types";
-import { formatReportDateRange, getDefaultSalesDateRange, getReportEmptyMessage, toReportDateRange } from "@/features/reports/utils/report-formatters";
+import {
+  formatReportDateRange,
+  getDefaultSalesDateRange,
+  getReportEmptyMessage,
+  toReportDateRange,
+} from "@/features/reports/utils/report-formatters";
 import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
@@ -49,10 +54,12 @@ export function SalesByProductReportPage() {
       <PageHeader
         eyebrow="Reportes"
         title="Ventas por producto"
-        description={`Ventas confirmadas con snapshots historicos por producto. ${formatReportDateRange({
-          from,
-          to,
-        })}.`}
+        description={`Ventas confirmadas con snapshots historicos por producto. ${formatReportDateRange(
+          {
+            from,
+            to,
+          }
+        )}.`}
       />
 
       <Card>
@@ -109,7 +116,9 @@ export function SalesByProductReportPage() {
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
               title={
-                isForbidden ? "Acceso restringido" : "No se pudo cargar el reporte"
+                isForbidden
+                  ? "Acceso restringido"
+                  : "No se pudo cargar el reporte"
               }
               messages={getApiErrorMessages(reportQuery.error)}
             />

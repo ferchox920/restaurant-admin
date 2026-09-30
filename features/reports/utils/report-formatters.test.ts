@@ -58,9 +58,9 @@ describe("report formatters", () => {
         to: undefined,
       })
     ).toBe("?productId=prod-1");
-    expect(
-      formatNullableUserName("Ada Lovelace", "ada@example.com")
-    ).toBe("Ada Lovelace");
+    expect(formatNullableUserName("Ada Lovelace", "ada@example.com")).toBe(
+      "Ada Lovelace"
+    );
     expect(formatNullableUserName(null, "ada@example.com")).toBe(
       "ada@example.com"
     );

@@ -32,9 +32,13 @@ export function ProductCostHistoryTable({
       <TableBody>
         {items.map((item) => (
           <TableRow key={item.id}>
-            <TableCell className="font-medium">{formatMoney(item.cost)}</TableCell>
+            <TableCell className="font-medium">
+              {formatMoney(item.cost)}
+            </TableCell>
             <TableCell>{formatDateTime(item.validFrom)}</TableCell>
-            <TableCell>{item.validTo ? formatDateTime(item.validTo) : "Vigente"}</TableCell>
+            <TableCell>
+              {item.validTo ? formatDateTime(item.validTo) : "Vigente"}
+            </TableCell>
             <TableCell>{formatDateTime(item.createdAt)}</TableCell>
             <TableCell>{item.createdById ?? "-"}</TableCell>
             <TableCell>{item.isCurrent ? "Vigente" : "Historico"}</TableCell>

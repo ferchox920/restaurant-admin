@@ -3,4 +3,3 @@ import { PaymentBanksPage } from "@/features/payment-banks/components/payment-ba
 export default function PaymentBanksRoutePage() {
   return <PaymentBanksPage />;
 }
-

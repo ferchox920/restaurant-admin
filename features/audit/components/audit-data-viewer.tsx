@@ -12,7 +12,10 @@ function isPlainObject(value: unknown) {
 }
 
 function isEmptyObject(value: unknown) {
-  return isPlainObject(value) && Object.keys(value as Record<string, unknown>).length === 0;
+  return (
+    isPlainObject(value) &&
+    Object.keys(value as Record<string, unknown>).length === 0
+  );
 }
 
 function renderValue(value: unknown) {
@@ -36,8 +39,13 @@ function renderValue(value: unknown) {
     return (
       <div className="space-y-2">
         {value.map((item, index) => (
-          <div key={index} className="rounded-lg border border-border bg-muted/30 px-3 py-2">
-            <p className="mb-1 text-xs font-medium text-muted-foreground">Item {index + 1}</p>
+          <div
+            key={index}
+            className="rounded-lg border border-border bg-muted/30 px-3 py-2"
+          >
+            <p className="mb-1 text-xs font-medium text-muted-foreground">
+              Item {index + 1}
+            </p>
             <div className="text-sm">{renderValue(item)}</div>
           </div>
         ))}
@@ -52,12 +60,19 @@ function renderValue(value: unknown) {
   if (isPlainObject(value)) {
     return (
       <div className="space-y-2">
-        {Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => (
-          <div key={key} className="rounded-lg border border-border bg-muted/30 px-3 py-2">
-            <p className="mb-1 text-xs font-medium text-muted-foreground">{key}</p>
-            <div className="text-sm">{renderValue(nestedValue)}</div>
-          </div>
-        ))}
+        {Object.entries(value as Record<string, unknown>).map(
+          ([key, nestedValue]) => (
+            <div
+              key={key}
+              className="rounded-lg border border-border bg-muted/30 px-3 py-2"
+            >
+              <p className="mb-1 text-xs font-medium text-muted-foreground">
+                {key}
+              </p>
+              <div className="text-sm">{renderValue(nestedValue)}</div>
+            </div>
+          )
+        )}
       </div>
     );
   }

@@ -22,7 +22,12 @@ import { useProduct } from "@/features/products/hooks/use-product";
 import { useReactivateProduct } from "@/features/products/hooks/use-reactivate-product";
 import { useUpdateProduct } from "@/features/products/hooks/use-update-product";
 import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
-import { formatCategoryName, formatDateTime, formatProductUnit, formatStockManagementType } from "@/lib/formatters";
+import {
+  formatCategoryName,
+  formatDateTime,
+  formatProductUnit,
+  formatStockManagementType,
+} from "@/lib/formatters";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { isApiError } from "@/lib/api/is-api-error";
 import { HTTP_STATUS } from "@/lib/api/http-status";
@@ -58,8 +63,9 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
       return product.category.name;
     }
 
-    return categoriesQuery.data?.find((category) => category.id === product.categoryId)
-      ?.name;
+    return categoriesQuery.data?.find(
+      (category) => category.id === product.categoryId
+    )?.name;
   }, [categoriesQuery.data, productQuery.data]);
 
   const isForbidden =
@@ -78,7 +84,8 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
       : undefined
   );
   const currentPricesByActiveChannel = useMemo(() => {
-    const activeChannels = salesChannelsQuery.data?.filter((channel) => channel.active) ?? [];
+    const activeChannels =
+      salesChannelsQuery.data?.filter((channel) => channel.active) ?? [];
     const prices = productPricesQuery.data ?? [];
 
     return activeChannels
@@ -179,7 +186,9 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
     (product.stockManagementType === "FINISHED_PRODUCT" && isOutOfStock);
   const saleEligibilityMessages = [
     !hasCurrentCost ? "Falta definir costo vigente." : null,
-    !hasCurrentPrice ? "Falta definir precio final en al menos un canal." : null,
+    !hasCurrentPrice
+      ? "Falta definir precio final en al menos un canal."
+      : null,
     product.stockManagementType === "FINISHED_PRODUCT" && isOutOfStock
       ? "Producto sin stock disponible."
       : null,
@@ -210,10 +219,16 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
               <p className="text-sm font-medium text-muted-foreground">
                 Categoria
               </p>
-              <p>{formatCategoryName(categoryName ? { name: categoryName } : null)}</p>
+              <p>
+                {formatCategoryName(
+                  categoryName ? { name: categoryName } : null
+                )}
+              </p>
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Unidad</p>
+              <p className="text-sm font-medium text-muted-foreground">
+                Unidad
+              </p>
               <p>{formatProductUnit(product.unit)}</p>
             </div>
             <div className="space-y-1">
@@ -294,18 +309,23 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
                 Costo vigente
               </p>
               {currentCostQuery.isLoading ? (
-                <p className="text-sm text-muted-foreground">Cargando costo vigente...</p>
+                <p className="text-sm text-muted-foreground">
+                  Cargando costo vigente...
+                </p>
               ) : currentCostQuery.error && !isCurrentCostMissing ? (
                 <p className="text-sm text-destructive">
                   No se pudo cargar el costo vigente.
                 </p>
               ) : isCurrentCostMissing ? (
-                <p className="text-sm text-muted-foreground">Sin costo vigente.</p>
+                <p className="text-sm text-muted-foreground">
+                  Sin costo vigente.
+                </p>
               ) : currentCostQuery.data ? (
                 <div className="space-y-1">
                   <p>{formatMoney(currentCostQuery.data.cost)}</p>
                   <p className="text-sm text-muted-foreground">
-                    Vigente desde {formatDateTime(currentCostQuery.data.validFrom)}
+                    Vigente desde{" "}
+                    {formatDateTime(currentCostQuery.data.validFrom)}
                   </p>
                 </div>
               ) : null}
@@ -316,7 +336,9 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
                 Precios vigentes por canal
               </p>
               {salesChannelsQuery.isLoading ? (
-                <p className="text-sm text-muted-foreground">Cargando canales...</p>
+                <p className="text-sm text-muted-foreground">
+                  Cargando canales...
+                </p>
               ) : productPricesQuery.isLoading ? (
                 <p className="text-sm text-muted-foreground">
                   Cargando resumen de precios...
@@ -333,7 +355,9 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
                 <div className="space-y-1">
                   {currentPricesByActiveChannel.map((item) => (
                     <p key={item.channelId} className="text-sm">
-                      <span className="text-muted-foreground">{item.channelName}:</span>{" "}
+                      <span className="text-muted-foreground">
+                        {item.channelName}:
+                      </span>{" "}
                       {formatMoney(item.price)}
                     </p>
                   ))}
@@ -373,7 +397,9 @@ export function ProductDetailPage({ productId }: ProductDetailPageProps) {
                       </div>
                     ) : null}
                     <div className="flex flex-wrap items-center gap-2">
-                      <StockStatusBadge status={inventoryQuery.data.stockStatus} />
+                      <StockStatusBadge
+                        status={inventoryQuery.data.stockStatus}
+                      />
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div className="space-y-1">

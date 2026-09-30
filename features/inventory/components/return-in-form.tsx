@@ -70,7 +70,9 @@ export function ReturnInForm({
           messages={getApiErrorMessages(error)}
         />
       ) : null}
-      {successMessage ? <InventoryOperationSuccess message={successMessage} /> : null}
+      {successMessage ? (
+        <InventoryOperationSuccess message={successMessage} />
+      ) : null}
       <Button type="submit" disabled={isPending}>
         {isPending ? "Guardando..." : "Registrar reingreso"}
       </Button>

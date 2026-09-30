@@ -153,7 +153,7 @@ describe("TableOrderWorkspace", () => {
     expect(cakeCardButton).not.toBeNull();
     fireEvent.click(cakeCardButton!);
     fireEvent.click(
-      within(catalog).getByRole("button", { name: "Sumar Cafe doble" }),
+      within(catalog).getByRole("button", { name: "Sumar Cafe doble" })
     );
 
     await waitFor(() => {
@@ -174,7 +174,7 @@ describe("TableOrderWorkspace", () => {
     });
 
     fireEvent.click(
-      within(catalog).getByRole("button", { name: "Restar Cafe doble" }),
+      within(catalog).getByRole("button", { name: "Restar Cafe doble" })
     );
 
     await waitFor(() => {
@@ -190,7 +190,7 @@ describe("TableOrderWorkspace", () => {
     });
 
     fireEvent.click(
-      within(nextCatalog).getByRole("button", { name: "Restar Cafe doble" }),
+      within(nextCatalog).getByRole("button", { name: "Restar Cafe doble" })
     );
 
     await waitFor(() => {

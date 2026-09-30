@@ -14,7 +14,9 @@ export function useAddSaleTicketItem(ticketId: string) {
       addSaleTicketItem(ticketId, {
         productId: payload.productId,
         quantity: toApiQuantityNumber(payload.quantity),
-        ...(payload.expectedVersion ? { expectedVersion: payload.expectedVersion } : {}),
+        ...(payload.expectedVersion
+          ? { expectedVersion: payload.expectedVersion }
+          : {}),
       }),
     onSuccess: (ticket) => {
       queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);

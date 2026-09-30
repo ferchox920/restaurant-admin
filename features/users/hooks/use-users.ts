@@ -7,7 +7,7 @@ import type { PaginationParams } from "@/types/common";
 
 export function useUsers(
   paginationOrEnabled?: PaginationParams | boolean,
-  enabled = true,
+  enabled = true
 ) {
   const pagination =
     typeof paginationOrEnabled === "boolean" ? undefined : paginationOrEnabled;

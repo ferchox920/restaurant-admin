@@ -4,9 +4,13 @@ export function UserSecurityNotice() {
       <p className="font-medium">Seguridad</p>
       <p>
         Un usuario inactivo no podra iniciar sesion. El frontend nunca muestra
-        <code className="mx-1">passwordHash</code> ni permite actualizar contrasenas desde este modulo.
+        <code className="mx-1">passwordHash</code> ni permite actualizar
+        contrasenas desde este modulo.
       </p>
-      <p className="mt-2">Si nunca inicio sesion, la UI muestra ese estado sin inferir actividad inexistente.</p>
+      <p className="mt-2">
+        Si nunca inicio sesion, la UI muestra ese estado sin inferir actividad
+        inexistente.
+      </p>
     </div>
   );
 }

@@ -11,7 +11,7 @@ function roundToCents(value: number) {
 
 export function calculateChannelPrice(
   basePrice: string | number,
-  channel: PriceAdjustmentChannel,
+  channel: PriceAdjustmentChannel
 ) {
   const numericBasePrice =
     typeof basePrice === "number" ? basePrice : Number(basePrice);
@@ -22,10 +22,10 @@ export function calculateChannelPrice(
 
   const totalTaxPercentage = (channel.subTaxes ?? []).reduce(
     (total, subTax) => total + subTax.percentage,
-    0,
+    0
   );
 
   return String(
-    roundToCents(numericBasePrice * (1 + totalTaxPercentage / 100)),
+    roundToCents(numericBasePrice * (1 + totalTaxPercentage / 100))
   );
 }

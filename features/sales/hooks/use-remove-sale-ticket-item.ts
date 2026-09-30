@@ -8,7 +8,13 @@ export function useRemoveSaleTicketItem(ticketId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (itemId: string) => removeSaleTicketItem(ticketId, itemId),
+    mutationFn: ({
+      itemId,
+      expectedVersion,
+    }: {
+      itemId: string;
+      expectedVersion?: string;
+    }) => removeSaleTicketItem(ticketId, itemId, expectedVersion),
     onSuccess: (ticket) => {
       queryClient.setQueryData(saleTicketsQueryKeys.detail(ticketId), ticket);
       void queryClient.invalidateQueries({

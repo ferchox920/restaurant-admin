@@ -5,23 +5,22 @@ function optionalText(value: string | undefined) {
   return normalized.length > 0 ? normalized : undefined;
 }
 
-const optionalCapacitySchema = z
-  .preprocess(
-    (value) => {
-      if (value === "" || value == null) {
-        return undefined;
-      }
+const optionalCapacitySchema = z.preprocess(
+  (value) => {
+    if (value === "" || value == null) {
+      return undefined;
+    }
 
-      return Number(value);
-    },
-    z
-      .number({
-        message: "La capacidad debe ser un numero.",
-      })
-      .int("La capacidad debe ser un entero.")
-      .positive("La capacidad debe ser mayor que 0.")
-      .optional()
-  );
+    return Number(value);
+  },
+  z
+    .number({
+      message: "La capacidad debe ser un numero.",
+    })
+    .int("La capacidad debe ser un entero.")
+    .positive("La capacidad debe ser mayor que 0.")
+    .optional()
+);
 
 export const createTableSchema = z.object({
   code: z

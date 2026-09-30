@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,17 +45,29 @@ export function CloseTableOrderDialog({
   error,
   onClose,
 }: Props) {
+  const submitting = useRef(false);
   const [open, setOpen] = useState(false);
   const form = useForm<CloseTableOrderFormValues>({
     resolver: zodResolver(closeTableOrderSchema),
     defaultValues: { paymentMethod: "CASH", paymentBankId: "" },
   });
-  const paymentMethod = useWatch({ control: form.control, name: "paymentMethod" });
+  const paymentMethod = useWatch({
+    control: form.control,
+    name: "paymentMethod",
+  });
   const disabled = isPending || itemsCount === 0;
 
   async function handleSubmit(values: CloseTableOrderFormValues) {
-    await onClose(values);
-    setOpen(false);
+    if (submitting.current) return;
+    submitting.current = true;
+    try {
+      await onClose(values);
+      setOpen(false);
+    } catch {
+      return;
+    } finally {
+      submitting.current = false;
+    }
   }
 
   return (
@@ -75,7 +87,12 @@ export function CloseTableOrderDialog({
       >
         <DialogTrigger
           render={
-            <Button type="button" size="lg" className="w-full" disabled={disabled}>
+            <Button
+              type="button"
+              size="lg"
+              className="w-full"
+              disabled={disabled}
+            >
               <CheckCircle2 aria-hidden="true" />
               Cerrar orden
             </Button>
@@ -89,7 +106,12 @@ export function CloseTableOrderDialog({
               la mesa.
             </DialogDescription>
           </DialogHeader>
-          <form className="space-y-4" onSubmit={form.handleSubmit(handleSubmit)}>
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              void form.handleSubmit(handleSubmit)(event);
+            }}
+          >
             <div className="space-y-2">
               <Label>Método de pago</Label>
               <Controller
@@ -137,7 +159,7 @@ export function CloseTableOrderDialog({
                       <SelectTrigger
                         className="w-full"
                         aria-invalid={Boolean(
-                          form.formState.errors.paymentBankId,
+                          form.formState.errors.paymentBankId
                         )}
                       >
                         <SelectValue placeholder="Selecciona un banco" />

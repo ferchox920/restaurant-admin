@@ -25,7 +25,7 @@ export function SalesChannelSelector({
   description = "El historial y el precio vigente se muestran para el canal seleccionado.",
 }: SalesChannelSelectorProps) {
   const selectedChannel = channels.find(
-    (channel) => channel.id === selectedChannelId,
+    (channel) => channel.id === selectedChannelId
   );
 
   return (

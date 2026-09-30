@@ -15,7 +15,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { createUserSchema } from "@/features/users/schemas/user.schema";
 import { userRoles } from "@/features/users/types/user.types";
@@ -50,7 +56,11 @@ export function CreateUserForm({
   error,
   onSubmit,
 }: CreateUserFormProps) {
-  const form = useForm<CreateUserFormValues, undefined, CreateUserFormSubmitValues>({
+  const form = useForm<
+    CreateUserFormValues,
+    undefined,
+    CreateUserFormSubmitValues
+  >({
     resolver: zodResolver(createUserSchema),
     defaultValues,
   });
@@ -90,7 +100,8 @@ export function CreateUserForm({
         <DialogHeader>
           <DialogTitle>Nuevo usuario</DialogTitle>
           <DialogDescription>
-            Crea un usuario interno del panel. La contrasena solo se usa en este alta y no vuelve a mostrarse.
+            Crea un usuario interno del panel. La contrasena solo se usa en este
+            alta y no vuelve a mostrarse.
           </DialogDescription>
         </DialogHeader>
 
@@ -192,11 +203,19 @@ export function CreateUserForm({
           </div>
 
           {error ? (
-            <ErrorMessage title={errorTitle} messages={getApiErrorMessages(error)} />
+            <ErrorMessage
+              title={errorTitle}
+              messages={getApiErrorMessages(error)}
+            />
           ) : null}
 
           <DialogFooter>
-            <Button type="button" variant="outline" disabled={isPending} onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isPending}
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
             <Button type="submit" disabled={isPending}>

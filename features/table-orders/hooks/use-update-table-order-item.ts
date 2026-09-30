@@ -19,7 +19,9 @@ export function useUpdateTableOrderItem(orderId: string) {
     }) =>
       updateTableOrderItem(orderId, itemId, {
         quantity: toApiQuantityNumber(data.quantity),
-        ...(data.expectedVersion ? { expectedVersion: data.expectedVersion } : {}),
+        ...(data.expectedVersion
+          ? { expectedVersion: data.expectedVersion }
+          : {}),
       }),
     onSuccess: (order) => {
       queryClient.setQueryData(tableOrdersQueryKeys.detail(orderId), order);

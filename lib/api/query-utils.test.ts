@@ -14,7 +14,10 @@ describe("query utils", () => {
       HTTP_STATUS.tooManyRequests,
     ]) {
       expect(
-        shouldRetryQuery(0, new ApiError({ statusCode, message: String(statusCode) }))
+        shouldRetryQuery(
+          0,
+          new ApiError({ statusCode, message: String(statusCode) })
+        )
       ).toBe(false);
     }
   });

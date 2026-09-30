@@ -24,19 +24,17 @@ describe("useAllProducts activation", () => {
   });
 
   it("does not download the catalog when the consumer is read-only", () => {
-    renderHook(
-      () => useAllProducts({ active: true }, { enabled: false }),
-      { wrapper }
-    );
+    renderHook(() => useAllProducts({ active: true }, { enabled: false }), {
+      wrapper,
+    });
 
     expect(getAllProducts).not.toHaveBeenCalled();
   });
 
   it("passes React Query cancellation to the catalog request", async () => {
-    renderHook(
-      () => useAllProducts({ active: true }, { enabled: true }),
-      { wrapper }
-    );
+    renderHook(() => useAllProducts({ active: true }, { enabled: true }), {
+      wrapper,
+    });
 
     await waitFor(() => expect(getAllProducts).toHaveBeenCalledTimes(1));
     expect(vi.mocked(getAllProducts).mock.calls[0]?.[1]).toBeInstanceOf(

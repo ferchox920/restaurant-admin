@@ -18,7 +18,10 @@ export function getAuditLogs(filters?: AuditLogFilters, signal?: AbortSignal) {
     offset: filters?.offset,
   });
 
-  return apiClient.get<AuditLogListItem[]>(`/api/audit-logs${queryString}`, signal);
+  return apiClient.get<AuditLogListItem[]>(
+    `/api/audit-logs${queryString}`,
+    signal
+  );
 }
 
 export function getAuditLog(auditLogId: string) {

@@ -4,5 +4,6 @@ export const tableOrdersQueryKeys = {
   list: (filters?: Record<string, string | number | boolean | undefined>) =>
     [...tableOrdersQueryKeys.lists(), filters ?? {}] as const,
   details: () => [...tableOrdersQueryKeys.all, "detail"] as const,
-  detail: (orderId: string) => [...tableOrdersQueryKeys.details(), orderId] as const,
+  detail: (orderId: string) =>
+    [...tableOrdersQueryKeys.details(), orderId] as const,
 };

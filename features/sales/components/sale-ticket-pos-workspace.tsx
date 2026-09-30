@@ -117,10 +117,7 @@ function getSaleBlockReason(product: SaleProductOption) {
   return null;
 }
 
-function getStockLimitReason(
-  product: SaleProductOption,
-  nextQuantity: number
-) {
+function getStockLimitReason(product: SaleProductOption, nextQuantity: number) {
   if (!requiresStock(product)) {
     return null;
   }
@@ -180,7 +177,9 @@ export function SaleTicketPosWorkspace({
   const [paymentMethod, setPaymentMethod] = useState<SalePaymentMethod | "">(
     ticket.paymentMethod ?? ""
   );
-  const [paymentBankId, setPaymentBankId] = useState(ticket.paymentBankId ?? "");
+  const [paymentBankId, setPaymentBankId] = useState(
+    ticket.paymentBankId ?? ""
+  );
   const [blockedProductReasons, setBlockedProductReasons] = useState<
     Record<string, string>
   >({});
@@ -202,11 +201,13 @@ export function SaleTicketPosWorkspace({
     const normalizedSearch = search.trim().toLowerCase();
 
     return products.filter((product) => {
-      const matchesCategory = remoteFiltering ||
+      const matchesCategory =
+        remoteFiltering ||
         selectedCategory === "Todos" ||
         getProductCategory(product) === selectedCategory;
       const matchesSearch =
-        remoteFiltering || !normalizedSearch ||
+        remoteFiltering ||
+        !normalizedSearch ||
         [product.name, product.sku ?? "", product.description ?? ""]
           .join(" ")
           .toLowerCase()
@@ -230,13 +231,12 @@ export function SaleTicketPosWorkspace({
         paymentBankId,
       })
     : null;
-  const paymentValidationMessage =
-    !paymentMethod
-      ? "Selecciona un metodo de pago antes de confirmar la venta."
-      : paymentValidationResult && !paymentValidationResult.success
-        ? paymentValidationResult.error.issues[0]?.message ??
-          "Completa el metodo de pago antes de confirmar la venta."
-        : null;
+  const paymentValidationMessage = !paymentMethod
+    ? "Selecciona un metodo de pago antes de confirmar la venta."
+    : paymentValidationResult && !paymentValidationResult.success
+      ? (paymentValidationResult.error.issues[0]?.message ??
+        "Completa el metodo de pago antes de confirmar la venta.")
+      : null;
 
   function getRejectedSaleReason(error: unknown) {
     const message =
@@ -391,226 +391,227 @@ export function SaleTicketPosWorkspace({
             </span>
           </button>
         </CardHeader>
-          <CardContent
-            className={`space-y-5 p-5 ${
-              openPanel === "products" ? "" : "hidden xl:block"
-            }`}
-          >
-            <div className="grid gap-3 rounded-2xl border bg-background/80 p-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,24rem)] lg:items-start">
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    type="button"
+        <CardContent
+          className={`space-y-5 p-5 ${
+            openPanel === "products" ? "" : "hidden xl:block"
+          }`}
+        >
+          <div className="grid gap-3 rounded-2xl border bg-background/80 p-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,24rem)] lg:items-start">
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  type="button"
                   variant={selectedCategory === category ? "default" : "ghost"}
                   size="sm"
                   aria-pressed={selectedCategory === category}
-                    onClick={() => {
-                      setSelectedCategory(category);
-                      const selected = catalogCategories?.find(
-                        (item) => item.name === category
-                      );
-                      onCatalogCategoryChange?.(selected?.id);
-                    }}
-                    className="shrink-0 rounded-full data-[selected=true]:shadow-sm"
-                    data-selected={selectedCategory === category}
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-              <div className="relative w-full">
-                <Search
-                  aria-hidden="true"
-                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                  value={search}
-                  onChange={(event) => {
-                    setSearch(event.target.value);
-                    onCatalogSearchChange?.(event.target.value);
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    const selected = catalogCategories?.find(
+                      (item) => item.name === category
+                    );
+                    onCatalogCategoryChange?.(selected?.id);
                   }}
-                  aria-label="Buscar productos"
-                  className="h-10 rounded-xl bg-muted/30 pr-9 pl-9"
-                />
-                {search ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    className="absolute top-1/2 right-2 -translate-y-1/2"
-                    aria-label="Limpiar búsqueda"
-                    onClick={() => {
-                      setSearch("");
-                      onCatalogSearchChange?.("");
-                    }}
-                  >
-                    <X aria-hidden="true" />
-                  </Button>
-                ) : null}
-              </div>
+                  className="shrink-0 rounded-full data-[selected=true]:shadow-sm"
+                  data-selected={selectedCategory === category}
+                >
+                  {category}
+                </Button>
+              ))}
             </div>
-
-            {isProductsLoading ? (
-              <LoadingState
-                title="Cargando productos"
-                message="Estamos preparando el catalogo de venta."
-                className="w-full max-w-none shadow-none"
+            <div className="relative w-full">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
               />
-            ) : null}
-
-            {productsError ? (
-              <ErrorMessage
-                title="No se pudieron cargar los productos"
-                messages={getApiErrorMessages(productsError)}
+              <Input
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  onCatalogSearchChange?.(event.target.value);
+                }}
+                aria-label="Buscar productos"
+                className="h-10 rounded-xl bg-muted/30 pr-9 pl-9"
               />
-            ) : null}
-
-            {!isProductsLoading && !productsError && products.length === 0 ? (
-              <EmptyState
-                title="Sin productos disponibles"
-                message="No hay productos activos para vender en este momento."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : null}
-
-            {!isProductsLoading &&
-            !productsError &&
-            products.length > 0 &&
-            filteredProducts.length === 0 ? (
-              <EmptyState
-                title="Sin resultados"
-                message="No encontramos productos con los filtros actuales."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : null}
-
-            {filteredProducts.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
-                {filteredProducts.map((product) => {
-                  const item = lineByProductId.get(product.id);
-                  const quantity = item ? formatQuantity(item.quantity) : "0";
-                  const numericQuantity = toNumber(item?.quantity);
-                  const isSelected = Boolean(item);
-                  const blockReason =
-                    blockedProductReasons[product.id] ??
-                    getSaleBlockReason(product);
-                  const limitReason = getStockLimitReason(
-                    product,
-                    numericQuantity + 1
-                  );
-                  const isBlocked = Boolean(blockReason);
-                  const isAtStockLimit = Boolean(limitReason);
-                  const stockLabel =
-                    !requiresStock(product)
-                      ? "Sin control de stock"
-                      : product.currentStock == null
-                      ? "Stock no disponible"
-                      : `Stock: ${formatQuantity(product.currentStock)}`;
-
-                  return (
-                    <div
-                      key={product.id}
-                      className="group flex min-h-44 flex-col justify-between rounded-2xl border bg-background p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md data-[blocked=true]:border-rose-200 data-[blocked=true]:bg-rose-50 data-[blocked=true]:text-rose-950 data-[selected=true]:border-primary data-[selected=true]:bg-primary/5 data-[selected=true]:shadow-md"
-                      data-selected={isSelected}
-                      data-blocked={isBlocked}
-                    >
-                      <button
-                        type="button"
-                        className="min-h-24 text-left disabled:cursor-not-allowed"
-                        disabled={isMutating || isBlocked || isAtStockLimit}
-                        onClick={() => incrementProduct(product)}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="line-clamp-2 font-medium leading-5">
-                              {product.name}
-                            </p>
-                            <p className="mt-1 truncate text-xs font-medium text-muted-foreground">
-                              {product.sku || getProductCategory(product)}
-                            </p>
-                          </div>
-                          {isBlocked ? (
-                            <Badge
-                              variant="outline"
-                              className="border-rose-200 bg-white text-rose-700"
-                            >
-                              No elegible
-                            </Badge>
-                          ) : isSelected ? (
-                            <Badge variant="default">{quantity}</Badge>
-                          ) : null}
-                        </div>
-                        <p className="mt-3 text-xs text-muted-foreground">
-                          {formatSaleTicketUnit(product.unit)}
-                        </p>
-                        <p className="mt-2 inline-flex rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-                          {stockLabel}
-                        </p>
-                        {blockReason ? (
-                          <p className="mt-2 text-xs font-medium text-rose-700">
-                            {blockReason}
-                          </p>
-                        ) : limitReason ? (
-                          <p className="mt-2 text-xs font-medium text-amber-700">
-                            {limitReason}
-                          </p>
-                        ) : product.stockStatus === "LOW_STOCK" ? (
-                          <p className="mt-2 text-xs font-medium text-amber-700">
-                            Bajo stock
-                          </p>
-                        ) : null}
-                      </button>
-
-                      <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          disabled={!isSelected || isMutating}
-                          onClick={() => decrementProduct(product.id)}
-                          aria-label={`Restar ${product.name}`}
-                        >
-                          <Minus aria-hidden="true" />
-                        </Button>
-                        <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
-                          {quantity}
-                        </div>
-                        <Button
-                          type="button"
-                          size="icon"
-                          disabled={isMutating || isBlocked || isAtStockLimit}
-                          onClick={() => incrementProduct(product)}
-                          aria-label={`Sumar ${product.name}`}
-                        >
-                          <Plus aria-hidden="true" />
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : null}
-            {hasMoreProducts ? (
-              <div className="flex justify-center pt-4">
+              {search ? (
                 <Button
                   type="button"
-                  variant="outline"
-                  disabled={isLoadingMoreProducts}
-                  onClick={onLoadMoreProducts}
+                  variant="ghost"
+                  size="icon-sm"
+                  className="absolute top-1/2 right-2 -translate-y-1/2"
+                  aria-label="Limpiar búsqueda"
+                  onClick={() => {
+                    setSearch("");
+                    onCatalogSearchChange?.("");
+                  }}
                 >
-                  {isLoadingMoreProducts ? "Cargando..." : "Cargar mas"}
+                  <X aria-hidden="true" />
                 </Button>
-              </div>
-            ) : null}
-          </CardContent>
+              ) : null}
+            </div>
+          </div>
+
+          {isProductsLoading ? (
+            <LoadingState
+              title="Cargando productos"
+              message="Estamos preparando el catalogo de venta."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : null}
+
+          {productsError ? (
+            <ErrorMessage
+              title="No se pudieron cargar los productos"
+              messages={getApiErrorMessages(productsError)}
+            />
+          ) : null}
+
+          {!isProductsLoading && !productsError && products.length === 0 ? (
+            <EmptyState
+              title="Sin productos disponibles"
+              message="No hay productos activos para vender en este momento."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : null}
+
+          {!isProductsLoading &&
+          !productsError &&
+          products.length > 0 &&
+          filteredProducts.length === 0 ? (
+            <EmptyState
+              title="Sin resultados"
+              message="No encontramos productos con los filtros actuales."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : null}
+
+          {filteredProducts.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+              {filteredProducts.map((product) => {
+                const item = lineByProductId.get(product.id);
+                const quantity = item ? formatQuantity(item.quantity) : "0";
+                const numericQuantity = toNumber(item?.quantity);
+                const isSelected = Boolean(item);
+                const blockReason =
+                  blockedProductReasons[product.id] ??
+                  getSaleBlockReason(product);
+                const limitReason = getStockLimitReason(
+                  product,
+                  numericQuantity + 1
+                );
+                const isBlocked = Boolean(blockReason);
+                const isAtStockLimit = Boolean(limitReason);
+                const stockLabel = !requiresStock(product)
+                  ? "Sin control de stock"
+                  : product.currentStock == null
+                    ? "Stock no disponible"
+                    : `Stock: ${formatQuantity(product.currentStock)}`;
+
+                return (
+                  <div
+                    key={product.id}
+                    className="group flex min-h-44 flex-col justify-between rounded-2xl border bg-background p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md data-[blocked=true]:border-rose-200 data-[blocked=true]:bg-rose-50 data-[blocked=true]:text-rose-950 data-[selected=true]:border-primary data-[selected=true]:bg-primary/5 data-[selected=true]:shadow-md"
+                    data-selected={isSelected}
+                    data-blocked={isBlocked}
+                  >
+                    <button
+                      type="button"
+                      className="min-h-24 text-left disabled:cursor-not-allowed"
+                      disabled={isMutating || isBlocked || isAtStockLimit}
+                      onClick={() => incrementProduct(product)}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="line-clamp-2 font-medium leading-5">
+                            {product.name}
+                          </p>
+                          <p className="mt-1 truncate text-xs font-medium text-muted-foreground">
+                            {product.sku || getProductCategory(product)}
+                          </p>
+                        </div>
+                        {isBlocked ? (
+                          <Badge
+                            variant="outline"
+                            className="border-rose-200 bg-white text-rose-700"
+                          >
+                            No elegible
+                          </Badge>
+                        ) : isSelected ? (
+                          <Badge variant="default">{quantity}</Badge>
+                        ) : null}
+                      </div>
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        {formatSaleTicketUnit(product.unit)}
+                      </p>
+                      <p className="mt-2 inline-flex rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                        {stockLabel}
+                      </p>
+                      {blockReason ? (
+                        <p className="mt-2 text-xs font-medium text-rose-700">
+                          {blockReason}
+                        </p>
+                      ) : limitReason ? (
+                        <p className="mt-2 text-xs font-medium text-amber-700">
+                          {limitReason}
+                        </p>
+                      ) : product.stockStatus === "LOW_STOCK" ? (
+                        <p className="mt-2 text-xs font-medium text-amber-700">
+                          Bajo stock
+                        </p>
+                      ) : null}
+                    </button>
+
+                    <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        disabled={!isSelected || isMutating}
+                        onClick={() => decrementProduct(product.id)}
+                        aria-label={`Restar ${product.name}`}
+                      >
+                        <Minus aria-hidden="true" />
+                      </Button>
+                      <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
+                        {quantity}
+                      </div>
+                      <Button
+                        type="button"
+                        size="icon"
+                        disabled={isMutating || isBlocked || isAtStockLimit}
+                        onClick={() => incrementProduct(product)}
+                        aria-label={`Sumar ${product.name}`}
+                      >
+                        <Plus aria-hidden="true" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+          {hasMoreProducts ? (
+            <div className="flex justify-center pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoadingMoreProducts}
+                onClick={onLoadMoreProducts}
+              >
+                {isLoadingMoreProducts ? "Cargando..." : "Cargar mas"}
+              </Button>
+            </div>
+          ) : null}
+        </CardContent>
       </Card>
 
       {addError || updateError || removeError ? (
         <div className="xl:col-span-2 xl:row-start-2">
           <ErrorMessage
             title="No se pudo actualizar el pedido"
-            messages={getApiErrorMessages(addError ?? updateError ?? removeError)}
+            messages={getApiErrorMessages(
+              addError ?? updateError ?? removeError
+            )}
           />
         </div>
       ) : null}
@@ -646,170 +647,173 @@ export function SaleTicketPosWorkspace({
             </span>
           </button>
         </CardHeader>
-          <CardContent
-            className={`space-y-5 p-5 xl:min-h-0 xl:overflow-y-auto ${
-              openPanel === "order" ? "" : "hidden xl:block"
-            }`}
-          >
-            {ticket.items.length === 0 ? (
-              <div className="rounded-2xl border border-dashed bg-muted/30 p-6 text-sm text-muted-foreground">
-                Agrega productos desde la grilla para armar el pedido.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {ticket.items.map((item) => {
-                  const product = products.find(
-                    (candidate) => candidate.id === item.productId
-                  );
-                  const limitReason = product
-                    ? getStockLimitReason(product, toNumber(item.quantity) + 1)
-                    : null;
-                  const stockLabel =
-                    !product || !requiresStock(product)
-                      ? "Sin control de stock"
-                      : product.currentStock == null
+        <CardContent
+          className={`space-y-5 p-5 xl:min-h-0 xl:overflow-y-auto ${
+            openPanel === "order" ? "" : "hidden xl:block"
+          }`}
+        >
+          {ticket.items.length === 0 ? (
+            <div className="rounded-2xl border border-dashed bg-muted/30 p-6 text-sm text-muted-foreground">
+              Agrega productos desde la grilla para armar el pedido.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {ticket.items.map((item) => {
+                const product = products.find(
+                  (candidate) => candidate.id === item.productId
+                );
+                const limitReason = product
+                  ? getStockLimitReason(product, toNumber(item.quantity) + 1)
+                  : null;
+                const stockLabel =
+                  !product || !requiresStock(product)
+                    ? "Sin control de stock"
+                    : product.currentStock == null
                       ? "Stock no disponible"
                       : `Stock: ${formatQuantity(product.currentStock)}`;
 
-                  return (
-                    <div
-                      key={item.id}
-                      className="rounded-2xl border bg-background p-4 shadow-sm"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="line-clamp-2 font-medium">
-                            {item.productNameSnapshot}
+                return (
+                  <div
+                    key={item.id}
+                    className="rounded-2xl border bg-background p-4 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="line-clamp-2 font-medium">
+                          {item.productNameSnapshot}
+                        </p>
+                        <p className="mt-1 text-xs font-medium text-muted-foreground">
+                          {formatMoney(item.unitPriceSnapshot)} c/u
+                        </p>
+                        <p className="mt-2 inline-flex rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                          {stockLabel}
+                        </p>
+                        {limitReason ? (
+                          <p className="mt-1 text-xs font-medium text-amber-700">
+                            {limitReason}
                           </p>
-                          <p className="mt-1 text-xs font-medium text-muted-foreground">
-                            {formatMoney(item.unitPriceSnapshot)} c/u
-                          </p>
-                          <p className="mt-2 inline-flex rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-                            {stockLabel}
-                          </p>
-                          {limitReason ? (
-                            <p className="mt-1 text-xs font-medium text-amber-700">
-                              {limitReason}
-                            </p>
-                          ) : null}
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          disabled={isMutating}
-                          onClick={() => {
-                            void Promise.resolve(onRemoveItem(item.id)).catch(
-                              () => {
-                                // Mutation state renders the error message.
-                              }
-                            );
-                          }}
-                          aria-label={`Quitar ${item.productNameSnapshot}`}
-                        >
-                          <Trash2 aria-hidden="true" />
-                        </Button>
+                        ) : null}
                       </div>
-                      <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          disabled={isMutating}
-                          onClick={() => decrementProduct(item.productId)}
-                          aria-label={`Restar ${item.productNameSnapshot}`}
-                        >
-                          <Minus aria-hidden="true" />
-                        </Button>
-                        <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
-                          {formatQuantity(item.quantity)}
-                        </div>
-                        <Button
-                          type="button"
-                          size="icon"
-                          disabled={isMutating || Boolean(limitReason)}
-                          onClick={() => {
-                            void Promise.resolve(
-                              onUpdateItem(item.id, {
-                                quantity: String(toNumber(item.quantity) + 1),
-                              })
-                            ).catch(() => {
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-sm"
+                        disabled={isMutating}
+                        onClick={() => {
+                          void Promise.resolve(onRemoveItem(item.id)).catch(
+                            () => {
                               // Mutation state renders the error message.
-                            });
-                          }}
-                          aria-label={`Sumar ${item.productNameSnapshot}`}
-                        >
-                          <Plus aria-hidden="true" />
-                        </Button>
-                      </div>
-                      <div className="mt-4 flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-sm">
-                        <span className="text-muted-foreground">Subtotal</span>
-                        <span className="font-medium">
-                          {formatMoney(item.subtotal)}
-                        </span>
-                      </div>
+                            }
+                          );
+                        }}
+                        aria-label={`Quitar ${item.productNameSnapshot}`}
+                      >
+                        <Trash2 aria-hidden="true" />
+                      </Button>
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                    <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        disabled={isMutating}
+                        onClick={() => decrementProduct(item.productId)}
+                        aria-label={`Restar ${item.productNameSnapshot}`}
+                      >
+                        <Minus aria-hidden="true" />
+                      </Button>
+                      <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
+                        {formatQuantity(item.quantity)}
+                      </div>
+                      <Button
+                        type="button"
+                        size="icon"
+                        disabled={isMutating || Boolean(limitReason)}
+                        onClick={() => {
+                          void Promise.resolve(
+                            onUpdateItem(item.id, {
+                              quantity: String(toNumber(item.quantity) + 1),
+                            })
+                          ).catch(() => {
+                            // Mutation state renders the error message.
+                          });
+                        }}
+                        aria-label={`Sumar ${item.productNameSnapshot}`}
+                      >
+                        <Plus aria-hidden="true" />
+                      </Button>
+                    </div>
+                    <div className="mt-4 flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="font-medium">
+                        {formatMoney(item.subtotal)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-            <div className="space-y-4">
-              <div className="space-y-3 rounded-2xl border bg-background p-5 shadow-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold">Resumen</p>
-                  <Badge variant="outline" className="bg-background">
-                    {ticket.items.length} {ticket.items.length === 1 ? "ítem" : "ítems"}
-                  </Badge>
-                </div>
-                <div className="border-t" />
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">{formatMoney(ticket.subtotal)}</span>
-                </div>
-                <div className="flex items-center justify-between text-xl font-semibold">
-                  <span>Total</span>
-                  <span>{formatMoney(ticket.total)}</span>
-                </div>
+          <div className="space-y-4">
+            <div className="space-y-3 rounded-2xl border bg-background p-5 shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold">Resumen</p>
+                <Badge variant="outline" className="bg-background">
+                  {ticket.items.length}{" "}
+                  {ticket.items.length === 1 ? "ítem" : "ítems"}
+                </Badge>
               </div>
-
-              <div className="space-y-3">
-                <SaleTicketPaymentSection
-                  paymentMethod={paymentMethod}
-                  paymentBankId={paymentBankId}
-                  banks={paymentBanks}
-                  isBanksLoading={isPaymentBanksLoading}
-                  banksError={paymentBanksError}
-                  isSaving={isSavingPayment}
-                  saveError={savePaymentError}
-                  disabled={isConfirmPending}
-                  onPaymentMethodChange={(nextPaymentMethod) => {
-                    setPaymentMethod(nextPaymentMethod);
-                    if (nextPaymentMethod === "CASH") {
-                      setPaymentBankId("");
-                    }
-                  }}
-                  onPaymentBankChange={setPaymentBankId}
-                  onSave={handleSavePayment}
-                />
-                <ConfirmSaleTicketDialog
-                  itemsCount={ticket.items.length}
-                  disabledReason={paymentValidationMessage}
-                  isPending={isConfirmPending}
-                  error={confirmError}
-                  success={confirmSuccess}
-                  onConfirm={handleConfirm}
-                />
-                <CancelSaleTicketDialog
-                  ticket={ticket}
-                  isPending={isCancelPending}
-                  error={cancelError}
-                  success={cancelSuccess}
-                  onCancel={onCancel}
-                />
+              <div className="border-t" />
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium">
+                  {formatMoney(ticket.subtotal)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xl font-semibold">
+                <span>Total</span>
+                <span>{formatMoney(ticket.total)}</span>
               </div>
             </div>
-          </CardContent>
+
+            <div className="space-y-3">
+              <SaleTicketPaymentSection
+                paymentMethod={paymentMethod}
+                paymentBankId={paymentBankId}
+                banks={paymentBanks}
+                isBanksLoading={isPaymentBanksLoading}
+                banksError={paymentBanksError}
+                isSaving={isSavingPayment}
+                saveError={savePaymentError}
+                disabled={isConfirmPending}
+                onPaymentMethodChange={(nextPaymentMethod) => {
+                  setPaymentMethod(nextPaymentMethod);
+                  if (nextPaymentMethod === "CASH") {
+                    setPaymentBankId("");
+                  }
+                }}
+                onPaymentBankChange={setPaymentBankId}
+                onSave={handleSavePayment}
+              />
+              <ConfirmSaleTicketDialog
+                itemsCount={ticket.items.length}
+                disabledReason={paymentValidationMessage}
+                isPending={isConfirmPending}
+                error={confirmError}
+                success={confirmSuccess}
+                onConfirm={handleConfirm}
+              />
+              <CancelSaleTicketDialog
+                ticket={ticket}
+                isPending={isCancelPending}
+                error={cancelError}
+                success={cancelSuccess}
+                onCancel={onCancel}
+              />
+            </div>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CommercialRecovery } from "@/components/feedback/commercial-recovery";
 import dynamic from "next/dynamic";
 import { ArrowLeft } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -52,11 +53,10 @@ const TableOrderWorkspace = dynamic(
   }
 );
 
-const TableOrderItemsTable = dynamic(
-  () =>
-    import("@/features/table-orders/components/table-order-items-table").then(
-      (module) => module.TableOrderItemsTable
-    )
+const TableOrderItemsTable = dynamic(() =>
+  import("@/features/table-orders/components/table-order-items-table").then(
+    (module) => module.TableOrderItemsTable
+  )
 );
 
 export function TableOrderDetailPage({ orderId }: Props) {
@@ -65,9 +65,13 @@ export function TableOrderDetailPage({ orderId }: Props) {
   const debouncedCatalogSearch = useDebouncedValue(catalogSearch.trim(), 300);
   const { user } = useAuth();
   const canMutate =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "CASHIER";
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "CASHIER";
   const canViewCosts =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "AUDITOR";
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "AUDITOR";
   const orderQuery = useTableOrder(orderId);
   const shouldLoadOrderResources = Boolean(
     canMutate && orderQuery.data?.status === "OPEN"
@@ -94,29 +98,27 @@ export function TableOrderDetailPage({ orderId }: Props) {
   const cancelOrderMutation = useCancelTableOrder(orderId);
   const closeOrderMutation = useCloseTableOrder(orderId);
 
-  const products = useMemo<SaleProductOption[]>(
-    () => {
-      if (posCatalogEnabled) {
-        return posCatalogQuery.data?.pages.flatMap((page) => page.items) ?? [];
-      }
-      return (
-      (productsQuery.data ?? [])
-        .filter((product) => product.active && product.stockManagementType !== "RECIPE_BASED")
-        .map((product) => ({
-          id: product.id,
-          name: product.name,
-          description: product.description,
-          sku: product.sku,
-          categoryId: product.categoryId,
-          categoryName: product.category?.name ?? null,
-          unit: product.unit,
-          stockManagementType: product.stockManagementType,
-          active: product.active,
-        }))
-      );
-    },
-    [posCatalogQuery.data, productsQuery.data]
-  );
+  const products = useMemo<SaleProductOption[]>(() => {
+    if (posCatalogEnabled) {
+      return posCatalogQuery.data?.pages.flatMap((page) => page.items) ?? [];
+    }
+    return (productsQuery.data ?? [])
+      .filter(
+        (product) =>
+          product.active && product.stockManagementType !== "RECIPE_BASED"
+      )
+      .map((product) => ({
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        sku: product.sku,
+        categoryId: product.categoryId,
+        categoryName: product.category?.name ?? null,
+        unit: product.unit,
+        stockManagementType: product.stockManagementType,
+        active: product.active,
+      }));
+  }, [posCatalogQuery.data, productsQuery.data]);
   const catalogCategories = posCatalogQuery.data?.pages[0]?.categories;
 
   if (orderQuery.isLoading) {
@@ -149,7 +151,9 @@ export function TableOrderDetailPage({ orderId }: Props) {
     return (
       <section className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         <ErrorMessage
-          title={isNotFound ? "Orden no encontrada" : "No se pudo cargar la orden"}
+          title={
+            isNotFound ? "Orden no encontrada" : "No se pudo cargar la orden"
+          }
           messages={
             isNotFound
               ? "La orden solicitada no existe o ya no esta disponible."
@@ -173,11 +177,12 @@ export function TableOrderDetailPage({ orderId }: Props) {
     (updateItemMutation.variables && "itemId" in updateItemMutation.variables
       ? updateItemMutation.variables.itemId
       : null) ??
-    removeItemMutation.variables ??
+    removeItemMutation.variables?.itemId ??
     null;
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <CommercialRecovery operation={`/api/table-orders/${orderId}/close`} />
       <PageHeader
         eyebrow="Orden de mesa"
         title={`Mesa ${order.tableCode}`}
@@ -233,7 +238,11 @@ export function TableOrderDetailPage({ orderId }: Props) {
             onCatalogSearchChange={setCatalogSearch}
             onCatalogCategoryChange={setCatalogCategoryId}
             onLoadMoreProducts={() => void posCatalogQuery.fetchNextPage()}
-            isProductsLoading={posCatalogEnabled ? posCatalogQuery.isLoading : productsQuery.isLoading}
+            isProductsLoading={
+              posCatalogEnabled
+                ? posCatalogQuery.isLoading
+                : productsQuery.isLoading
+            }
             productsError={posCatalogQuery.error ?? productsQuery.error}
             isAddingItem={addItemMutation.isPending}
             isUpdatingItem={updateItemMutation.isPending}
@@ -241,7 +250,9 @@ export function TableOrderDetailPage({ orderId }: Props) {
             addError={addItemMutation.error}
             updateError={updateItemMutation.error}
             removeError={removeItemMutation.error}
-            paymentBanks={(paymentBanksQuery.data ?? []).filter((bank) => bank.active)}
+            paymentBanks={(paymentBanksQuery.data ?? []).filter(
+              (bank) => bank.active
+            )}
             isPaymentBanksLoading={paymentBanksQuery.isLoading}
             isCancelPending={cancelOrderMutation.isPending}
             isClosePending={closeOrderMutation.isPending}
@@ -263,7 +274,10 @@ export function TableOrderDetailPage({ orderId }: Props) {
               });
             }}
             onRemoveItem={async (itemId) => {
-              await removeItemMutation.mutateAsync(itemId);
+              await removeItemMutation.mutateAsync({
+                itemId,
+                expectedVersion: order.version,
+              });
             }}
             onCancel={async (values) => {
               await cancelOrderMutation.mutateAsync({
@@ -280,88 +294,95 @@ export function TableOrderDetailPage({ orderId }: Props) {
           />
         </>
       ) : (
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_22rem]">
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex flex-wrap items-center gap-3">
-                Estado
-                <TableOrderStatusBadge status={order.status} />
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
-              <p>Area: {order.tableArea || "-"}</p>
-              <p>Ticket: {order.saleTicketId}</p>
-              <p>Apertura: {formatDateTime(order.openedAt)}</p>
-              <p>Cierre: {formatDateTime(order.closedAt)}</p>
-              <p>Cancelacion: {formatDateTime(order.cancelledAt)}</p>
-              <p>Notas: {order.notes || "-"}</p>
-              {order.status === "CANCELLED" ? (
-                <p className="md:col-span-2">
-                  Motivo: {order.cancelReason || "-"} No afecto stock.
-                </p>
-              ) : null}
-              {order.status === "CLOSED" ? (
-                <p className="md:col-span-2">
-                  Venta confirmada por backend. El stock fue descontado al cierre.
-                </p>
-              ) : null}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Consumos</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {hasItems ? (
-                <TableOrderItemsTable
-                  items={order.saleTicket.items}
-                  canEdit={canEdit}
-                  canViewCosts={Boolean(canViewCosts)}
-                  isUpdatingItem={updateItemMutation.isPending}
-                  updateError={updateItemMutation.error}
-                  removeError={removeItemMutation.error}
-                  pendingItemId={pendingItemId}
-                  onUpdateItem={async (itemId, values) => {
-                    await updateItemMutation.mutateAsync({ itemId, data: values });
-                  }}
-                  onRemoveItem={async (itemId) => {
-                    await removeItemMutation.mutateAsync(itemId);
-                  }}
-                />
-              ) : (
-                <EmptyState
-                  title="Orden sin consumos"
-                  message={
-                    isOpen
-                      ? "Agrega consumos antes de cerrar la orden."
-                      : "Esta orden no registra consumos."
-                  }
-                  className="w-full max-w-none shadow-none"
-                />
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-4">
-          <TableOrderTotalCard order={order} />
-
-          {isOpen ? (
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_22rem]">
+          <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Acciones de orden</CardTitle>
+                <CardTitle className="flex flex-wrap items-center gap-3">
+                  Estado
+                  <TableOrderStatusBadge status={order.status} />
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Orden abierta en modo lectura. Tu rol no permite mutaciones.
-                </p>
+              <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2">
+                <p>Area: {order.tableArea || "-"}</p>
+                <p>Ticket: {order.saleTicketId}</p>
+                <p>Apertura: {formatDateTime(order.openedAt)}</p>
+                <p>Cierre: {formatDateTime(order.closedAt)}</p>
+                <p>Cancelacion: {formatDateTime(order.cancelledAt)}</p>
+                <p>Notas: {order.notes || "-"}</p>
+                {order.status === "CANCELLED" ? (
+                  <p className="md:col-span-2">
+                    Motivo: {order.cancelReason || "-"} No afecto stock.
+                  </p>
+                ) : null}
+                {order.status === "CLOSED" ? (
+                  <p className="md:col-span-2">
+                    Venta confirmada por backend. El stock fue descontado al
+                    cierre.
+                  </p>
+                ) : null}
               </CardContent>
             </Card>
-          ) : null}
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Consumos</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {hasItems ? (
+                  <TableOrderItemsTable
+                    items={order.saleTicket.items}
+                    canEdit={canEdit}
+                    canViewCosts={Boolean(canViewCosts)}
+                    isUpdatingItem={updateItemMutation.isPending}
+                    updateError={updateItemMutation.error}
+                    removeError={removeItemMutation.error}
+                    pendingItemId={pendingItemId}
+                    onUpdateItem={async (itemId, values) => {
+                      await updateItemMutation.mutateAsync({
+                        itemId,
+                        data: { ...values, expectedVersion: order.version },
+                      });
+                    }}
+                    onRemoveItem={async (itemId) => {
+                      await removeItemMutation.mutateAsync({
+                        itemId,
+                        expectedVersion: order.version,
+                      });
+                    }}
+                  />
+                ) : (
+                  <EmptyState
+                    title="Orden sin consumos"
+                    message={
+                      isOpen
+                        ? "Agrega consumos antes de cerrar la orden."
+                        : "Esta orden no registra consumos."
+                    }
+                    className="w-full max-w-none shadow-none"
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="space-y-4">
+            <TableOrderTotalCard order={order} />
+
+            {isOpen ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Acciones de orden</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Orden abierta en modo lectura. Tu rol no permite mutaciones.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : null}
+          </div>
         </div>
-      </div>
       )}
     </section>
   );

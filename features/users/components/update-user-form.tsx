@@ -7,7 +7,13 @@ import type { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { updateUserSchema } from "@/features/users/schemas/user.schema";
 import type { User } from "@/features/users/types/user.types";
@@ -34,7 +40,11 @@ export function UpdateUserForm({
   onSubmit,
 }: UpdateUserFormProps) {
   const [roleChangeConfirmed, setRoleChangeConfirmed] = useState(false);
-  const form = useForm<UpdateUserFormValues, undefined, UpdateUserFormSubmitValues>({
+  const form = useForm<
+    UpdateUserFormValues,
+    undefined,
+    UpdateUserFormSubmitValues
+  >({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
       email: user.email,
@@ -174,17 +184,27 @@ export function UpdateUserForm({
             onChange={(event) => setRoleChangeConfirmed(event.target.checked)}
           />
           <span>
-            Confirmo que cambiar el rol de <strong>{user.firstName} {user.lastName}</strong> es una accion sensible.
+            Confirmo que cambiar el rol de{" "}
+            <strong>
+              {user.firstName} {user.lastName}
+            </strong>{" "}
+            es una accion sensible.
           </span>
         </label>
       ) : null}
 
       {error ? (
-        <ErrorMessage title={errorTitle} messages={getApiErrorMessages(error)} />
+        <ErrorMessage
+          title={errorTitle}
+          messages={getApiErrorMessages(error)}
+        />
       ) : null}
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={isPending || (hasRoleChange && !roleChangeConfirmed)}>
+        <Button
+          type="submit"
+          disabled={isPending || (hasRoleChange && !roleChangeConfirmed)}
+        >
           {isPending ? "Guardando..." : "Guardar cambios"}
         </Button>
       </div>

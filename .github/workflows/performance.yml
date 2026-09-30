@@ -1,26 +1,62 @@
-name: Performance budgets
+name: Frontend verification
 
 on:
   pull_request:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+concurrency:
+  group: frontend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
+      - run: npm install --global npm@11.6.2
       - run: npm ci
-      - run: npm run lint
-      - run: npm test
-      - run: npm run build
-      - run: npm run bundle:check
-      - uses: actions/upload-artifact@v4
+      - run: npm run audit:check
+      - run: npm run verify
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
-          name: bundle-report
-          path: bundle-report.json
+          name: frontend-verification
+          retention-days: 14
+          path: |
+            bundle-report.json
+            output/playwright/*.json
+            output/playwright/*.log
+
+  fullstack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.6.2
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:fullstack
+      - name: Sanitize trace and HTML credentials, including failed runs
+        id: sanitize
+        if: always()
+        run: node scripts/sanitize-evidence.mjs output/playwright
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: ${{ !cancelled() && steps.sanitize.outcome == 'success' }}
+        with:
+          name: frontend-fullstack
+          retention-days: 14
+          path: |
+            output/playwright/**
+            bundle-report.json

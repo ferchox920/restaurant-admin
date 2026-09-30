@@ -9,4 +9,3 @@ export const paymentBankSchema = z.object({
     .transform((value) => value ?? "")
     .transform((value) => (value.length > 0 ? value : undefined)),
 });
-

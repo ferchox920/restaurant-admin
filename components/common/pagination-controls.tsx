@@ -19,12 +19,24 @@ export function PaginationControls({
 }: PaginationControlsProps) {
   return (
     <div className="flex items-center justify-between gap-3 border-t pt-4">
-      <span className="text-sm text-muted-foreground">Pagina {Math.floor(offset / limit) + 1}</span>
+      <span className="text-sm text-muted-foreground">
+        Pagina {Math.floor(offset / limit) + 1}
+      </span>
       <div className="flex gap-2">
-        <Button type="button" variant="outline" disabled={disabled || offset === 0} onClick={() => onOffsetChange(Math.max(0, offset - limit))}>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={disabled || offset === 0}
+          onClick={() => onOffsetChange(Math.max(0, offset - limit))}
+        >
           Anterior
         </Button>
-        <Button type="button" variant="outline" disabled={disabled || itemCount !== limit} onClick={() => onOffsetChange(offset + itemCount)}>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={disabled || itemCount !== limit}
+          onClick={() => onOffsetChange(offset + itemCount)}
+        >
           Siguiente
         </Button>
       </div>

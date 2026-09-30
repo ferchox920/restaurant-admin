@@ -1,5 +1,7 @@
 "use client";
 
+import { clearCommercialIntents } from "@/lib/api/commercial-intent";
+
 import {
   createContext,
   ReactNode,
@@ -7,11 +9,15 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
   useSyncExternalStore,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, logout as logoutRequest } from "@/features/auth/api/auth.api";
+import {
+  getCurrentUser,
+  logout as logoutRequest,
+} from "@/features/auth/api/auth.api";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import type {
   AuthenticatedUser,
@@ -51,6 +57,7 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const [cookieSessionActive, setCookieSessionActive] = useState(true);
   const token = useSyncExternalStore(
     subscribeToAccessToken,
     getAccessToken,
@@ -58,12 +65,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 
   const currentUserQuery = useCurrentUser({
-    enabled: sessionMode === "cookie" || Boolean(token),
+    enabled: sessionMode === "cookie" ? cookieSessionActive : Boolean(token),
   });
 
   const authErrorStatus =
     currentUserQuery.error && isApiError(currentUserQuery.error)
-      ? currentUserQuery.error.statusCode ?? null
+      ? (currentUserQuery.error.statusCode ?? null)
       : null;
 
   const user = (currentUserQuery.data ?? null) as AuthenticatedUser | null;
@@ -79,9 +86,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [authErrorStatus, queryClient]);
 
   const clearSession = useCallback(() => {
+    setCookieSessionActive(false);
+    void queryClient.cancelQueries();
     clearAccessToken();
+    clearCommercialIntents();
     queryClient.clear();
   }, [queryClient]);
+
+  useEffect(() => {
+    const expire = () => {
+      clearSession();
+      router.replace("/login");
+    };
+    window.addEventListener("restaurant:session-expired", expire);
+    return () =>
+      window.removeEventListener("restaurant:session-expired", expire);
+  }, [clearSession, router]);
 
   const refreshCurrentUser = useCallback(async () => {
     if (sessionMode === "bearer" && !getAccessToken()) {
@@ -99,6 +119,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const login = useCallback(
     async (payload: LoginResponse) => {
+      setCookieSessionActive(true);
       if (sessionMode === "bearer") {
         if (!payload.accessToken) {
           throw new Error("La API no devolvio el token de acceso esperado.");
@@ -117,9 +138,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useCallback(async () => {
     try {
-      if (sessionMode === "cookie") {
-        await logoutRequest();
-      }
+      await logoutRequest();
     } finally {
       clearSession();
       router.replace("/login");
@@ -127,6 +146,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [clearSession, router]);
 
   const status: AuthStatus = useMemo(() => {
+    if (sessionMode === "cookie" && !cookieSessionActive) {
+      return "unauthenticated";
+    }
     if (sessionMode === "bearer" && !token) {
       return "unauthenticated";
     }
@@ -140,7 +162,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     return user ? "authenticated" : "unauthenticated";
-  }, [authErrorStatus, currentUserQuery.isLoading, token, user]);
+  }, [
+    authErrorStatus,
+    cookieSessionActive,
+    currentUserQuery.isLoading,
+    token,
+    user,
+  ]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
@@ -168,7 +196,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider value={value}>
-      <OperationalEvents enabled={status === "authenticated"} />
+      <OperationalEvents
+        enabled={status === "authenticated" && user?.role !== "AUDITOR"}
+      />
       {children}
     </AuthContext.Provider>
   );

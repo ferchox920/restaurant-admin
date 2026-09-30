@@ -56,7 +56,9 @@ export function TableOrderItemsTable({
             <TableHead>Precio unitario</TableHead>
             {canViewCosts ? <TableHead>Costo unitario</TableHead> : null}
             <TableHead>Subtotal</TableHead>
-            {canEdit ? <TableHead className="text-right">Acciones</TableHead> : null}
+            {canEdit ? (
+              <TableHead className="text-right">Acciones</TableHead>
+            ) : null}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,7 +67,9 @@ export function TableOrderItemsTable({
 
             return (
               <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.productNameSnapshot}</TableCell>
+                <TableCell className="font-medium">
+                  {item.productNameSnapshot}
+                </TableCell>
                 <TableCell>{item.productSkuSnapshot || "-"}</TableCell>
                 <TableCell>{item.productUnitSnapshot}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
@@ -106,7 +110,10 @@ export function TableOrderItemsTable({
           })}
           {canEdit && removeError ? (
             <TableRow>
-              <TableCell colSpan={canViewCosts ? 8 : 7} className="text-sm text-destructive">
+              <TableCell
+                colSpan={canViewCosts ? 8 : 7}
+                className="text-sm text-destructive"
+              >
                 No se pudo quitar el consumo. Revisa el estado de la orden.
               </TableCell>
             </TableRow>

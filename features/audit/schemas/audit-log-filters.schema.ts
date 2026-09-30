@@ -10,7 +10,10 @@ export const auditLogFiltersSchema = z
     action: z.enum(auditActions).optional(),
     entityType: z.enum(auditEntityTypes).optional(),
     entityId: z.string().trim().min(1).optional(),
-    from: z.string().datetime("La fecha desde debe ser ISO datetime.").optional(),
+    from: z
+      .string()
+      .datetime("La fecha desde debe ser ISO datetime.")
+      .optional(),
     to: z.string().datetime("La fecha hasta debe ser ISO datetime.").optional(),
     limit: z
       .number()

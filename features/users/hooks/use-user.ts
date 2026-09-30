@@ -8,7 +8,10 @@ type UseUserOptions = {
   enabled?: boolean;
 };
 
-export function useUser(userId: string | undefined, options: UseUserOptions = {}) {
+export function useUser(
+  userId: string | undefined,
+  options: UseUserOptions = {}
+) {
   const { enabled = true } = options;
 
   return useQuery({

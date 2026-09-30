@@ -6,6 +6,11 @@ import {
 } from "@/lib/quantity";
 
 describe("quantity helpers", () => {
+  it("rejects quantities that would be rounded or lose precision in the pinned decimal contract", () => {
+    expect(() => toApiQuantityNumber("1.2345")).toThrow();
+    expect(() => toApiQuantityNumber("9007199254740993")).toThrow();
+    expect(toApiQuantityNumber("0.01")).toBe(0.01);
+  });
   it("normalizes decimal separators", () => {
     expect(normalizeQuantityInput(" 10,25 ")).toBe("10.25");
   });

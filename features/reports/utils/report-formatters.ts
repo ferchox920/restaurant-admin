@@ -67,7 +67,10 @@ export function buildReportSearchParams(
 ) {
   return buildQueryString(
     Object.fromEntries(
-      Object.entries(filters ?? {}).map(([key, value]) => [key, value ?? undefined])
+      Object.entries(filters ?? {}).map(([key, value]) => [
+        key,
+        value ?? undefined,
+      ])
     )
   );
 }

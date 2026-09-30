@@ -44,7 +44,7 @@ export function ProductMovementHistory({
   const movementsQuery = useProductInventoryMovements(
     canRead ? productId : undefined,
     deferredFilters,
-    validRange,
+    validRange
   );
   const isForbidden =
     movementsQuery.error &&
@@ -58,7 +58,8 @@ export function ProductMovementHistory({
           <CardTitle>Movimientos</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
-          Tu rol puede consultar stock actual, pero no el historial de movimientos.
+          Tu rol puede consultar stock actual, pero no el historial de
+          movimientos.
         </CardContent>
       </Card>
     );
@@ -77,9 +78,19 @@ export function ProductMovementHistory({
           movementType={movementType}
           from={from}
           to={to}
-          onMovementTypeChange={(value) => { setMovementType(value); setOffset(0); }}
-          onFromChange={(value) => { setFrom(value); setOffset(0); if (to && value > to) setTo(""); }}
-          onToChange={(value) => { setTo(value); setOffset(0); }}
+          onMovementTypeChange={(value) => {
+            setMovementType(value);
+            setOffset(0);
+          }}
+          onFromChange={(value) => {
+            setFrom(value);
+            setOffset(0);
+            if (to && value > to) setTo("");
+          }}
+          onToChange={(value) => {
+            setTo(value);
+            setOffset(0);
+          }}
         />
 
         {movementsQuery.isLoading ? (
@@ -127,7 +138,13 @@ export function ProductMovementHistory({
           <InventoryMovementTable movements={movementsQuery.data ?? []} />
         ) : null}
         {!movementsQuery.error && validRange ? (
-          <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={movementsQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={movementsQuery.isFetching} />
+          <PaginationControls
+            offset={offset}
+            limit={DEFAULT_PAGE_LIMIT}
+            itemCount={movementsQuery.data?.length ?? 0}
+            onOffsetChange={setOffset}
+            disabled={movementsQuery.isFetching}
+          />
         ) : null}
       </CardContent>
     </Card>

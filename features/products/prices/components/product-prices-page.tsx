@@ -44,16 +44,25 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
   const canMutate = user?.role === "ADMIN" || user?.role === "MANAGER";
   const canReadUsers = user?.role === "ADMIN";
 
-  const [selectedChannelId, setSelectedChannelId] = useState<string | undefined>();
-  const [priceSuccessMessage, setPriceSuccessMessage] = useState<string | undefined>();
-  const [costSuccessMessage, setCostSuccessMessage] = useState<string | undefined>();
+  const [selectedChannelId, setSelectedChannelId] = useState<
+    string | undefined
+  >();
+  const [priceSuccessMessage, setPriceSuccessMessage] = useState<
+    string | undefined
+  >();
+  const [costSuccessMessage, setCostSuccessMessage] = useState<
+    string | undefined
+  >();
   const [costOffset, setCostOffset] = useState(0);
   const [priceOffset, setPriceOffset] = useState(0);
   const productQuery = useProduct(productId);
   const channelsQuery = useSalesChannels();
   const allPricesQuery = useAllProductPrices(productId);
   const currentCostQuery = useCurrentProductCost(productId);
-  const costsQuery = useProductCosts(productId, { limit: DEFAULT_PAGE_LIMIT, offset: costOffset });
+  const costsQuery = useProductCosts(productId, {
+    limit: DEFAULT_PAGE_LIMIT,
+    offset: costOffset,
+  });
   const usersQuery = useUsers(canReadUsers);
   const createPriceMutation = useCreateProductPrice(productId);
   const createCostMutation = useCreateProductCost(productId);
@@ -77,10 +86,17 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
     [selectableChannels]
   );
   const effectiveChannelId = selectedChannelId ?? initialChannelId;
-  const currentPriceQuery = useCurrentProductPrice(productId, effectiveChannelId);
-  const pricesQuery = useProductPrices(productId, effectiveChannelId, { limit: DEFAULT_PAGE_LIMIT, offset: priceOffset });
+  const currentPriceQuery = useCurrentProductPrice(
+    productId,
+    effectiveChannelId
+  );
+  const pricesQuery = useProductPrices(productId, effectiveChannelId, {
+    limit: DEFAULT_PAGE_LIMIT,
+    offset: priceOffset,
+  });
   const selectedChannel = useMemo(
-    () => selectableChannels.find((channel) => channel.id === effectiveChannelId),
+    () =>
+      selectableChannels.find((channel) => channel.id === effectiveChannelId),
     [effectiveChannelId, selectableChannels]
   );
   const userNameById = useMemo(() => {
@@ -182,13 +198,16 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
             <SalesChannelSelector
               channels={selectableChannels}
               selectedChannelId={effectiveChannelId}
-              onChange={(value) => { setSelectedChannelId(value); setPriceOffset(0); }}
+              onChange={(value) => {
+                setSelectedChannelId(value);
+                setPriceOffset(0);
+              }}
               description=""
             />
           )
         }
         createdByName={getCreatedByName(
-          currentPriceQuery.data?.createdById ?? null,
+          currentPriceQuery.data?.createdById ?? null
         )}
         currentCost={currentCostQuery.data ?? undefined}
         isCostLoading={currentCostQuery.isLoading}
@@ -216,11 +235,11 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
               }
               setSelectedChannelId(
                 prices.find(
-                  (price) => price.salesChannelId === effectiveChannelId,
-                )?.salesChannelId ?? prices[0]?.salesChannelId,
+                  (price) => price.salesChannelId === effectiveChannelId
+                )?.salesChannelId ?? prices[0]?.salesChannelId
               );
               setPriceSuccessMessage(
-                `Se actualizaron ${prices.length} precios de venta desde el precio base.`,
+                `Se actualizaron ${prices.length} precios de venta desde el precio base.`
               );
             }}
           />
@@ -235,7 +254,7 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
               setCostSuccessMessage(undefined);
               await createCostMutation.mutateAsync(values);
               setCostSuccessMessage(
-                "El costo vigente se actualizo correctamente.",
+                "El costo vigente se actualizo correctamente."
               );
             }}
           />
@@ -272,7 +291,15 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
               ) : (
                 <ProductCostHistoryTable items={costsQuery.data ?? []} />
               )}
-              {!costsQuery.error ? <PaginationControls offset={costOffset} limit={DEFAULT_PAGE_LIMIT} itemCount={costsQuery.data?.length ?? 0} onOffsetChange={setCostOffset} disabled={costsQuery.isFetching} /> : null}
+              {!costsQuery.error ? (
+                <PaginationControls
+                  offset={costOffset}
+                  limit={DEFAULT_PAGE_LIMIT}
+                  itemCount={costsQuery.data?.length ?? 0}
+                  onOffsetChange={setCostOffset}
+                  disabled={costsQuery.isFetching}
+                />
+              ) : null}
             </CardContent>
           </Card>
 
@@ -310,7 +337,15 @@ export function ProductPricesPage({ productId }: ProductPricesPageProps) {
                   getCreatedByName={getCreatedByName}
                 />
               )}
-              {!pricesQuery.error && effectiveChannelId ? <PaginationControls offset={priceOffset} limit={DEFAULT_PAGE_LIMIT} itemCount={pricesQuery.data?.length ?? 0} onOffsetChange={setPriceOffset} disabled={pricesQuery.isFetching} /> : null}
+              {!pricesQuery.error && effectiveChannelId ? (
+                <PaginationControls
+                  offset={priceOffset}
+                  limit={DEFAULT_PAGE_LIMIT}
+                  itemCount={pricesQuery.data?.length ?? 0}
+                  onOffsetChange={setPriceOffset}
+                  disabled={pricesQuery.isFetching}
+                />
+              ) : null}
             </CardContent>
           </Card>
         </div>

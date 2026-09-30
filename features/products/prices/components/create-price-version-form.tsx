@@ -83,7 +83,7 @@ export function CreatePriceVersionForm({
       activeChannels.map((channel) => ({
         salesChannelId: channel.id,
         price: calculateChannelPrice(values.price, channel),
-      })),
+      }))
     );
     form.reset({
       price: "",

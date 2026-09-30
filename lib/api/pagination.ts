@@ -13,7 +13,7 @@ export function withDefaultPagination<T extends PaginationParams>(params?: T) {
 
 export async function fetchAllPages<T>(
   fetchPage: (pagination: Required<PaginationParams>) => Promise<T[]>,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ) {
   const items: T[] = [];
   let offset = 0;

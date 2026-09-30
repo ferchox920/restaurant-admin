@@ -45,7 +45,9 @@ export function CurrentPriceCard({
   const priceAmount = parseAmount(currentPrice?.price);
   const costAmount = parseAmount(currentCost?.cost);
   const marginAmount =
-    priceAmount !== null && costAmount !== null ? priceAmount - costAmount : null;
+    priceAmount !== null && costAmount !== null
+      ? priceAmount - costAmount
+      : null;
   const marginPercentage =
     marginAmount !== null && priceAmount && priceAmount > 0
       ? (marginAmount / priceAmount) * 100
@@ -104,7 +106,8 @@ export function CurrentPriceCard({
                     No elegible para venta
                   </Badge>
                   <span>
-                    Falta completar el costo vigente antes de vender este producto.
+                    Falta completar el costo vigente antes de vender este
+                    producto.
                   </span>
                 </div>
               </div>
@@ -141,7 +144,9 @@ export function CurrentPriceCard({
                 ) : null}
               </div>
               <div className="rounded-lg bg-muted/50 p-4">
-                <p className="text-sm font-medium text-muted-foreground">Canal</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Canal
+                </p>
                 <div className="mt-2">
                   {channelSelector ?? (
                     <p className="text-lg font-medium">
@@ -156,7 +161,9 @@ export function CurrentPriceCard({
 
             <div className="grid gap-4 text-sm sm:grid-cols-3">
               <div>
-                <p className="font-medium text-muted-foreground">Precio desde</p>
+                <p className="font-medium text-muted-foreground">
+                  Precio desde
+                </p>
                 <p>{formatDateTime(currentPrice.validFrom)}</p>
               </div>
               <div>
@@ -195,7 +202,9 @@ export function CurrentPriceCard({
                   Precio de venta
                 </p>
                 <p className="mt-2 text-2xl font-semibold">Sin precio</p>
-                {channelSelector ? <div className="mt-3">{channelSelector}</div> : null}
+                {channelSelector ? (
+                  <div className="mt-3">{channelSelector}</div>
+                ) : null}
               </div>
               <div className="rounded-lg bg-muted/50 p-4">
                 <p className="text-sm font-medium text-muted-foreground">

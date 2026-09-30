@@ -17,7 +17,10 @@ function getReport<T>(path: string, signal?: AbortSignal) {
   return signal ? apiClient.get<T>(path, signal) : apiClient.get<T>(path);
 }
 
-export function getStockReport(filters?: StockReportFilters, signal?: AbortSignal) {
+export function getStockReport(
+  filters?: StockReportFilters,
+  signal?: AbortSignal
+) {
   const queryString = buildReportSearchParams({
     ...filters,
     ...(stockReportPaginationEnabled ? { responseMode: "paged" } : {}),
@@ -33,10 +36,16 @@ export function getStockReport(filters?: StockReportFilters, signal?: AbortSigna
     return {
       items: response,
       summary: {
-        available: response.filter((item) => item.stockStatus === "AVAILABLE").length,
-        lowStock: response.filter((item) => item.stockStatus === "LOW_STOCK").length,
-        outOfStock: response.filter((item) => item.stockStatus === "OUT_OF_STOCK").length,
-        notTracked: response.filter((item) => item.stockStatus === "NOT_TRACKED").length,
+        available: response.filter((item) => item.stockStatus === "AVAILABLE")
+          .length,
+        lowStock: response.filter((item) => item.stockStatus === "LOW_STOCK")
+          .length,
+        outOfStock: response.filter(
+          (item) => item.stockStatus === "OUT_OF_STOCK"
+        ).length,
+        notTracked: response.filter(
+          (item) => item.stockStatus === "NOT_TRACKED"
+        ).length,
       },
       total: response.length,
       limit: response.length,

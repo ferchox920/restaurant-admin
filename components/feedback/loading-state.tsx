@@ -7,11 +7,7 @@ type LoadingStateProps = {
   className?: string;
 };
 
-export function LoadingState({
-  title,
-  message,
-  className,
-}: LoadingStateProps) {
+export function LoadingState({ title, message, className }: LoadingStateProps) {
   return (
     <Card
       role="status"

@@ -35,7 +35,11 @@ import { formatMoney } from "@/lib/money";
 import { PaginationControls } from "@/components/common/pagination-controls";
 import { DEFAULT_PAGE_LIMIT } from "@/lib/api/pagination";
 import { useDebouncedValue } from "@/lib/hooks/use-debounced-value";
-import { INVALID_DATE_RANGE_MESSAGE, isValidDateRange, toIsoDateBoundary } from "@/lib/api/date-range";
+import {
+  INVALID_DATE_RANGE_MESSAGE,
+  isValidDateRange,
+  toIsoDateBoundary,
+} from "@/lib/api/date-range";
 
 type StatusFilter = "all" | TableOrderStatus;
 
@@ -49,15 +53,18 @@ export function TableOrdersPage() {
   const deferredTableId = useDebouncedValue(tableId.trim(), 300);
   const deferredOpenedById = useDebouncedValue(openedById.trim(), 300);
   const validRange = isValidDateRange(from, to);
-  const ordersQuery = useTableOrders({
-    status: status === "all" ? undefined : status,
-    tableId: deferredTableId || undefined,
-    openedById: deferredOpenedById || undefined,
-    from: validRange ? toIsoDateBoundary(from, "start") : undefined,
-    to: validRange ? toIsoDateBoundary(to, "end") : undefined,
-    limit: DEFAULT_PAGE_LIMIT,
-    offset,
-  }, validRange);
+  const ordersQuery = useTableOrders(
+    {
+      status: status === "all" ? undefined : status,
+      tableId: deferredTableId || undefined,
+      openedById: deferredOpenedById || undefined,
+      from: validRange ? toIsoDateBoundary(from, "start") : undefined,
+      to: validRange ? toIsoDateBoundary(to, "end") : undefined,
+      limit: DEFAULT_PAGE_LIMIT,
+      offset,
+    },
+    validRange
+  );
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-6">
@@ -72,7 +79,13 @@ export function TableOrdersPage() {
           <div className="grid gap-4 md:grid-cols-5">
             <div className="space-y-2">
               <Label>Estado</Label>
-              <Select value={status} onValueChange={(value) => { setStatus(value as StatusFilter); setOffset(0); }}>
+              <Select
+                value={status}
+                onValueChange={(value) => {
+                  setStatus(value as StatusFilter);
+                  setOffset(0);
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -89,7 +102,10 @@ export function TableOrdersPage() {
               <Input
                 id="table-orders-table-id"
                 value={tableId}
-                onChange={(event) => { setTableId(event.target.value); setOffset(0); }}
+                onChange={(event) => {
+                  setTableId(event.target.value);
+                  setOffset(0);
+                }}
                 placeholder="UUID avanzado"
               />
             </div>
@@ -98,7 +114,10 @@ export function TableOrdersPage() {
               <Input
                 id="table-orders-opened-by"
                 value={openedById}
-                onChange={(event) => { setOpenedById(event.target.value); setOffset(0); }}
+                onChange={(event) => {
+                  setOpenedById(event.target.value);
+                  setOffset(0);
+                }}
                 placeholder="UUID avanzado"
               />
             </div>
@@ -122,11 +141,18 @@ export function TableOrdersPage() {
                 id="table-orders-to"
                 type="date"
                 value={to}
-                onChange={(event) => { setTo(event.target.value); setOffset(0); }}
+                onChange={(event) => {
+                  setTo(event.target.value);
+                  setOffset(0);
+                }}
               />
             </div>
           </div>
-          {!validRange ? <p className="text-sm text-destructive">{INVALID_DATE_RANGE_MESSAGE}</p> : null}
+          {!validRange ? (
+            <p className="text-sm text-destructive">
+              {INVALID_DATE_RANGE_MESSAGE}
+            </p>
+          ) : null}
 
           {ordersQuery.isLoading ? (
             <LoadingState
@@ -185,7 +211,9 @@ export function TableOrdersPage() {
                       <TableCell>
                         {formatDateTime(order.closedAt ?? order.cancelledAt)}
                       </TableCell>
-                      <TableCell>{formatMoney(order.saleTicket.total)}</TableCell>
+                      <TableCell>
+                        {formatMoney(order.saleTicket.total)}
+                      </TableCell>
                       <TableCell>{order.openedById}</TableCell>
                       <TableCell className="text-right">
                         <Button
@@ -207,7 +235,13 @@ export function TableOrdersPage() {
             </div>
           ) : null}
           {!ordersQuery.error && validRange ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={ordersQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={ordersQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={ordersQuery.data?.length ?? 0}
+              onOffsetChange={setOffset}
+              disabled={ordersQuery.isFetching}
+            />
           ) : null}
         </CardContent>
       </Card>

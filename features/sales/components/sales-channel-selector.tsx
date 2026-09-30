@@ -36,7 +36,8 @@ export function SalesChannelSelector({
       <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder}>
           {(value) =>
-            channels.find((channel) => channel.id === value)?.name ?? placeholder
+            channels.find((channel) => channel.id === value)?.name ??
+            placeholder
           }
         </SelectValue>
       </SelectTrigger>

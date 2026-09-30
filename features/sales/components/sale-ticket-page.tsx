@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CommercialRecovery } from "@/components/feedback/commercial-recovery";
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/feedback/error-message";
@@ -58,11 +59,10 @@ const SaleTicketPosWorkspace = dynamic(
   }
 );
 
-const SaleTicketCriticalActions = dynamic(
-  () =>
-    import("@/features/sales/components/sale-ticket-critical-actions").then(
-      (module) => module.SaleTicketCriticalActions
-    )
+const SaleTicketCriticalActions = dynamic(() =>
+  import("@/features/sales/components/sale-ticket-critical-actions").then(
+    (module) => module.SaleTicketCriticalActions
+  )
 );
 
 export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
@@ -71,17 +71,20 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
   const debouncedCatalogSearch = useDebouncedValue(catalogSearch.trim(), 300);
   const { user } = useAuth();
   const canMutateDraft =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "CASHIER";
-  const canVoid =
-    user?.role === "ADMIN" || user?.role === "MANAGER";
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "CASHIER";
+  const canVoid = user?.role === "ADMIN" || user?.role === "MANAGER";
   const canViewCosts =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "AUDITOR";
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "AUDITOR";
 
   const saleTicketQuery = useSaleTicket(ticketId);
   const shouldLoadDraftResources = Boolean(
     canMutateDraft &&
-      saleTicketQuery.data &&
-      canEditTicket(saleTicketQuery.data)
+    saleTicketQuery.data &&
+    canEditTicket(saleTicketQuery.data)
   );
   const posCatalogQuery = usePosCatalog(
     {
@@ -116,46 +119,52 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
   const updateSaleTicketItemMutation = useUpdateSaleTicketItem(ticketId);
   const removeSaleTicketItemMutation = useRemoveSaleTicketItem(ticketId);
 
-  const sellableProducts = useMemo<SaleProductOption[]>(
-    () => {
-      if (posCatalogEnabled) {
-        return posCatalogQuery.data?.pages.flatMap((page) => page.items) ?? [];
-      }
-      const inventoryByProductId = new Map(
-        (inventoryQuery.data ?? []).map((item) => [item.productId, item])
-      );
-      const categoryNamesById = new Map(
-        (categoriesQuery.data ?? []).map((category) => [category.id, category.name])
-      );
+  const sellableProducts = useMemo<SaleProductOption[]>(() => {
+    if (posCatalogEnabled) {
+      return posCatalogQuery.data?.pages.flatMap((page) => page.items) ?? [];
+    }
+    const inventoryByProductId = new Map(
+      (inventoryQuery.data ?? []).map((item) => [item.productId, item])
+    );
+    const categoryNamesById = new Map(
+      (categoriesQuery.data ?? []).map((category) => [
+        category.id,
+        category.name,
+      ])
+    );
 
-      return (productsQuery.data ?? [])
-        .filter(
-          (product) => product.active && product.stockManagementType !== "RECIPE_BASED"
-        )
-        .map((product) => {
-          const inventory = inventoryByProductId.get(product.id);
+    return (productsQuery.data ?? [])
+      .filter(
+        (product) =>
+          product.active && product.stockManagementType !== "RECIPE_BASED"
+      )
+      .map((product) => {
+        const inventory = inventoryByProductId.get(product.id);
 
-          return {
-            id: product.id,
-            name: product.name,
-            description: product.description,
-            sku: product.sku,
-            categoryId: product.categoryId,
-            categoryName:
-              product.category?.name ??
-              (product.categoryId
-                ? categoryNamesById.get(product.categoryId) ?? null
-                : null),
-            unit: product.unit,
-            stockManagementType: product.stockManagementType,
-            stockStatus: inventory?.stockStatus,
-            currentStock: inventory?.currentStock ?? null,
-            active: product.active,
-          };
-        });
-    },
-    [categoriesQuery.data, inventoryQuery.data, posCatalogQuery.data, productsQuery.data]
-  );
+        return {
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          sku: product.sku,
+          categoryId: product.categoryId,
+          categoryName:
+            product.category?.name ??
+            (product.categoryId
+              ? (categoryNamesById.get(product.categoryId) ?? null)
+              : null),
+          unit: product.unit,
+          stockManagementType: product.stockManagementType,
+          stockStatus: inventory?.stockStatus,
+          currentStock: inventory?.currentStock ?? null,
+          active: product.active,
+        };
+      });
+  }, [
+    categoriesQuery.data,
+    inventoryQuery.data,
+    posCatalogQuery.data,
+    productsQuery.data,
+  ]);
   const catalogCategories = posCatalogQuery.data?.pages[0]?.categories;
 
   if (saleTicketQuery.isLoading) {
@@ -188,7 +197,9 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
     return (
       <section className="mx-auto flex w-full max-w-4xl flex-col gap-6">
         <ErrorMessage
-          title={isNotFound ? "Ticket no encontrado" : "No se pudo cargar el ticket"}
+          title={
+            isNotFound ? "Ticket no encontrado" : "No se pudo cargar el ticket"
+          }
           messages={
             isNotFound
               ? "El ticket solicitado no existe o ya no esta disponible."
@@ -208,67 +219,82 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
   const isDraft = canEditTicket(ticket);
   const canEditDraft = canMutateDraft && isDraft;
   const hasItems = ticket.items.length > 0;
-  const cancelSucceeded = ticket.status === "CANCELLED" && !cancelSaleTicketMutation.isPending;
+  const cancelSucceeded =
+    ticket.status === "CANCELLED" && !cancelSaleTicketMutation.isPending;
   const confirmSucceeded =
     ticket.status === "CONFIRMED" && !confirmSaleTicketMutation.isPending;
-  const voidSucceeded = ticket.status === "VOIDED" && !voidSaleTicketMutation.isPending;
+  const voidSucceeded =
+    ticket.status === "VOIDED" && !voidSaleTicketMutation.isPending;
   const pendingItemId =
     (updateSaleTicketItemMutation.variables &&
     "itemId" in updateSaleTicketItemMutation.variables
       ? updateSaleTicketItemMutation.variables.itemId
       : null) ??
-    removeSaleTicketItemMutation.variables ??
+    removeSaleTicketItemMutation.variables?.itemId ??
     null;
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <CommercialRecovery
+        operation={`/api/sales/tickets/${ticketId}/confirm`}
+      />
+      <CommercialRecovery operation={`/api/sales/tickets/${ticketId}/void`} />
       <SaleTicketHeader
         ticket={ticket}
         onBack={onBack}
-        criticalActions={!canEditDraft ? (
-          <SaleTicketCriticalActions
-            ticket={ticket}
-            canMutateDraft={canEditDraft}
-            canMutateVoid={Boolean(canVoid)}
-            cancelError={cancelSaleTicketMutation.error}
-            confirmError={
-              !hasItems && !confirmSaleTicketMutation.error
-                ? "Agrega al menos un item al borrador antes de confirmar la venta."
-                : confirmSaleTicketMutation.error
-            }
-            voidError={voidSaleTicketMutation.error}
-            isCancelPending={cancelSaleTicketMutation.isPending}
-            isConfirmPending={confirmSaleTicketMutation.isPending}
-            isVoidPending={voidSaleTicketMutation.isPending}
-            cancelSuccess={cancelSucceeded}
-            confirmSuccess={confirmSucceeded}
-            voidSuccess={voidSucceeded}
-            onCancel={async () => {
-              await cancelSaleTicketMutation.mutateAsync({
-                reason: "Cancelado desde el panel de ventas.",
-                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
-              });
-            }}
-            onConfirm={async () => {
-              if (!hasItems || !ticket.paymentMethod) {
-                return;
+        criticalActions={
+          !canEditDraft ? (
+            <SaleTicketCriticalActions
+              ticket={ticket}
+              canMutateDraft={canEditDraft}
+              canMutateVoid={Boolean(canVoid)}
+              cancelError={cancelSaleTicketMutation.error}
+              confirmError={
+                !hasItems && !confirmSaleTicketMutation.error
+                  ? "Agrega al menos un item al borrador antes de confirmar la venta."
+                  : confirmSaleTicketMutation.error
               }
+              voidError={voidSaleTicketMutation.error}
+              isCancelPending={cancelSaleTicketMutation.isPending}
+              isConfirmPending={confirmSaleTicketMutation.isPending}
+              isVoidPending={voidSaleTicketMutation.isPending}
+              cancelSuccess={cancelSucceeded}
+              confirmSuccess={confirmSucceeded}
+              voidSuccess={voidSucceeded}
+              onCancel={async () => {
+                await cancelSaleTicketMutation.mutateAsync({
+                  reason: "Cancelado desde el panel de ventas.",
+                  ...(ticket.version
+                    ? { expectedVersion: ticket.version }
+                    : {}),
+                });
+              }}
+              onConfirm={async () => {
+                if (!hasItems || !ticket.paymentMethod) {
+                  return;
+                }
 
-              await confirmSaleTicketMutation.mutateAsync({
-                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
-                paymentMethod: ticket.paymentMethod,
-                ...(ticket.paymentMethod === "TRANSFER" && ticket.paymentBankId
-                  ? { paymentBankId: ticket.paymentBankId }
-                  : {}),
-              });
-            }}
-            onVoid={async (values) => {
-              await voidSaleTicketMutation.mutateAsync({
-                ...values,
-                ...(ticket.version ? { expectedVersion: ticket.version } : {}),
-              });
-            }}
-          />
-        ) : null}
+                await confirmSaleTicketMutation.mutateAsync({
+                  ...(ticket.version
+                    ? { expectedVersion: ticket.version }
+                    : {}),
+                  paymentMethod: ticket.paymentMethod,
+                  ...(ticket.paymentMethod === "TRANSFER" &&
+                  ticket.paymentBankId
+                    ? { paymentBankId: ticket.paymentBankId }
+                    : {}),
+                });
+              }}
+              onVoid={async (values) => {
+                await voidSaleTicketMutation.mutateAsync({
+                  ...values,
+                  ...(ticket.version
+                    ? { expectedVersion: ticket.version }
+                    : {}),
+                });
+              }}
+            />
+          ) : null
+        }
       />
 
       {canEditDraft ? (
@@ -290,7 +316,10 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
               categoriesQuery.isLoading
             }
             productsError={
-              posCatalogQuery.error ?? productsQuery.error ?? inventoryQuery.error ?? categoriesQuery.error
+              posCatalogQuery.error ??
+              productsQuery.error ??
+              inventoryQuery.error ??
+              categoriesQuery.error
             }
             isAddingItem={addSaleTicketItemMutation.isPending}
             isUpdatingItem={updateSaleTicketItemMutation.isPending}
@@ -324,19 +353,26 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
                 itemId,
                 data: {
                   ...values,
-                  ...(ticket.version ? { expectedVersion: ticket.version } : {}),
+                  ...(ticket.version
+                    ? { expectedVersion: ticket.version }
+                    : {}),
                 },
               });
             }}
             onRemoveItem={async (itemId) => {
-              await removeSaleTicketItemMutation.mutateAsync(itemId);
+              await removeSaleTicketItemMutation.mutateAsync({
+                itemId,
+                expectedVersion: ticket.version,
+              });
             }}
             onSavePayment={async (values: SaleTicketPaymentFormValues) => {
               await updateSaleTicketMutation.mutateAsync({
                 ticketId,
                 data: {
                   ...values,
-                  ...(ticket.version ? { expectedVersion: ticket.version } : {}),
+                  ...(ticket.version
+                    ? { expectedVersion: ticket.version }
+                    : {}),
                 },
               });
             }}
@@ -360,58 +396,68 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
         </>
       ) : (
         <>
-          <SaleTicketSummary ticket={ticket} canViewCosts={Boolean(canViewCosts)} />
+          <SaleTicketSummary
+            ticket={ticket}
+            canViewCosts={Boolean(canViewCosts)}
+          />
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,1fr)]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Items del ticket</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {ticket.items.length === 0 ? (
-              <EmptyState
-                title={isDraft ? "Borrador sin items" : "Sin items"}
-                message={
-                  isDraft
-                    ? "Agrega productos para completar la venta antes de confirmar la venta."
-                    : "Este ticket no registra items para mostrar."
-                }
-                className="w-full max-w-none shadow-none"
-              />
-            ) : (
-              <SaleTicketItemsTable
-                items={ticket.items}
-                canEdit={canEditDraft}
-                canViewCosts={Boolean(canViewCosts)}
-                isUpdatingItem={updateSaleTicketItemMutation.isPending}
-                updateError={updateSaleTicketItemMutation.error}
-                removeError={removeSaleTicketItemMutation.error}
-                pendingItemId={pendingItemId}
-                onUpdateItem={async (itemId, values) => {
-                  await updateSaleTicketItemMutation.mutateAsync({
-                    itemId,
-                    data: values,
-                  });
-                }}
-                onRemoveItem={async (itemId) => {
-                  await removeSaleTicketItemMutation.mutateAsync(itemId);
-                }}
-              />
-            )}
-          </CardContent>
-        </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Items del ticket</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {ticket.items.length === 0 ? (
+                  <EmptyState
+                    title={isDraft ? "Borrador sin items" : "Sin items"}
+                    message={
+                      isDraft
+                        ? "Agrega productos para completar la venta antes de confirmar la venta."
+                        : "Este ticket no registra items para mostrar."
+                    }
+                    className="w-full max-w-none shadow-none"
+                  />
+                ) : (
+                  <SaleTicketItemsTable
+                    items={ticket.items}
+                    canEdit={canEditDraft}
+                    canViewCosts={Boolean(canViewCosts)}
+                    isUpdatingItem={updateSaleTicketItemMutation.isPending}
+                    updateError={updateSaleTicketItemMutation.error}
+                    removeError={removeSaleTicketItemMutation.error}
+                    pendingItemId={pendingItemId}
+                    onUpdateItem={async (itemId, values) => {
+                      await updateSaleTicketItemMutation.mutateAsync({
+                        itemId,
+                        data: { ...values, expectedVersion: ticket.version },
+                      });
+                    }}
+                    onRemoveItem={async (itemId) => {
+                      await removeSaleTicketItemMutation.mutateAsync({
+                        itemId,
+                        expectedVersion: ticket.version,
+                      });
+                    }}
+                  />
+                )}
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Estado de la venta</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <p>Esta venta ya no permite cambios de productos o cantidades.</p>
-              <p>Los importes mostrados corresponden al momento de cierre.</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Estado de la venta</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <p>
+                    Esta venta ya no permite cambios de productos o cantidades.
+                  </p>
+                  <p>
+                    Los importes mostrados corresponden al momento de cierre.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </>
       )}
     </section>

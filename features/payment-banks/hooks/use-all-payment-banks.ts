@@ -1,7 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getAllPaymentBanks, type PaymentBanksFilters } from "@/features/payment-banks/api/payment-banks.api";
+import {
+  getAllPaymentBanks,
+  type PaymentBanksFilters,
+} from "@/features/payment-banks/api/payment-banks.api";
 import { paymentBanksQueryKeys } from "@/features/payment-banks/query-keys";
 import {
   QUERY_STALE_TIME,

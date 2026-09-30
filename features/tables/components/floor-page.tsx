@@ -29,7 +29,9 @@ export function FloorPage() {
   const router = useRouter();
   const { user } = useAuth();
   const canOperate =
-    user?.role === "ADMIN" || user?.role === "MANAGER" || user?.role === "CASHIER";
+    user?.role === "ADMIN" ||
+    user?.role === "MANAGER" ||
+    user?.role === "CASHIER";
   const [openingTableId, setOpeningTableId] = useState<string | null>(null);
   const [viewingTableId, setViewingTableId] = useState<string | null>(null);
   const [viewOrderError, setViewOrderError] = useState<unknown>(null);
@@ -51,7 +53,7 @@ export function FloorPage() {
       available: tables.filter((table) => table.status === "AVAILABLE").length,
       occupied: tables.filter((table) => table.status === "OCCUPIED").length,
     }),
-    [tables],
+    [tables]
   );
   const filteredTables = useMemo(
     () =>
@@ -67,7 +69,7 @@ export function FloorPage() {
 
         return matchesStatus && matchesSearch;
       }),
-    [deferredSearch, statusFilter, tables],
+    [deferredSearch, statusFilter, tables]
   );
 
   async function handleOpenOrder(
@@ -169,9 +171,7 @@ export function FloorPage() {
               </span>
               <div>
                 <p className="text-sm text-muted-foreground">Ocupadas</p>
-                <p className="text-2xl font-semibold">
-                  {tableCounts.occupied}
-                </p>
+                <p className="text-2xl font-semibold">{tableCounts.occupied}</p>
               </div>
             </CardContent>
           </Card>
@@ -182,52 +182,54 @@ export function FloorPage() {
         <CardContent className="space-y-4 pt-5">
           {!tablesQuery.isLoading && !tablesQuery.error && tables.length > 0 ? (
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div
-              className="flex flex-wrap gap-2"
-              role="group"
-              aria-label="Filtrar mesas por estado"
-            >
-              {([
-                ["ALL", "Todas", tableCounts.total],
-                ["AVAILABLE", "Disponibles", tableCounts.available],
-                ["OCCUPIED", "Ocupadas", tableCounts.occupied],
-              ] as const).map(([value, label, count]) => (
-                <Button
-                  key={value}
-                  type="button"
-                  size="sm"
-                  variant={statusFilter === value ? "default" : "outline"}
-                  aria-pressed={statusFilter === value}
-                  onClick={() => setStatusFilter(value)}
-                >
-                  {label} ({count})
-                </Button>
-              ))}
-            </div>
-            <div className="relative w-full lg:max-w-sm">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-              />
-              <Input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                aria-label="Buscar mesa por código, nombre o área"
-                className="pr-9 pl-9"
-              />
-              {search ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  className="absolute top-1/2 right-2 -translate-y-1/2"
-                  aria-label="Limpiar búsqueda"
-                  onClick={() => setSearch("")}
-                >
-                  <X aria-hidden="true" />
-                </Button>
-              ) : null}
-            </div>
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label="Filtrar mesas por estado"
+              >
+                {(
+                  [
+                    ["ALL", "Todas", tableCounts.total],
+                    ["AVAILABLE", "Disponibles", tableCounts.available],
+                    ["OCCUPIED", "Ocupadas", tableCounts.occupied],
+                  ] as const
+                ).map(([value, label, count]) => (
+                  <Button
+                    key={value}
+                    type="button"
+                    size="sm"
+                    variant={statusFilter === value ? "default" : "outline"}
+                    aria-pressed={statusFilter === value}
+                    onClick={() => setStatusFilter(value)}
+                  >
+                    {label} ({count})
+                  </Button>
+                ))}
+              </div>
+              <div className="relative w-full lg:max-w-sm">
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  aria-label="Buscar mesa por código, nombre o área"
+                  className="pr-9 pl-9"
+                />
+                {search ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    className="absolute top-1/2 right-2 -translate-y-1/2"
+                    aria-label="Limpiar búsqueda"
+                    onClick={() => setSearch("")}
+                  >
+                    <X aria-hidden="true" />
+                  </Button>
+                ) : null}
+              </div>
             </div>
           ) : null}
           {tablesQuery.isLoading || channelsQuery.isLoading ? (
@@ -241,7 +243,11 @@ export function FloorPage() {
           {tablesQuery.error ? (
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
-              title={isForbidden ? "Acceso restringido" : "No se pudo cargar el salon"}
+              title={
+                isForbidden
+                  ? "Acceso restringido"
+                  : "No se pudo cargar el salon"
+              }
               messages={getApiErrorMessages(tablesQuery.error)}
             />
           ) : null}
@@ -265,7 +271,8 @@ export function FloorPage() {
 
           {!tablesQuery.isLoading &&
           !tablesQuery.error &&
-          tables.length > 0 && filteredTables.length === 0 ? (
+          tables.length > 0 &&
+          filteredTables.length === 0 ? (
             <EmptyState
               title="Sin mesas coincidentes"
               message="No encontramos mesas con la búsqueda y el estado seleccionados."
@@ -278,7 +285,9 @@ export function FloorPage() {
           filteredTables.length > 0 ? (
             <FloorGrid
               tables={filteredTables}
-              channels={(channelsQuery.data ?? []).filter((channel) => channel.active)}
+              channels={(channelsQuery.data ?? []).filter(
+                (channel) => channel.active
+              )}
               canOperate={canOperate}
               openingTableId={openingTableId}
               viewingTableId={viewingTableId}

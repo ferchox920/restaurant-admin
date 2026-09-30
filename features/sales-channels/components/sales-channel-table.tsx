@@ -24,7 +24,7 @@ type SalesChannelTableProps = {
 function getTotalChargesPercentage(salesChannel: SalesChannel) {
   return (salesChannel.subTaxes ?? []).reduce(
     (total, subTax) => total + subTax.percentage,
-    0,
+    0
   );
 }
 
@@ -60,9 +60,7 @@ export function SalesChannelTable({
             }
           >
             <TableCell className="max-w-56 whitespace-normal">
-              <p className="font-medium text-foreground">
-                {salesChannel.name}
-              </p>
+              <p className="font-medium text-foreground">{salesChannel.name}</p>
               {salesChannel.description ? (
                 <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
                   {salesChannel.description}

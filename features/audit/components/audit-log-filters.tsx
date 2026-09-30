@@ -4,9 +4,20 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { UserSelector } from "@/features/users/components/user-selector";
-import { auditActions, auditEntityTypes, type AuditAction, type AuditEntityType } from "@/features/audit/types/audit-log.types";
+import {
+  auditActions,
+  auditEntityTypes,
+  type AuditAction,
+  type AuditEntityType,
+} from "@/features/audit/types/audit-log.types";
 
 export type AuditLogFilterValues = {
   from: string;
@@ -97,17 +108,32 @@ export function AuditLogFilters({
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <div className="space-y-2">
           <Label htmlFor="audit-from">Desde</Label>
-          <Input id="audit-from" type="date" value={values.from} onChange={(event) => onFromChange(event.target.value)} />
+          <Input
+            id="audit-from"
+            type="date"
+            value={values.from}
+            onChange={(event) => onFromChange(event.target.value)}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="audit-to">Hasta</Label>
-          <Input id="audit-to" type="date" value={values.to} onChange={(event) => onToChange(event.target.value)} />
+          <Input
+            id="audit-to"
+            type="date"
+            value={values.to}
+            onChange={(event) => onToChange(event.target.value)}
+          />
         </div>
 
         <div className="space-y-2">
           <Label>Accion</Label>
-          <Select value={values.action} onValueChange={(value) => onActionChange((value ?? "__all__") as AuditAction | "__all__")}>
+          <Select
+            value={values.action}
+            onValueChange={(value) =>
+              onActionChange((value ?? "__all__") as AuditAction | "__all__")
+            }
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Todas">
                 {(value) =>
@@ -130,7 +156,14 @@ export function AuditLogFilters({
 
         <div className="space-y-2">
           <Label>Tipo de entidad</Label>
-          <Select value={values.entityType} onValueChange={(value) => onEntityTypeChange((value ?? "__all__") as AuditEntityType | "__all__")}>
+          <Select
+            value={values.entityType}
+            onValueChange={(value) =>
+              onEntityTypeChange(
+                (value ?? "__all__") as AuditEntityType | "__all__"
+              )
+            }
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Todas">
                 {(value) =>
@@ -153,7 +186,11 @@ export function AuditLogFilters({
 
         <div className="space-y-2">
           <Label htmlFor="audit-entity-id">Entity ID</Label>
-          <Input id="audit-entity-id" value={values.entityId} onChange={(event) => onEntityIdChange(event.target.value)} />
+          <Input
+            id="audit-entity-id"
+            value={values.entityId}
+            onChange={(event) => onEntityIdChange(event.target.value)}
+          />
         </div>
 
         <div className="space-y-2">
@@ -162,12 +199,15 @@ export function AuditLogFilters({
             <>
               <UserSelector
                 value={values.userId || "__all__"}
-                onValueChange={(value) => onUserIdChange(value === "__all__" ? "" : value)}
+                onValueChange={(value) =>
+                  onUserIdChange(value === "__all__" ? "" : value)
+                }
                 includeInactive
                 includeAllOption
               />
               <p className="text-xs text-muted-foreground">
-                Visible solo para ADMIN porque `GET /api/users` no esta autorizado para otros roles.
+                Visible solo para ADMIN porque `GET /api/users` no esta
+                autorizado para otros roles.
               </p>
             </>
           ) : (
@@ -178,7 +218,8 @@ export function AuditLogFilters({
                 placeholder="UUID del actor"
               />
               <p className="text-xs text-muted-foreground">
-                Filtro avanzado por UUID para no disparar requests no autorizados a Users.
+                Filtro avanzado por UUID para no disparar requests no
+                autorizados a Users.
               </p>
             </>
           )}

@@ -39,7 +39,12 @@ export function UserActions({
       ) : null}
 
       {canMutate && onEdit ? (
-        <Button type="button" variant="ghost" size="sm" onClick={() => onEdit(user)}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => onEdit(user)}
+        >
           <Pencil aria-hidden="true" />
           Editar
         </Button>

@@ -4,9 +4,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllProductPrices } from "@/features/products/prices/api/product-prices.api";
 import { productPricesQueryKeys } from "@/features/products/prices/query-keys";
 
-export function useAllProductPrices(productId: string | undefined, channelId?: string) {
+export function useAllProductPrices(
+  productId: string | undefined,
+  channelId?: string
+) {
   return useQuery({
-    queryKey: [...productPricesQueryKeys.history(productId ?? "", channelId), "all-pages"],
+    queryKey: [
+      ...productPricesQueryKeys.history(productId ?? "", channelId),
+      "all-pages",
+    ],
     queryFn: ({ signal }) =>
       getAllProductPrices(productId as string, channelId, signal),
     enabled: Boolean(productId),

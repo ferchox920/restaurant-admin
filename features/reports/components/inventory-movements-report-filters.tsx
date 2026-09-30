@@ -4,8 +4,17 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { inventoryMovementTypes, inventoryReferenceTypes } from "@/features/inventory/types/inventory.types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  inventoryMovementTypes,
+  inventoryReferenceTypes,
+} from "@/features/inventory/types/inventory.types";
 import type {
   InventoryMovementType,
   InventoryReferenceType,
@@ -128,7 +137,9 @@ export function InventoryMovementsReportFilters({
           <Select
             value={values.movementType}
             onValueChange={(value) =>
-              onMovementTypeChange((value ?? "__all__") as InventoryMovementType | "__all__")
+              onMovementTypeChange(
+                (value ?? "__all__") as InventoryMovementType | "__all__"
+              )
             }
           >
             <SelectTrigger className="w-full">
@@ -156,7 +167,9 @@ export function InventoryMovementsReportFilters({
           <Select
             value={values.referenceType}
             onValueChange={(value) =>
-              onReferenceTypeChange((value ?? "__all__") as InventoryReferenceType | "__all__")
+              onReferenceTypeChange(
+                (value ?? "__all__") as InventoryReferenceType | "__all__"
+              )
             }
           >
             <SelectTrigger className="w-full">
@@ -190,7 +203,8 @@ export function InventoryMovementsReportFilters({
             placeholder="ID del usuario"
           />
           <p className="text-xs text-muted-foreground">
-            Se conserva como filtro avanzado para no consultar `/api/users` desde roles sin permiso.
+            Se conserva como filtro avanzado para no consultar `/api/users`
+            desde roles sin permiso.
           </p>
         </div>
 

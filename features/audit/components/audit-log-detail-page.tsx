@@ -76,7 +76,10 @@ export function AuditLogDetailPage({ auditLogId }: { auditLogId: string }) {
         title={`Registro ${log.id}`}
         description="Detalle de trazabilidad con defensa adicional sobre campos sensibles."
         actions={
-          <Link href="/audit-logs" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+          <Link
+            href="/audit-logs"
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          >
             Volver al listado
           </Link>
         }

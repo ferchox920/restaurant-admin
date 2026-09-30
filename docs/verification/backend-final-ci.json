@@ -1,0 +1,50 @@
+{
+  "backendHeadSha": "5562dec6cef7c00f76c31cc5bf663f5cf282ae14",
+  "initialBackendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+  "pullRequest": "https://github.com/ferchox920/restaurant-api/pull/1",
+  "workflowRun": "https://github.com/ferchox920/restaurant-api/actions/runs/36761935610",
+  "codeqlRun": "https://github.com/ferchox920/restaurant-api/actions/runs/36761935471",
+  "evidenceSource": "Fresh GitHub workflow jobs and logs inspected; PR merge commit contains the exact backend head",
+  "jobs": [
+    {
+      "id": 110046419851,
+      "name": "unit",
+      "conclusion": "success",
+      "unitTests": 324,
+      "auditAll": 0,
+      "auditProduction": 0
+    },
+    {
+      "id": 110046419953,
+      "name": "postgres (database)",
+      "conclusion": "success",
+      "tests": 39
+    },
+    {
+      "id": 110046420134,
+      "name": "postgres (seed)",
+      "conclusion": "success",
+      "tests": 1
+    },
+    {
+      "id": 110046419844,
+      "name": "analyze",
+      "conclusion": "success"
+    }
+  ],
+  "sseClosureMs": {
+    "revoked": 1989.195425,
+    "inactive": 2001.150681,
+    "role": 1998.567663,
+    "jwtExpiry": 1827.965336,
+    "assertedMaximum": 3000
+  },
+  "codeqlArtifact": {
+    "id": 11118443294,
+    "sha256": "1790006f9f4105fe21c752139044ace97cb34e15646d1ce74f31450b83e6993c",
+    "downloadDigestVerified": true,
+    "sarifResults": 0
+  },
+  "note": "CodeQL success does not substitute for the independent dependency audit. Human visual review remains pending.",
+  "antecedent": "backend-first-stage-ci.json"
+}

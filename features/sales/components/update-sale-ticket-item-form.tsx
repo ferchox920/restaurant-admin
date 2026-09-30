@@ -64,7 +64,8 @@ export function UpdateSaleTicketItemForm({
         <DialogHeader>
           <DialogTitle>Actualizar cantidad</DialogTitle>
           <DialogDescription>
-            Ajusta la cantidad del item &quot;{productName}&quot; dentro del borrador.
+            Ajusta la cantidad del item &quot;{productName}&quot; dentro del
+            borrador.
           </DialogDescription>
         </DialogHeader>
 

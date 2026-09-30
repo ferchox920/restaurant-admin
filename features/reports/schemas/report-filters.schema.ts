@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { inventoryMovementTypes, inventoryReferenceTypes } from "@/features/inventory/types/inventory.types";
+import {
+  inventoryMovementTypes,
+  inventoryReferenceTypes,
+} from "@/features/inventory/types/inventory.types";
 import { stockManagementTypes } from "@/features/products/types/product.types";
 import { reportStockStatuses } from "@/features/reports/types/report.types";
 
@@ -18,30 +21,30 @@ const optionalIsoDateSchema = z
   .optional();
 
 function withDateRangeValidation<T extends z.ZodRawShape>(shape: T) {
-  return z
-    .object(shape)
-    .refine(
-      (value) => {
-        if (!("from" in value) || !("to" in value)) {
-          return true;
-        }
-
-        const from =
-          typeof value.from === "string" ? new Date(value.from).getTime() : undefined;
-        const to =
-          typeof value.to === "string" ? new Date(value.to).getTime() : undefined;
-
-        if (from === undefined || to === undefined) {
-          return true;
-        }
-
-        return from <= to;
-      },
-      {
-        message: '"from" cannot be greater than "to".',
-        path: ["to"],
+  return z.object(shape).refine(
+    (value) => {
+      if (!("from" in value) || !("to" in value)) {
+        return true;
       }
-    );
+
+      const from =
+        typeof value.from === "string"
+          ? new Date(value.from).getTime()
+          : undefined;
+      const to =
+        typeof value.to === "string" ? new Date(value.to).getTime() : undefined;
+
+      if (from === undefined || to === undefined) {
+        return true;
+      }
+
+      return from <= to;
+    },
+    {
+      message: '"from" cannot be greater than "to".',
+      path: ["to"],
+    }
+  );
 }
 
 export const stockReportFiltersSchema = z.object({

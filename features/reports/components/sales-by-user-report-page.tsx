@@ -13,7 +13,12 @@ import { SalesByUserReportTable } from "@/features/reports/components/sales-by-u
 import { useSalesByUserReport } from "@/features/reports/hooks/use-sales-by-user-report";
 import { salesReportFiltersSchema } from "@/features/reports/schemas/report-filters.schema";
 import type { SalesReportFilters as SalesReportQueryFilters } from "@/features/reports/types/report.types";
-import { formatReportDateRange, getDefaultSalesDateRange, getReportEmptyMessage, toReportDateRange } from "@/features/reports/utils/report-formatters";
+import {
+  formatReportDateRange,
+  getDefaultSalesDateRange,
+  getReportEmptyMessage,
+  toReportDateRange,
+} from "@/features/reports/utils/report-formatters";
 import { useAllSalesChannels as useSalesChannels } from "@/features/sales-channels/hooks/use-all-sales-channels";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { HTTP_STATUS } from "@/lib/api/http-status";
@@ -79,14 +84,18 @@ export function SalesByUserReportPage() {
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <div className="space-y-2">
-              <p className="text-sm font-medium">Usuario confirmador (UUID avanzado)</p>
+              <p className="text-sm font-medium">
+                Usuario confirmador (UUID avanzado)
+              </p>
               <Input
                 value={userId}
                 onChange={(event) => setUserId(event.target.value)}
                 placeholder="ID del confirmador"
               />
               <p className="text-xs text-muted-foreground">
-                Se mantiene como UUID porque `GET /api/users` solo esta autorizado para ADMIN y el reporte debe seguir siendo seguro para MANAGER y AUDITOR.
+                Se mantiene como UUID porque `GET /api/users` solo esta
+                autorizado para ADMIN y el reporte debe seguir siendo seguro
+                para MANAGER y AUDITOR.
               </p>
             </div>
           </div>
@@ -119,7 +128,9 @@ export function SalesByUserReportPage() {
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
               title={
-                isForbidden ? "Acceso restringido" : "No se pudo cargar el reporte"
+                isForbidden
+                  ? "Acceso restringido"
+                  : "No se pudo cargar el reporte"
               }
               messages={getApiErrorMessages(reportQuery.error)}
             />

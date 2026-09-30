@@ -16,6 +16,7 @@ const mockSubscribeToAccessToken = vi.fn((onStoreChange?: () => void) => {
 const mockUseCurrentUser = vi.fn<(options?: unknown) => unknown>();
 
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/dashboard",
   useRouter: () => ({
     replace: mockReplace,
   }),
@@ -38,11 +39,11 @@ function AuthProbe() {
 
   return (
     <div>
-      <span data-testid="is-authenticated">
-        {String(auth.isAuthenticated)}
-      </span>
+      <span data-testid="is-authenticated">{String(auth.isAuthenticated)}</span>
       <span data-testid="is-loading">{String(auth.isLoading)}</span>
-      <span data-testid="auth-error-status">{String(auth.authErrorStatus)}</span>
+      <span data-testid="auth-error-status">
+        {String(auth.authErrorStatus)}
+      </span>
     </div>
   );
 }

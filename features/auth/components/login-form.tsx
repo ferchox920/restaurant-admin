@@ -8,11 +8,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthErrorAlert } from "@/features/auth/components/auth-error-alert";
@@ -73,7 +69,10 @@ export function LoginForm({ nextPath }: LoginFormProps) {
       await authenticate(response);
       router.replace(nextPath);
     } catch (error) {
-      if (isApiError(error) && error.statusCode === HTTP_STATUS.tooManyRequests) {
+      if (
+        isApiError(error) &&
+        error.statusCode === HTTP_STATUS.tooManyRequests
+      ) {
         setRetryAfter(error.retryAfter ?? 5);
       }
       form.setError("root", {
@@ -148,70 +147,79 @@ export function LoginForm({ nextPath }: LoginFormProps) {
             </p>
           </CardHeader>
           <CardContent className="space-y-5">
+            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-[#3a2b1d] dark:text-[#f8efe1]"
+                >
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="admin@restaurant.local"
+                  required
+                  className="h-11 border-[#d8c6aa] bg-[#fffaf2] px-3 text-[#211a12] placeholder:text-[#9b8974] focus-visible:border-[#c56d1f] focus-visible:ring-[#c56d1f]/25 dark:border-white/10 dark:bg-white/10 dark:text-[#fff6e7] dark:placeholder:text-[#958775]"
+                  aria-invalid={Boolean(form.formState.errors.email)}
+                  aria-describedby={emailErrorId}
+                  {...form.register("email")}
+                />
+                {form.formState.errors.email ? (
+                  <p id={emailErrorId} className="text-sm text-destructive">
+                    {form.formState.errors.email.message}
+                  </p>
+                ) : null}
+              </div>
 
-          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-[#3a2b1d] dark:text-[#f8efe1]">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                placeholder="admin@restaurant.local"
-                required
-                className="h-11 border-[#d8c6aa] bg-[#fffaf2] px-3 text-[#211a12] placeholder:text-[#9b8974] focus-visible:border-[#c56d1f] focus-visible:ring-[#c56d1f]/25 dark:border-white/10 dark:bg-white/10 dark:text-[#fff6e7] dark:placeholder:text-[#958775]"
-                aria-invalid={Boolean(form.formState.errors.email)}
-                aria-describedby={emailErrorId}
-                {...form.register("email")}
-              />
-              {form.formState.errors.email ? (
-                <p id={emailErrorId} className="text-sm text-destructive">
-                  {form.formState.errors.email.message}
-                </p>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="password"
+                  className="text-[#3a2b1d] dark:text-[#f8efe1]"
+                >
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="Tu password"
+                  required
+                  className="h-11 border-[#d8c6aa] bg-[#fffaf2] px-3 text-[#211a12] placeholder:text-[#9b8974] focus-visible:border-[#c56d1f] focus-visible:ring-[#c56d1f]/25 dark:border-white/10 dark:bg-white/10 dark:text-[#fff6e7] dark:placeholder:text-[#958775]"
+                  aria-invalid={Boolean(form.formState.errors.password)}
+                  aria-describedby={passwordErrorId}
+                  {...form.register("password")}
+                />
+                {form.formState.errors.password ? (
+                  <p id={passwordErrorId} className="text-sm text-destructive">
+                    {form.formState.errors.password.message}
+                  </p>
+                ) : null}
+              </div>
+
+              {rootError ? (
+                <AuthErrorAlert
+                  message={rootError.split("\n").filter(Boolean)}
+                />
               ) : null}
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-[#3a2b1d] dark:text-[#f8efe1]">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="Tu password"
-                required
-                className="h-11 border-[#d8c6aa] bg-[#fffaf2] px-3 text-[#211a12] placeholder:text-[#9b8974] focus-visible:border-[#c56d1f] focus-visible:ring-[#c56d1f]/25 dark:border-white/10 dark:bg-white/10 dark:text-[#fff6e7] dark:placeholder:text-[#958775]"
-                aria-invalid={Boolean(form.formState.errors.password)}
-                aria-describedby={passwordErrorId}
-                {...form.register("password")}
-              />
-              {form.formState.errors.password ? (
-                <p id={passwordErrorId} className="text-sm text-destructive">
-                  {form.formState.errors.password.message}
-                </p>
-              ) : null}
-            </div>
-
-            {rootError ? (
-              <AuthErrorAlert message={rootError.split("\n").filter(Boolean)} />
-            ) : null}
-
-            <Button
-              type="submit"
-              disabled={loginMutation.isPending || isLoading || retryAfter > 0}
-              className="h-11 w-full bg-[#211a12] text-[#fff6e7] shadow-lg shadow-[#211a12]/20 hover:bg-[#3a2b1d] dark:bg-[#f8efe1] dark:text-[#211a12] dark:hover:bg-[#eadbc6]"
-            >
-              <Lock aria-hidden="true" data-icon="inline-start" />
-              {loginMutation.isPending
-                ? "Ingresando..."
-                : retryAfter > 0
-                  ? `Intenta nuevamente en ${retryAfter}s`
-                  : "Abrir dashboard"}
-            </Button>
-          </form>
-        </CardContent>
+              <Button
+                type="submit"
+                disabled={
+                  loginMutation.isPending || isLoading || retryAfter > 0
+                }
+                className="h-11 w-full bg-[#211a12] text-[#fff6e7] shadow-lg shadow-[#211a12]/20 hover:bg-[#3a2b1d] dark:bg-[#f8efe1] dark:text-[#211a12] dark:hover:bg-[#eadbc6]"
+              >
+                <Lock aria-hidden="true" data-icon="inline-start" />
+                {loginMutation.isPending
+                  ? "Ingresando..."
+                  : retryAfter > 0
+                    ? `Intenta nuevamente en ${retryAfter}s`
+                    : "Abrir dashboard"}
+              </Button>
+            </form>
+          </CardContent>
         </Card>
       </section>
     </main>

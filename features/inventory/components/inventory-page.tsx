@@ -71,11 +71,20 @@ export function InventoryPage() {
         <CardContent className="space-y-4">
           <InventoryFilters
             activeFilter={activeFilter}
-            onActiveFilterChange={(value) => { setActiveFilter(value); setOffset(0); }}
+            onActiveFilterChange={(value) => {
+              setActiveFilter(value);
+              setOffset(0);
+            }}
             stockStatus={stockStatus}
-            onStockStatusChange={(value) => { setStockStatus(value); setOffset(0); }}
+            onStockStatusChange={(value) => {
+              setStockStatus(value);
+              setOffset(0);
+            }}
             search={search}
-            onSearchChange={(value) => { setSearch(value); setOffset(0); }}
+            onSearchChange={(value) => {
+              setSearch(value);
+              setOffset(0);
+            }}
           />
 
           {inventoryQuery.isLoading ? (
@@ -126,7 +135,13 @@ export function InventoryPage() {
             </>
           ) : null}
           {!inventoryQuery.error ? (
-            <PaginationControls offset={offset} limit={DEFAULT_PAGE_LIMIT} itemCount={inventoryQuery.data?.length ?? 0} onOffsetChange={setOffset} disabled={inventoryQuery.isFetching} />
+            <PaginationControls
+              offset={offset}
+              limit={DEFAULT_PAGE_LIMIT}
+              itemCount={inventoryQuery.data?.length ?? 0}
+              onOffsetChange={setOffset}
+              disabled={inventoryQuery.isFetching}
+            />
           ) : null}
         </CardContent>
       </Card>

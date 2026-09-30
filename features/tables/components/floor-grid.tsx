@@ -42,16 +42,19 @@ export function FloorGrid({
       acc[key].push(table);
       return acc;
     },
-    {},
+    {}
   );
   const areas = Object.entries(grouped)
     .sort(([left], [right]) => left.localeCompare(right))
-    .map(([area, items]) => [
-      area,
-      [...items].sort((left, right) =>
-        left.code.localeCompare(right.code, undefined, { numeric: true }),
-      ),
-    ] as const);
+    .map(
+      ([area, items]) =>
+        [
+          area,
+          [...items].sort((left, right) =>
+            left.code.localeCompare(right.code, undefined, { numeric: true })
+          ),
+        ] as const
+    );
 
   return (
     <div className="space-y-8">
@@ -80,8 +83,12 @@ export function FloorGrid({
                 canOperate={canOperate}
                 isOpening={openingTableId === table.id}
                 isViewing={viewingTableId === table.id}
-                openError={openErrorTableId === table.id ? openError : undefined}
-                viewError={viewErrorTableId === table.id ? viewError : undefined}
+                openError={
+                  openErrorTableId === table.id ? openError : undefined
+                }
+                viewError={
+                  viewErrorTableId === table.id ? viewError : undefined
+                }
                 onOpenOrder={onOpenOrder}
                 onViewOrder={onViewOrder}
               />

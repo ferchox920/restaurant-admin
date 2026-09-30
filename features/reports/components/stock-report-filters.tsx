@@ -4,8 +4,17 @@ import { RotateCcw, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { reportStockStatuses, type ReportStockStatus } from "@/features/reports/types/report.types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  reportStockStatuses,
+  type ReportStockStatus,
+} from "@/features/reports/types/report.types";
 import type { StockManagementType } from "@/features/products/types/product.types";
 import type { Category } from "@/features/categories/types/category.types";
 import { formatStockManagementType } from "@/lib/formatters";
@@ -21,7 +30,9 @@ type StockReportFilterValues = {
 type StockReportFiltersProps = {
   categories: Category[];
   values: StockReportFilterValues;
-  onActiveFilterChange: (value: StockReportFilterValues["activeFilter"]) => void;
+  onActiveFilterChange: (
+    value: StockReportFilterValues["activeFilter"]
+  ) => void;
   onCategoryIdChange: (value: string) => void;
   onStockStatusChange: (value: StockReportFilterValues["stockStatus"]) => void;
   onStockManagementTypeChange: (
@@ -94,8 +105,8 @@ export function StockReportFilters({
                   }
 
                   return (
-                    categories.find((category) => category.id === value)?.name ??
-                    "Todas"
+                    categories.find((category) => category.id === value)
+                      ?.name ?? "Todas"
                   );
                 }}
               </SelectValue>
@@ -147,7 +158,8 @@ export function StockReportFilters({
             value={values.stockManagementType}
             onValueChange={(value) =>
               onStockManagementTypeChange(
-                (value ?? "__all__") as StockReportFilterValues["stockManagementType"]
+                (value ??
+                  "__all__") as StockReportFilterValues["stockManagementType"]
               )
             }
           >

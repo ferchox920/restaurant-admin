@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { AuditActionBadge } from "@/features/audit/components/audit-action-badge";
 import { AuditEntityBadge } from "@/features/audit/components/audit-entity-badge";
 import type { AuditLog } from "@/features/audit/types/audit-log.types";
@@ -45,7 +52,10 @@ export function AuditLogTable({ items }: { items: AuditLog[] }) {
             <TableCell>{item.entityId ?? "-"}</TableCell>
             <TableCell>{getAuditSummary(item)}</TableCell>
             <TableCell className="text-right">
-              <Link href={`/audit-logs/${item.id}`} className="text-sm underline-offset-4 hover:underline">
+              <Link
+                href={`/audit-logs/${item.id}`}
+                className="text-sm underline-offset-4 hover:underline"
+              >
                 Ver registro
               </Link>
             </TableCell>

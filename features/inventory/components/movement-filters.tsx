@@ -50,9 +50,7 @@ export function MovementFilters({
           value={movementType ?? "__all__"}
           onValueChange={(value) =>
             onMovementTypeChange(
-              value === "__all__"
-                ? undefined
-                : (value as InventoryMovementType),
+              value === "__all__" ? undefined : (value as InventoryMovementType)
             )
           }
         >

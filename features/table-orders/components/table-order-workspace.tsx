@@ -20,10 +20,7 @@ import type {
   TableOrder,
   UpdateTableOrderItemFormValues,
 } from "@/features/table-orders/types/table-order.types";
-import {
-  formatProductUnit,
-  formatStockManagementType,
-} from "@/lib/formatters";
+import { formatProductUnit, formatStockManagementType } from "@/lib/formatters";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 import { formatMoney } from "@/lib/money";
 
@@ -124,11 +121,13 @@ export function TableOrderWorkspace({
     const normalizedSearch = search.trim().toLowerCase();
 
     return products.filter((product) => {
-      const matchesCategory = remoteFiltering ||
+      const matchesCategory =
+        remoteFiltering ||
         selectedCategory === "Todos" ||
         getProductCategory(product) === selectedCategory;
       const matchesSearch =
-        remoteFiltering || !normalizedSearch ||
+        remoteFiltering ||
+        !normalizedSearch ||
         [product.name, product.sku ?? "", product.description ?? ""]
           .join(" ")
           .toLowerCase()
@@ -222,187 +221,185 @@ export function TableOrderWorkspace({
           </button>
         </CardHeader>
 
-          <CardContent
-            className={`space-y-5 p-5 ${
-              openPanel === "products" ? "" : "hidden xl:block"
-            }`}
-          >
-            <div className="grid gap-3 rounded-2xl border bg-background/80 p-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,24rem)] lg:items-start">
-              <div className="flex flex-wrap gap-2">
-                {categories.map((category) => (
-                  <Button
-                    key={category}
-                    type="button"
-                    variant={selectedCategory === category ? "default" : "ghost"}
-                    size="sm"
-                    aria-pressed={selectedCategory === category}
-                    onClick={() => {
-                      setSelectedCategory(category);
-                      const selected = catalogCategories?.find(
-                        (item) => item.name === category
-                      );
-                      onCatalogCategoryChange?.(selected?.id);
-                    }}
-                    className="shrink-0 rounded-full"
-                  >
-                    {category}
-                  </Button>
-                ))}
-              </div>
-              <div className="relative w-full">
-                <Search
-                  aria-hidden="true"
-                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                  value={search}
-                  onChange={(event) => {
-                    setSearch(event.target.value);
-                    onCatalogSearchChange?.(event.target.value);
+        <CardContent
+          className={`space-y-5 p-5 ${
+            openPanel === "products" ? "" : "hidden xl:block"
+          }`}
+        >
+          <div className="grid gap-3 rounded-2xl border bg-background/80 p-3 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,24rem)] lg:items-start">
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  type="button"
+                  variant={selectedCategory === category ? "default" : "ghost"}
+                  size="sm"
+                  aria-pressed={selectedCategory === category}
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    const selected = catalogCategories?.find(
+                      (item) => item.name === category
+                    );
+                    onCatalogCategoryChange?.(selected?.id);
                   }}
-                  aria-label="Buscar productos"
-                  className="h-10 rounded-xl bg-muted/30 pr-9 pl-9"
-                />
-                {search ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    className="absolute top-1/2 right-2 -translate-y-1/2"
-                    aria-label="Limpiar búsqueda"
-                    onClick={() => {
-                      setSearch("");
-                      onCatalogSearchChange?.("");
-                    }}
-                  >
-                    <X aria-hidden="true" />
-                  </Button>
-                ) : null}
-              </div>
+                  className="shrink-0 rounded-full"
+                >
+                  {category}
+                </Button>
+              ))}
             </div>
-
-            {isProductsLoading ? (
-              <LoadingState
-                title="Cargando productos"
-                message="Estamos preparando el catalogo de venta."
-                className="w-full max-w-none shadow-none"
+            <div className="relative w-full">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
               />
-            ) : null}
-
-            {productsError ? (
-              <ErrorMessage
-                title="No se pudieron cargar los productos"
-                messages={getApiErrorMessages(productsError)}
+              <Input
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  onCatalogSearchChange?.(event.target.value);
+                }}
+                aria-label="Buscar productos"
+                className="h-10 rounded-xl bg-muted/30 pr-9 pl-9"
               />
-            ) : null}
+              {search ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  className="absolute top-1/2 right-2 -translate-y-1/2"
+                  aria-label="Limpiar búsqueda"
+                  onClick={() => {
+                    setSearch("");
+                    onCatalogSearchChange?.("");
+                  }}
+                >
+                  <X aria-hidden="true" />
+                </Button>
+              ) : null}
+            </div>
+          </div>
 
-            {!isProductsLoading && !productsError && products.length === 0 ? (
-              <EmptyState
-                title="Sin productos disponibles"
-                message="No hay productos activos para cargar consumos."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : null}
+          {isProductsLoading ? (
+            <LoadingState
+              title="Cargando productos"
+              message="Estamos preparando el catalogo de venta."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : null}
 
-            {!isProductsLoading &&
-            !productsError &&
-            products.length > 0 &&
-            filteredProducts.length === 0 ? (
-              <EmptyState
-                title="Sin resultados"
-                message="No encontramos productos con los filtros actuales."
-                className="w-full max-w-none shadow-none"
-              />
-            ) : null}
+          {productsError ? (
+            <ErrorMessage
+              title="No se pudieron cargar los productos"
+              messages={getApiErrorMessages(productsError)}
+            />
+          ) : null}
 
-            {filteredProducts.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
-                {filteredProducts.map((product) => {
-                  const item = lineByProductId.get(product.id);
-                  const quantity = item ? formatQuantity(item.quantity) : "0";
-                  const isSelected = Boolean(item);
+          {!isProductsLoading && !productsError && products.length === 0 ? (
+            <EmptyState
+              title="Sin productos disponibles"
+              message="No hay productos activos para cargar consumos."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : null}
 
-                  return (
-                    <div
-                      key={product.id}
-                      className="group flex min-h-40 flex-col justify-between rounded-2xl border bg-background p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md data-[selected=true]:border-primary data-[selected=true]:bg-primary/5 data-[selected=true]:shadow-md"
-                      data-selected={isSelected}
+          {!isProductsLoading &&
+          !productsError &&
+          products.length > 0 &&
+          filteredProducts.length === 0 ? (
+            <EmptyState
+              title="Sin resultados"
+              message="No encontramos productos con los filtros actuales."
+              className="w-full max-w-none shadow-none"
+            />
+          ) : null}
+
+          {filteredProducts.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+              {filteredProducts.map((product) => {
+                const item = lineByProductId.get(product.id);
+                const quantity = item ? formatQuantity(item.quantity) : "0";
+                const isSelected = Boolean(item);
+
+                return (
+                  <div
+                    key={product.id}
+                    className="group flex min-h-40 flex-col justify-between rounded-2xl border bg-background p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md data-[selected=true]:border-primary data-[selected=true]:bg-primary/5 data-[selected=true]:shadow-md"
+                    data-selected={isSelected}
+                  >
+                    <button
+                      type="button"
+                      className="min-h-20 text-left disabled:cursor-not-allowed"
+                      disabled={isMutating}
+                      onClick={() => {
+                        void incrementProduct(product);
+                      }}
                     >
-                      <button
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="line-clamp-2 font-medium leading-5">
+                            {product.name}
+                          </p>
+                          <p className="mt-1 truncate text-xs font-medium text-muted-foreground">
+                            {product.sku || getProductCategory(product)}
+                          </p>
+                        </div>
+                        {isSelected ? <Badge>{quantity}</Badge> : null}
+                      </div>
+                      <p className="mt-3 text-xs text-muted-foreground">
+                        {formatProductUnit(product.unit)}
+                      </p>
+                      <p className="mt-2 inline-flex rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                        {formatStockManagementType(product.stockManagementType)}
+                      </p>
+                    </button>
+
+                    <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
+                      <Button
                         type="button"
-                        className="min-h-20 text-left disabled:cursor-not-allowed"
+                        variant="outline"
+                        size="icon"
+                        disabled={!isSelected || isMutating}
+                        onClick={() => {
+                          void decrementProduct(product.id);
+                        }}
+                        aria-label={`Restar ${product.name}`}
+                      >
+                        <Minus aria-hidden="true" />
+                      </Button>
+                      <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
+                        {quantity}
+                      </div>
+                      <Button
+                        type="button"
+                        size="icon"
                         disabled={isMutating}
                         onClick={() => {
                           void incrementProduct(product);
                         }}
+                        aria-label={`Sumar ${product.name}`}
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="line-clamp-2 font-medium leading-5">
-                              {product.name}
-                            </p>
-                            <p className="mt-1 truncate text-xs font-medium text-muted-foreground">
-                              {product.sku || getProductCategory(product)}
-                            </p>
-                          </div>
-                          {isSelected ? <Badge>{quantity}</Badge> : null}
-                        </div>
-                        <p className="mt-3 text-xs text-muted-foreground">
-                          {formatProductUnit(product.unit)}
-                        </p>
-                        <p className="mt-2 inline-flex rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-                          {formatStockManagementType(
-                            product.stockManagementType,
-                          )}
-                        </p>
-                      </button>
-
-                      <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          disabled={!isSelected || isMutating}
-                          onClick={() => {
-                            void decrementProduct(product.id);
-                          }}
-                          aria-label={`Restar ${product.name}`}
-                        >
-                          <Minus aria-hidden="true" />
-                        </Button>
-                        <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
-                          {quantity}
-                        </div>
-                        <Button
-                          type="button"
-                          size="icon"
-                          disabled={isMutating}
-                          onClick={() => {
-                            void incrementProduct(product);
-                          }}
-                          aria-label={`Sumar ${product.name}`}
-                        >
-                          <Plus aria-hidden="true" />
-                        </Button>
-                      </div>
+                        <Plus aria-hidden="true" />
+                      </Button>
                     </div>
-                  );
-                })}
-              </div>
-            ) : null}
-            {hasMoreProducts ? (
-              <div className="flex justify-center pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={isLoadingMoreProducts}
-                  onClick={onLoadMoreProducts}
-                >
-                  {isLoadingMoreProducts ? "Cargando..." : "Cargar mas"}
-                </Button>
-              </div>
-            ) : null}
-          </CardContent>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+          {hasMoreProducts ? (
+            <div className="flex justify-center pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoadingMoreProducts}
+                onClick={onLoadMoreProducts}
+              >
+                {isLoadingMoreProducts ? "Cargando..." : "Cargar mas"}
+              </Button>
+            </div>
+          ) : null}
+        </CardContent>
       </Card>
 
       {addError || updateError || removeError ? (
@@ -410,7 +407,7 @@ export function TableOrderWorkspace({
           <ErrorMessage
             title="No se pudo actualizar la orden"
             messages={getApiErrorMessages(
-              addError ?? updateError ?? removeError,
+              addError ?? updateError ?? removeError
             )}
           />
         </div>
@@ -452,120 +449,124 @@ export function TableOrderWorkspace({
           </button>
         </CardHeader>
 
-          <CardContent
-            className={`space-y-5 p-5 xl:min-h-0 xl:overflow-y-auto ${
-              openPanel === "order" ? "" : "hidden xl:block"
-            }`}
-          >
-            {items.length === 0 ? (
-              <div className="rounded-2xl border border-dashed bg-muted/30 p-6 text-sm text-muted-foreground">
-                Agrega productos desde la grilla para armar la orden de consumo.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl border bg-background p-4 shadow-sm"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="line-clamp-2 font-medium">
-                          {item.productNameSnapshot}
-                        </p>
-                        <p className="mt-1 text-xs font-medium text-muted-foreground">
-                          {formatMoney(item.unitPriceSnapshot)} c/u
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-sm"
-                        disabled={isMutating}
-                        onClick={() => {
-                          void Promise.resolve(onRemoveItem(item.id)).catch(() => {
+        <CardContent
+          className={`space-y-5 p-5 xl:min-h-0 xl:overflow-y-auto ${
+            openPanel === "order" ? "" : "hidden xl:block"
+          }`}
+        >
+          {items.length === 0 ? (
+            <div className="rounded-2xl border border-dashed bg-muted/30 p-6 text-sm text-muted-foreground">
+              Agrega productos desde la grilla para armar la orden de consumo.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl border bg-background p-4 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="line-clamp-2 font-medium">
+                        {item.productNameSnapshot}
+                      </p>
+                      <p className="mt-1 text-xs font-medium text-muted-foreground">
+                        {formatMoney(item.unitPriceSnapshot)} c/u
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      disabled={isMutating}
+                      onClick={() => {
+                        void Promise.resolve(onRemoveItem(item.id)).catch(
+                          () => {
                             return;
-                          });
-                        }}
-                        aria-label={`Quitar ${item.productNameSnapshot}`}
-                      >
-                        <Trash2 aria-hidden="true" />
-                      </Button>
-                    </div>
-                    <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        disabled={isMutating}
-                        onClick={() => {
-                          void decrementProduct(item.productId);
-                        }}
-                        aria-label={`Restar ${item.productNameSnapshot}`}
-                      >
-                        <Minus aria-hidden="true" />
-                      </Button>
-                      <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
-                        {formatQuantity(item.quantity)}
-                      </div>
-                      <Button
-                        type="button"
-                        size="icon"
-                        disabled={isMutating}
-                        onClick={() => {
-                          void Promise.resolve(
-                            onUpdateItem(item.id, {
-                              quantity: String(toNumber(item.quantity) + 1),
-                            })
-                          ).catch(() => {
-                            return;
-                          });
-                        }}
-                        aria-label={`Sumar ${item.productNameSnapshot}`}
-                      >
-                        <Plus aria-hidden="true" />
-                      </Button>
-                    </div>
-                    <div className="mt-4 flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-sm">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span className="font-medium">{formatMoney(item.subtotal)}</span>
-                    </div>
+                          }
+                        );
+                      }}
+                      aria-label={`Quitar ${item.productNameSnapshot}`}
+                    >
+                      <Trash2 aria-hidden="true" />
+                    </Button>
                   </div>
-                ))}
-              </div>
-            )}
-
-            <div className="space-y-4">
-              <div className="space-y-3 rounded-2xl border bg-background p-5 shadow-sm">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">
-                    {formatMoney(order.saleTicket.subtotal)}
-                  </span>
+                  <div className="mt-4 grid grid-cols-[2.25rem_1fr_2.25rem] items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      disabled={isMutating}
+                      onClick={() => {
+                        void decrementProduct(item.productId);
+                      }}
+                      aria-label={`Restar ${item.productNameSnapshot}`}
+                    >
+                      <Minus aria-hidden="true" />
+                    </Button>
+                    <div className="rounded-xl bg-muted px-2 py-2 text-center text-sm font-semibold">
+                      {formatQuantity(item.quantity)}
+                    </div>
+                    <Button
+                      type="button"
+                      size="icon"
+                      disabled={isMutating}
+                      onClick={() => {
+                        void Promise.resolve(
+                          onUpdateItem(item.id, {
+                            quantity: String(toNumber(item.quantity) + 1),
+                          })
+                        ).catch(() => {
+                          return;
+                        });
+                      }}
+                      aria-label={`Sumar ${item.productNameSnapshot}`}
+                    >
+                      <Plus aria-hidden="true" />
+                    </Button>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-medium">
+                      {formatMoney(item.subtotal)}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between text-xl font-semibold">
-                  <span>Total</span>
-                  <span>{formatMoney(order.saleTicket.total)}</span>
-                </div>
-              </div>
+              ))}
+            </div>
+          )}
 
-              <div className="space-y-3">
-                <CloseTableOrderDialog
-                  itemsCount={items.length}
-                  paymentBanks={paymentBanks}
-                  isPaymentBanksLoading={isPaymentBanksLoading}
-                  isPending={isClosePending}
-                  error={closeError}
-                  onClose={onClose}
-                />
-                <CancelTableOrderDialog
-                  isPending={isCancelPending}
-                  error={cancelError}
-                  onCancel={onCancel}
-                />
+          <div className="space-y-4">
+            <div className="space-y-3 rounded-2xl border bg-background p-5 shadow-sm">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-medium">
+                  {formatMoney(order.saleTicket.subtotal)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xl font-semibold">
+                <span>Total</span>
+                <span>{formatMoney(order.saleTicket.total)}</span>
               </div>
             </div>
-          </CardContent>
+
+            <div className="space-y-3">
+              <CloseTableOrderDialog
+                itemsCount={items.length}
+                paymentBanks={paymentBanks}
+                isPaymentBanksLoading={isPaymentBanksLoading}
+                isPending={isClosePending}
+                error={closeError}
+                onClose={onClose}
+              />
+              <CancelTableOrderDialog
+                isPending={isCancelPending}
+                error={cancelError}
+                onCancel={onCancel}
+              />
+            </div>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

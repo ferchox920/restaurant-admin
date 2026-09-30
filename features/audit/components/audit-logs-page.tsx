@@ -12,7 +12,11 @@ import { AuditLogFilters } from "@/features/audit/components/audit-log-filters";
 import { AuditLogTable } from "@/features/audit/components/audit-log-table";
 import { useAuditLogs } from "@/features/audit/hooks/use-audit-logs";
 import { auditLogFiltersSchema } from "@/features/audit/schemas/audit-log-filters.schema";
-import type { AuditLogFilters as AuditFilters, AuditAction, AuditEntityType } from "@/features/audit/types/audit-log.types";
+import type {
+  AuditLogFilters as AuditFilters,
+  AuditAction,
+  AuditEntityType,
+} from "@/features/audit/types/audit-log.types";
 import { toReportDateRange } from "@/features/reports/utils/report-formatters";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
@@ -46,7 +50,9 @@ export function AuditLogsPage() {
 
   const from = searchParams.get("from") ?? "";
   const to = searchParams.get("to") ?? "";
-  const action = (searchParams.get("action") ?? "__all__") as AuditAction | "__all__";
+  const action = (searchParams.get("action") ?? "__all__") as
+    | AuditAction
+    | "__all__";
   const entityType = (searchParams.get("entityType") ?? "__all__") as
     | AuditEntityType
     | "__all__";
@@ -57,7 +63,10 @@ export function AuditLogsPage() {
   const parsedLimit = Number(limitParam);
   const parsedOffset = Number(offsetParam);
   const limit =
-    limitParam && Number.isInteger(parsedLimit) && parsedLimit >= 1 && parsedLimit <= 100
+    limitParam &&
+    Number.isInteger(parsedLimit) &&
+    parsedLimit >= 1 &&
+    parsedLimit <= 100
       ? parsedLimit
       : Number(DEFAULT_LIMIT);
   const offset =
@@ -105,7 +114,17 @@ export function AuditLogsPage() {
       limit,
       offset,
     }),
-    [action, entityId, entityType, from, hasInvalidDateInput, limit, offset, to, userId]
+    [
+      action,
+      entityId,
+      entityType,
+      from,
+      hasInvalidDateInput,
+      limit,
+      offset,
+      to,
+      userId,
+    ]
   );
 
   const validation = auditLogFiltersSchema.safeParse(filters);
@@ -143,12 +162,36 @@ export function AuditLogsPage() {
               limit: String(limit),
               allowActorSelector: canUseActorSelector,
             }}
-            onFromChange={(value) => replaceSearchParams({ from: value || undefined }, { resetOffset: true })}
-            onToChange={(value) => replaceSearchParams({ to: value || undefined }, { resetOffset: true })}
-            onActionChange={(value) => replaceSearchParams({ action: value }, { resetOffset: true })}
-            onEntityTypeChange={(value) => replaceSearchParams({ entityType: value }, { resetOffset: true })}
-            onEntityIdChange={(value) => replaceSearchParams({ entityId: value.trim() || undefined }, { resetOffset: true })}
-            onUserIdChange={(value) => replaceSearchParams({ userId: value.trim() || undefined }, { resetOffset: true })}
+            onFromChange={(value) =>
+              replaceSearchParams(
+                { from: value || undefined },
+                { resetOffset: true }
+              )
+            }
+            onToChange={(value) =>
+              replaceSearchParams(
+                { to: value || undefined },
+                { resetOffset: true }
+              )
+            }
+            onActionChange={(value) =>
+              replaceSearchParams({ action: value }, { resetOffset: true })
+            }
+            onEntityTypeChange={(value) =>
+              replaceSearchParams({ entityType: value }, { resetOffset: true })
+            }
+            onEntityIdChange={(value) =>
+              replaceSearchParams(
+                { entityId: value.trim() || undefined },
+                { resetOffset: true }
+              )
+            }
+            onUserIdChange={(value) =>
+              replaceSearchParams(
+                { userId: value.trim() || undefined },
+                { resetOffset: true }
+              )
+            }
             onLimitChange={(value) =>
               replaceSearchParams(
                 {
@@ -206,12 +249,19 @@ export function AuditLogsPage() {
           {canRenderAuditState && logsQuery.error ? (
             <ErrorMessage
               variant={isForbidden ? "forbidden" : "general"}
-              title={isForbidden ? "Acceso restringido" : "No se pudo cargar la auditoria"}
+              title={
+                isForbidden
+                  ? "Acceso restringido"
+                  : "No se pudo cargar la auditoria"
+              }
               messages={getApiErrorMessages(logsQuery.error)}
             />
           ) : null}
 
-          {canRenderAuditState && !logsQuery.isLoading && !logsQuery.error && items.length === 0 ? (
+          {canRenderAuditState &&
+          !logsQuery.isLoading &&
+          !logsQuery.error &&
+          items.length === 0 ? (
             <EmptyState
               title="Sin eventos"
               message="No hay registros de auditoria para los filtros seleccionados."
@@ -219,7 +269,10 @@ export function AuditLogsPage() {
             />
           ) : null}
 
-          {canRenderAuditState && !logsQuery.isLoading && !logsQuery.error && items.length > 0 ? (
+          {canRenderAuditState &&
+          !logsQuery.isLoading &&
+          !logsQuery.error &&
+          items.length > 0 ? (
             <>
               <AuditLogTable items={items} />
               <div className="space-y-3">
@@ -237,7 +290,9 @@ export function AuditLogsPage() {
                     disabled={!canGoBack}
                     onClick={() =>
                       replaceSearchParams({
-                        offset: String(Math.max(DEFAULT_OFFSET, offset - limit)),
+                        offset: String(
+                          Math.max(DEFAULT_OFFSET, offset - limit)
+                        ),
                       })
                     }
                   >
