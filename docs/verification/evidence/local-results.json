@@ -6,22 +6,22 @@
     {
       "script": "lint",
       "args": [],
-      "startedAt": "2026-09-30T15:33:37.685Z",
-      "finishedAt": "2026-09-30T15:33:49.555Z",
+      "startedAt": "2026-09-30T15:56:19.986Z",
+      "finishedAt": "2026-09-30T15:56:29.260Z",
       "exitCode": 0
     },
     {
       "script": "format:check",
       "args": [],
-      "startedAt": "2026-09-30T15:33:49.556Z",
-      "finishedAt": "2026-09-30T15:33:52.362Z",
+      "startedAt": "2026-09-30T15:56:29.261Z",
+      "finishedAt": "2026-09-30T15:56:32.047Z",
       "exitCode": 0
     },
     {
       "script": "typecheck",
       "args": [],
-      "startedAt": "2026-09-30T15:33:52.362Z",
-      "finishedAt": "2026-09-30T15:33:55.947Z",
+      "startedAt": "2026-09-30T15:56:32.048Z",
+      "finishedAt": "2026-09-30T15:56:34.878Z",
       "exitCode": 0
     },
     {
@@ -32,32 +32,32 @@
         "--reporter=json",
         "--outputFile=output/playwright/vitest.json"
       ],
-      "startedAt": "2026-09-30T15:33:55.947Z",
-      "finishedAt": "2026-09-30T15:34:36.085Z",
+      "startedAt": "2026-09-30T15:56:34.878Z",
+      "finishedAt": "2026-09-30T15:56:52.355Z",
       "exitCode": 0
     },
     {
       "script": "build",
       "args": [],
-      "startedAt": "2026-09-30T15:34:36.085Z",
-      "finishedAt": "2026-09-30T15:34:59.803Z",
+      "startedAt": "2026-09-30T15:56:52.356Z",
+      "finishedAt": "2026-09-30T15:57:03.402Z",
       "exitCode": 0
     },
     {
       "script": "bundle:check",
       "args": [],
-      "startedAt": "2026-09-30T15:34:59.804Z",
-      "finishedAt": "2026-09-30T15:35:00.207Z",
+      "startedAt": "2026-09-30T15:57:03.402Z",
+      "finishedAt": "2026-09-30T15:57:03.793Z",
       "exitCode": 0
     }
   ],
   "vitest": {
-    "tests": 85,
-    "passed": 85,
+    "tests": 86,
+    "passed": 86,
     "failed": 0,
     "pending": 0,
     "suites": 34,
-    "reportSha256": "6aa3083ebae8f9942b7b627301c457301479bd51a244ffc98a5b8c4678937703"
+    "reportSha256": "ac7eadcd7c66ebd94523c8ac69fae6bd148d3ee165ccbc5e5793b2ba7f5987b7"
   },
   "audit": {
     "info": 0,
@@ -76,7 +76,7 @@
     "total": 0
   },
   "bundle": {
-    "generatedAt": "2026-09-30T15:36:28.953Z",
+    "generatedAt": "2026-09-30T15:58:20.989Z",
     "results": [
       {
         "route": "/dashboard",
@@ -115,7 +115,7 @@
       },
       {
         "route": "/products",
-        "gzipKb": 116.4,
+        "gzipKb": 116.5,
         "budgetKb": 170,
         "passed": true,
         "chunks": 11
@@ -130,14 +130,14 @@
     ]
   },
   "fullstack": {
-    "run": "run-1790782524348",
+    "run": "run-1790783844733",
     "rounds": [
       {
         "round": 1,
         "metadata": {
           "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
-          "startedAt": "2026-09-30T15:36:28.975Z",
-          "finishedAt": "2026-09-30T15:37:40.083Z",
+          "startedAt": "2026-09-30T15:58:21.010Z",
+          "finishedAt": "2026-09-30T15:59:33.020Z",
           "success": true,
           "cleanupExit": 0,
           "projects": ["desktop-chromium", "mobile-chromium-emulated"],
@@ -158,29 +158,29 @@
           {
             "project": "desktop-chromium",
             "stats": {
-              "startTime": "2026-09-30T15:37:03.464Z",
-              "duration": 12415.447,
+              "startTime": "2026-09-30T15:58:55.924Z",
+              "duration": 12304.778,
               "expected": 1,
               "skipped": 0,
               "unexpected": 0,
               "flaky": 0
             },
             "errors": [],
-            "reportSha256": "fc6788f25e8134415d7b26476680fe896b6f17860b0e1bdd51e4434d90cd7e78",
+            "reportSha256": "94e9cea12972159ffb8f73d85a0a5d5f55ffe4e35c5373673ace930954a0f465",
             "htmlPresent": true
           },
           {
             "project": "mobile-chromium-emulated",
             "stats": {
-              "startTime": "2026-09-30T15:37:20.433Z",
-              "duration": 14389.566,
+              "startTime": "2026-09-30T15:59:13.339Z",
+              "duration": 14145.147,
               "expected": 1,
               "skipped": 0,
               "unexpected": 0,
               "flaky": 0
             },
             "errors": [],
-            "reportSha256": "7dd0d358d70d9c97601984ece3033fd1863053def66a7932b2e21a4c857503b5",
+            "reportSha256": "5e7f5546bb46737774fe2a372cca74e69f93d3d53a08cf86c5e2f2fc8437a7dc",
             "htmlPresent": true
           }
         ]
@@ -189,8 +189,8 @@
         "round": 2,
         "metadata": {
           "backendSha": "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
-          "startedAt": "2026-09-30T15:37:40.084Z",
-          "finishedAt": "2026-09-30T15:38:34.882Z",
+          "startedAt": "2026-09-30T15:59:33.021Z",
+          "finishedAt": "2026-09-30T16:00:22.887Z",
           "success": true,
           "cleanupExit": 0,
           "projects": ["desktop-chromium", "mobile-chromium-emulated"],
@@ -211,29 +211,29 @@
           {
             "project": "desktop-chromium",
             "stats": {
-              "startTime": "2026-09-30T15:37:56.618Z",
-              "duration": 12194.74,
+              "startTime": "2026-09-30T15:59:50.401Z",
+              "duration": 10086.857,
               "expected": 1,
               "skipped": 0,
               "unexpected": 0,
               "flaky": 0
             },
             "errors": [],
-            "reportSha256": "89d0d5e1c42faf4e6b0c3f87a7fdfe3602661f1025074add78487f9da6309143",
+            "reportSha256": "0d10cce3f2cd0eea5fd65d81c884f1f9e382c884d81c4cdacfdd1125c87d8609",
             "htmlPresent": true
           },
           {
             "project": "mobile-chromium-emulated",
             "stats": {
-              "startTime": "2026-09-30T15:38:12.995Z",
-              "duration": 16474.828,
+              "startTime": "2026-09-30T16:00:04.645Z",
+              "duration": 13066.57,
               "expected": 1,
               "skipped": 0,
               "unexpected": 0,
               "flaky": 0
             },
             "errors": [],
-            "reportSha256": "d6862b9d2c145de598d37c03604a1a90fe1e92480469d0a75ae6beb3b26be266",
+            "reportSha256": "117588aabbfef931b597ebe539b9b4332ef58e6d6c86e664130eabd4cf81fe87",
             "htmlPresent": true
           }
         ]

@@ -26,7 +26,7 @@ El [PR backend #1](https://github.com/ferchox920/restaurant-api/pull/1) sigue ab
 | -------------------- | --------------------------------------------- | ------------------------------------------- |
 | npm ci               | EUSAGE: wasi-threads 1.2.2 no satisface 1.2.3 | Reparado y verificado nuevamente            |
 | lint sin fix         | 0 errores                                     | 0 errores; exit 0                           |
-| Vitest               | 71 tests, 28 suites                           | 85 tests, 34 suites; 0 fallos, 0 skips      |
+| Vitest               | 71 tests, 28 suites                           | 86 tests, 34 suites; 0 fallos, 0 skips      |
 | TypeScript explícito | pasó                                          | pasó; exit 0                                |
 | build de producción  | pasó                                          | producción real usada en recorridos         |
 | bundle:check         | 7 rutas dentro de presupuesto                 | límites originales conservados              |
@@ -138,12 +138,12 @@ incorrecta, locator de panel desktop, typecheck de un test nuevo, locator de voi
 una carrera en el propio test de respuesta perdida y reconexión SSE sin cursor.
 Se corrigieron; no se convirtieron en skips. El runner final usa retries 0.
 
-La ejecución local final `run-1790782524348` terminó con exit 0:
+La ejecución local final `run-1790783844733` terminó con exit 0:
 
 | Vuelta | Inicio/fin UTC              | Escritorio         | Móvil emulado      | Bearer HTTP        | Limpieza |
 | ------ | --------------------------- | ------------------ | ------------------ | ------------------ | -------- |
-| 1      | 15:36:28.975 / 15:37:40.083 | 1 journey aprobado | 1 journey aprobado | 4 checks aprobados | exit 0   |
-| 2      | 15:37:40.084 / 15:38:34.882 | 1 journey aprobado | 1 journey aprobado | 4 checks aprobados | exit 0   |
+| 1      | 15:58:21.010 / 15:59:33.020 | 1 journey aprobado | 1 journey aprobado | 4 checks aprobados | exit 0   |
+| 2      | 15:59:33.021 / 16:00:22.887 | 1 journey aprobado | 1 journey aprobado | 4 checks aprobados | exit 0   |
 
 Total: 4 journeys reales, 8 checks bearer, 0 fallos, 0 skips, 0 flaky, 0 reintentos.
 Cada vuelta aplicó las 16 migraciones y seed sobre una base nueva. Los cuatro
@@ -151,11 +151,11 @@ reportes JSON y HTML existen y fueron validados antes de declarar éxito. Al cie
 `docker ps -a --filter label=restaurant.frontend-integration=true` no devuelve contenedores.
 [Resumen local versionado](evidence/local-results.json) conserva metadata, conteos,
 auditorías y hashes de reportes; los artefactos completos permanecen en
-`output/playwright/run-1790782524348`, fuera de Git.
+`output/playwright/run-1790783844733`, fuera de Git.
 
-La verificación estática final, 15:33:37–15:35:00 UTC, aprobó `npm run verify`
-completo después de `npm ci`: lint, formato sin escritura, TypeScript, 85 tests en
-34 suites, build y bundle. Se añadieron 14 tests respecto de los 71 de la base.
+La verificación estática final, 15:56:19–15:57:03 UTC, aprobó `npm run verify`
+completo después de `npm ci`: lint, formato sin escritura, TypeScript, 86 tests en
+34 suites, build y bundle. Se añadieron 15 tests respecto de los 71 de la base.
 
 Además de las iteraciones iniciales, se corrigió una carrera offline/online del
 transporte SSE móvil y se hizo síncrona la lectura del header en el test. Un intento
@@ -181,8 +181,38 @@ Los límites originales 65 KiB dashboard / 170 KiB resto se conservan. Base gzip
 son 50.1/66.5/111.4/49.6/58.6/116.4/49.6 KiB para el build cookie/SSE probado;
 están en bundle-report.json y logs. Las siete rutas pasan sin cambiar los límites.
 
-La evidencia remota se enlaza en el PR y se contrasta por SHA, jobs, logs y
-artefactos. La evidencia local anterior se distingue de esa ejecución en Linux.
+La primera CI, sobre `57b7a019278f732381643e124a84232bf8ae95bf`, aprobó verify
+y CodeQL, pero falló fullstack móvil con HTTP 429. La traza registra 98 respuestas
+200, 113 solicitudes abortadas y 8 respuestas 429 para el GET de una orden durante
+el replay: cada evento disparaba invalidaciones redundantes. Se conserva el
+[run fallido y sus artefactos](https://github.com/ferchox920/restaurant-admin/actions/runs/36739499276).
+El frontend ahora agrupa las invalidaciones durante 50 ms, con una sola ejecución
+por ráfaga que cubre todas las raíces operativas. Un test con 1001 eventos prueba
+el límite de invalidaciones y la cancelación al desmontar. Se conserva el historial
+SSE entre proyectos, el límite del backend de 100/minuto y todos los escenarios.
+
+Evidencia remota posterior comprobada sobre código
+`1168ecb7e3565af49be159dc15748b9bbed15570`:
+
+- [CI verify y fullstack](https://github.com/ferchox920/restaurant-admin/actions/runs/36740710614):
+  jobs `109974054757` y `109974055118` success. Artifact Vitest confirma 86 tests,
+  34 suites, 0 fallos/pendientes; lint, formato, TypeScript, build y siete presupuestos
+  pasan. Fullstack confirma dos bases nuevas, cuatro journeys sin skips/flaky/retries,
+  ocho checks bearer y cleanupExit 0 en ambas vueltas.
+- [CodeQL](https://github.com/ferchox920/restaurant-admin/actions/runs/36740710617):
+  job `109974057314` success, log `Successfully uploaded results`, SARIF con 0 resultados.
+- Artefactos descargados e inspeccionados, con SHA256 coincidente con el digest de GitHub:
+  [verification](https://github.com/ferchox920/restaurant-admin/actions/runs/36740710614/artifacts/11110207386),
+  [fullstack: HTML/JSON, trazas, capturas y logs](https://github.com/ferchox920/restaurant-admin/actions/runs/36740710614/artifacts/11110207625),
+  [SARIF CodeQL](https://github.com/ferchox920/restaurant-admin/actions/runs/36740710617/artifacts/11109394247).
+  Auditorías CI coinciden con local: 3 de desarrollo, 0 producción.
+
+[Snapshot CI versionado](evidence/ci-results.json) registra head, jobs, metadata,
+conteos, digests y hashes de logs. Este snapshot corresponde al código indicado;
+los checks y enlaces del head final de documentación están en el
+[PR frontend #1](https://github.com/ferchox920/restaurant-admin/pull/1).
+La evidencia local anterior se distingue de esta ejecución en Linux. Los 0 resultados
+de CodeQL no sustituyen la auditoría de dependencias ni una revisión humana.
 
 Pendientes del backend conservados: 14 avisos npm (1 bajo, 2 moderados, 11 altos),
 revocación legacy, retención indefinida y reconciliación manual de claves incompletas.
