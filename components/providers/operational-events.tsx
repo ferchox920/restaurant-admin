@@ -26,13 +26,25 @@ export function OperationalEvents({ enabled }: { enabled: boolean }) {
         void queryClient.invalidateQueries({ queryKey, refetchType: "active" });
       });
     };
+    let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+    let pendingRefresh = synchronize;
+    const queueRefresh = (refresh = synchronize) => {
+      // A replay can deliver hundreds of events in one frame. Every refresh covers
+      // all operational roots, so one trailing refresh also covers earlier events.
+      pendingRefresh = refresh;
+      if (refreshTimer !== undefined) return;
+      refreshTimer = setTimeout(() => {
+        refreshTimer = undefined;
+        pendingRefresh();
+      }, 50);
+    };
     const disconnect = connectOperationalStream(
       `${apiUrl}/api/operations/events`,
       {
-        onConnected: synchronize,
+        onConnected: queueRefresh,
         onEvent: (name, data) => {
           if (name === "resync.required") {
-            synchronize();
+            queueRefresh();
             return;
           }
           if (
@@ -44,20 +56,23 @@ export function OperationalEvents({ enabled }: { enabled: boolean }) {
             ].includes(name)
           )
             return;
-          try {
-            invalidateOperationalEvent(queryClient, name, JSON.parse(data));
-          } catch {
-            synchronize();
-          }
+          queueRefresh(() => {
+            try {
+              invalidateOperationalEvent(queryClient, name, JSON.parse(data));
+            } catch {
+              synchronize();
+            }
+          });
         },
       }
     );
     const visible = () => {
-      if (document.visibilityState === "visible") synchronize();
+      if (document.visibilityState === "visible") queueRefresh();
     };
     document.addEventListener("visibilitychange", visible);
     return () => {
       disconnect();
+      clearTimeout(refreshTimer);
       document.removeEventListener("visibilitychange", visible);
     };
   }, [enabled, pathname, queryClient]);
