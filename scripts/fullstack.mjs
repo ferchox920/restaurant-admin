@@ -8,8 +8,9 @@ import {
 } from "node:fs";
 import { resolve } from "node:path";
 import { randomBytes } from "node:crypto";
+import { sanitizeEvidence } from "./sanitize-evidence.mjs";
 
-const sha = "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd";
+const sha = "5562dec6cef7c00f76c31cc5bf663f5cf282ae14";
 const root = process.cwd();
 const output = resolve(root, `output/playwright/run-${Date.now()}`);
 mkdirSync(output, { recursive: true });
@@ -88,6 +89,7 @@ if (!existsSync(resolve(backend, ".git")))
     "https://github.com/ferchox920/restaurant-api.git",
     backend,
   ]);
+await run("git", ["fetch", "origin"], backend);
 await run("git", ["checkout", "--detach", sha], backend);
 const actual = spawnSync("git", ["rev-parse", "HEAD"], {
   cwd: backend,
@@ -237,6 +239,7 @@ for (let round = 1; round <= rounds; round++) {
         root,
         {
           ...testEnv,
+          INTEGRATION_PROJECT: project,
           PLAYWRIGHT_JSON_OUTPUT_FILE: resolve(
             output,
             `round-${round}-${project}-results.json`
@@ -257,7 +260,7 @@ for (let round = 1; round <= rounds; round++) {
         )
       );
       if (
-        report.stats.expected !== 1 ||
+        report.stats.expected !== 5 ||
         report.stats.unexpected ||
         report.stats.skipped ||
         report.stats.flaky ||
@@ -315,6 +318,15 @@ for (let round = 1; round <= rounds; round++) {
       windowsHide: true,
       encoding: "utf8",
     });
+    const sanitized = sanitizeEvidence(output, [
+      password,
+      demoPassword,
+      env.JWT_SECRET,
+    ]);
+    writeFileSync(
+      resolve(output, `round-${round}-sanitization.json`),
+      JSON.stringify(sanitized, null, 2)
+    );
     writeFileSync(
       resolve(output, `round-${round}-metadata.json`),
       JSON.stringify(

@@ -12,6 +12,13 @@ export function connectOperationalStream(url: string, callbacks: Callbacks) {
   let delay = 1000;
   let timer: ReturnType<typeof setTimeout>;
   let controller: AbortController;
+  function stop() {
+    disposed = true;
+    clearTimeout(timer);
+    controller?.abort();
+    window.removeEventListener("online", online);
+    window.removeEventListener("offline", offline);
+  }
   async function connect() {
     if (disposed || running || !navigator.onLine) return;
     running = true;
@@ -23,7 +30,8 @@ export function connectOperationalStream(url: string, callbacks: Callbacks) {
         headers: cursor ? { "Last-Event-ID": cursor } : {},
       });
       if (disposed) return;
-      if (response.status === 401) {
+      if (response.status === 401 || response.status === 403) {
+        stop();
         window.dispatchEvent(new Event("restaurant:session-expired"));
         return;
       }
@@ -59,6 +67,11 @@ export function connectOperationalStream(url: string, callbacks: Callbacks) {
             }
             if (id !== undefined && /^\d+$/.test(id)) cursor = id;
             if (data.length) {
+              if (name === "session.invalid") {
+                stop();
+                window.dispatchEvent(new Event("restaurant:session-expired"));
+                return;
+              }
               callbacks.onEvent(name, data.join("\n"));
               window.dispatchEvent(
                 new CustomEvent("restaurant:operational-event", {
@@ -95,11 +108,5 @@ export function connectOperationalStream(url: string, callbacks: Callbacks) {
   const offline = () => controller?.abort();
   window.addEventListener("offline", offline);
   window.addEventListener("online", online);
-  return () => {
-    disposed = true;
-    clearTimeout(timer);
-    controller?.abort();
-    window.removeEventListener("online", online);
-    window.removeEventListener("offline", offline);
-  };
+  return stop;
 }

@@ -1,5 +1,7 @@
 # Restaurant Admin
 
+API: [Restaurant API](https://github.com/ferchox920/restaurant-api). [Demo desde cero, arquitectura, límites, capturas y material laboral](docs/demo.md). [Dependencias por advisory](docs/verification/dependencies-final.md). [Cierre técnico, reproducciones y evidencia](docs/verification/final-stage.md). La configuración recomendada usa cookie persistida y proxy del mismo origen.
+
 Frontend administrativo para la operación de un restaurante, construido con Next.js, TypeScript y React.
 
 ## Funcionalidad
@@ -33,10 +35,10 @@ Variables públicas:
 NEXT_PUBLIC_API_URL=http://localhost:3000
 API_URL=http://localhost:3000
 NEXT_PUBLIC_APP_NAME=Restaurant Admin
-NEXT_PUBLIC_SESSION_MODE=bearer
+NEXT_PUBLIC_SESSION_MODE=cookie
 NEXT_PUBLIC_WEB_VITALS_ENDPOINT=
-NEXT_PUBLIC_REALTIME_ENABLED=false
-NEXT_PUBLIC_STOCK_REPORT_PAGINATION=false
+NEXT_PUBLIC_REALTIME_ENABLED=true
+NEXT_PUBLIC_STOCK_REPORT_PAGINATION=true
 ```
 
 `NEXT_PUBLIC_WEB_VITALS_ENDPOINT` es opcional. Si se configura, el navegador
@@ -80,7 +82,7 @@ npm run test:fullstack # Docker: dos vueltas con API fijada, PostgreSQL y seed p
 
 ## Integración verificable
 
-El recorrido usa el backend `e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd`,
+El recorrido usa el backend `5562dec6cef7c00f76c31cc5bf663f5cf282ae14`,
 frontend de producción, cookies HttpOnly/Secure, comprobación de origen para
 mutaciones y SSE con cursor `Last-Event-ID`. Docker debe estar disponible y los
 puertos locales 55481–55483 libres. El runner clona la API por separado, instala
@@ -99,14 +101,16 @@ API y limpia el cliente. Un JWT legacy sin `jti` sigue vigente en el backend des
 de logout. SSE se conecta únicamente en modo cookie.
 
 Confirmar, cerrar y anular conservan una clave y el payload en sessionStorage
-cuando la respuesta es incierta, incluso al recargar. Reintentar los mismos datos
-recupera la misma clave; cambiar datos inicia otra intención. Revisar primero el
-estado del servidor. Una respuesta `STALE_VERSION` refresca los datos y pide revisar
+cuando la respuesta es incierta, incluso al recargar. El mensaje **Resultado incierto**
+y el botón **Recuperar resultado** reenvían exclusivamente los datos y la clave originales,
+y muestran el resultado autoritativo. Una respuesta `STALE_VERSION` refresca los datos y pide revisar
 la decisión; no repite automáticamente la mutación.
 
-Logs, reportes, trazas y capturas quedan en `output/playwright/run-*`; son fixtures
-ficticias y pueden contener sus tokens de sesión. CI los conserva 14 días. Ver
-[resultados y límites](docs/verification/frontend-integration.md) y
+Logs, reportes, trazas y capturas quedan en `output/playwright/run-*`; usan fixtures
+ficticias y se sanean antes de publicar: JWT, cookies, credenciales y storageState
+se eliminan o redactan también dentro de ZIP y HTML. Los directorios de traces se
+separan por proyecto para conservar escritorio y móvil. CI los conserva 14 días. Ver
+[demo y etapa final](docs/demo.md), [antecedentes de integración](docs/verification/frontend-integration.md) y
 [matriz de 76 consumidores HTTP](docs/verification/contract-matrix.md).
 
 ## Convenciones

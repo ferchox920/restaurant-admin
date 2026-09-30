@@ -40,6 +40,11 @@ async function post(
 }
 async function login(page: Page, role = "admin") {
   await page.goto("/login");
+  await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+  await page.screenshot({
+    path: test.info().outputPath("login.png"),
+    fullPage: true,
+  });
   await page.getByLabel("Email", { exact: true }).fill(`${role}@example.com`);
   await page
     .getByLabel("Password", { exact: true })
@@ -118,6 +123,10 @@ test("real restaurant journey, concurrency, transport recovery, SSE and permissi
     await expect(
       page.getByRole("heading", { name: "Salón", exact: true })
     ).toBeVisible();
+    await page.screenshot({
+      path: info.outputPath("floor.png"),
+      fullPage: true,
+    });
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= window.innerWidth
@@ -205,6 +214,11 @@ test("real restaurant journey, concurrency, transport recovery, SSE and permissi
     await page.reload();
   });
   await test.step("two sessions: stale write denied, refresh for human review", async () => {
+    await showOrderPanel(page);
+    await page.screenshot({
+      path: info.outputPath("order.png"),
+      fullPage: true,
+    });
     console.log("two sessions: stale write denied, refresh for human review");
     const second = await browser.newContext({
       storageState: await page.context().storageState(),
@@ -331,6 +345,31 @@ test("real restaurant journey, concurrency, transport recovery, SSE and permissi
       await request.get("/backend/api/reports/sales-by-channel")
     ).json();
     expect(JSON.stringify(report)).toContain(channel);
+    await page.goto(`/sales/${ticketId}`);
+    await expect(
+      page.getByText("Confirmada", { exact: true }).first()
+    ).toBeVisible();
+    await page.screenshot({
+      path: info.outputPath("sale.png"),
+      fullPage: true,
+    });
+    await page.goto("/inventory");
+    await expect(
+      page.getByRole("heading", { name: "Stock general", exact: true })
+    ).toBeVisible();
+    await expect(
+      page.getByText("Coca-Cola 500ml", { exact: true }).first()
+    ).toBeVisible();
+    await page.screenshot({
+      path: info.outputPath("inventory.png"),
+      fullPage: true,
+    });
+    await page.goto("/audit-logs");
+    await expect(page.getByRole("table")).toBeVisible();
+    await page.screenshot({
+      path: info.outputPath("audit.png"),
+      fullPage: true,
+    });
     await page.goto("/floor");
     expect(
       (await (await request.get(`/backend/api/tables/${tableId}`)).json())

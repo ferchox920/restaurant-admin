@@ -1,0 +1,395 @@
+{
+  "initialFrontendSha": "de1d955b155a42cb097f8f06652a9cd4ade1192e",
+  "backendSha": "5562dec6cef7c00f76c31cc5bf663f5cf282ae14",
+  "scope": "Local working tree before frontend publication; final frontend head/CI checked independently on PR",
+  "auditBefore": {
+    "all": {
+      "exitCode": 1,
+      "findings": 3,
+      "severity": {
+        "low": 1,
+        "moderate": 2,
+        "high": 0
+      },
+      "queryError": false
+    },
+    "production": {
+      "exitCode": 0,
+      "findings": 0,
+      "queryError": false
+    }
+  },
+  "auditAfter": [
+    {
+      "scope": "all",
+      "exitCode": 0,
+      "queryError": false,
+      "findings": 0
+    },
+    {
+      "scope": "production",
+      "exitCode": 0,
+      "queryError": false,
+      "findings": 0
+    }
+  ],
+  "verification": [
+    {
+      "script": "lint",
+      "args": [],
+      "startedAt": "2026-09-30T19:16:48.856Z",
+      "finishedAt": "2026-09-30T19:16:59.872Z",
+      "exitCode": 0
+    },
+    {
+      "script": "format:check",
+      "args": [],
+      "startedAt": "2026-09-30T19:16:59.872Z",
+      "finishedAt": "2026-09-30T19:17:02.923Z",
+      "exitCode": 0
+    },
+    {
+      "script": "typecheck",
+      "args": [],
+      "startedAt": "2026-09-30T19:17:02.924Z",
+      "finishedAt": "2026-09-30T19:17:09.415Z",
+      "exitCode": 0
+    },
+    {
+      "script": "test",
+      "args": [
+        "--",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile=output/playwright/vitest.json"
+      ],
+      "startedAt": "2026-09-30T19:17:09.416Z",
+      "finishedAt": "2026-09-30T19:17:27.410Z",
+      "exitCode": 0
+    },
+    {
+      "script": "build",
+      "args": [],
+      "startedAt": "2026-09-30T19:17:27.411Z",
+      "finishedAt": "2026-09-30T19:17:38.873Z",
+      "exitCode": 0
+    },
+    {
+      "script": "bundle:check",
+      "args": [],
+      "startedAt": "2026-09-30T19:17:38.874Z",
+      "finishedAt": "2026-09-30T19:17:39.274Z",
+      "exitCode": 0
+    }
+  ],
+  "unit": {
+    "unique": 95,
+    "passed": 95,
+    "failed": 0,
+    "omitted": 0,
+    "added": 9
+  },
+  "finalBrowser": {
+    "unique": 5,
+    "newIndependent": 4,
+    "projects": 2,
+    "cleanRounds": 2,
+    "executions": 20,
+    "passed": 20,
+    "omitted": 0,
+    "automaticRetries": 0,
+    "manualRetryPolicy": "Correct defect or fixture, then run complete scenario again; never enable retries to hide failure"
+  },
+  "finalBearer": {
+    "unique": 4,
+    "executions": 8,
+    "passed": 8,
+    "scope": "HTTP legacy behavior, separate from browser"
+  },
+  "allLocalBrowserAttemptTotals": {
+    "executions": 75,
+    "passed": 71,
+    "failed": 4,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "localBrowserHistory": [
+    {
+      "run": "run-1790790541720",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": []
+    },
+    {
+      "run": "run-1790790663358",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": []
+    },
+    {
+      "run": "run-1790790906580",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": []
+    },
+    {
+      "run": "run-1790791051159",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": [
+        {
+          "file": "round-1-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T17:59:03.123Z",
+            "duration": 23946.906000000003,
+            "expected": 4,
+            "skipped": 0,
+            "unexpected": 1,
+            "flaky": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "run-1790791282384",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": [
+        {
+          "file": "round-1-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:02:46.812Z",
+            "duration": 41307.473,
+            "expected": 4,
+            "skipped": 0,
+            "unexpected": 1,
+            "flaky": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "run-1790791685847",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": [
+        {
+          "file": "round-1-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:09:53.843Z",
+            "duration": 53139.075000000004,
+            "expected": 3,
+            "skipped": 0,
+            "unexpected": 2,
+            "flaky": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "run-1790791941017",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": [
+        {
+          "file": "round-1-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:13:43.774Z",
+            "duration": 25051.862,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-1-mobile-chromium-emulated-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:14:13.045Z",
+            "duration": 27482.280000000002,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-2-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:15:06.553Z",
+            "duration": 24934.377,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-2-mobile-chromium-emulated-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:15:35.680Z",
+            "duration": 26865.325,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "run-1790792286432",
+      "scope": "preserved setup/reproduction/earlier execution",
+      "reports": [
+        {
+          "file": "round-1-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:19:35.107Z",
+            "duration": 27578.899999999998,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-1-mobile-chromium-emulated-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:20:35.534Z",
+            "duration": 27743.392,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-2-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:21:54.188Z",
+            "duration": 24382.894999999997,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-2-mobile-chromium-emulated-results.json",
+          "stats": {
+            "startTime": "2026-09-30T18:22:22.796Z",
+            "duration": 27125.744000000002,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        }
+      ]
+    },
+    {
+      "run": "run-1790795330040",
+      "scope": "selected final local execution",
+      "reports": [
+        {
+          "file": "round-1-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T19:10:30.741Z",
+            "duration": 26051.877,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-1-mobile-chromium-emulated-results.json",
+          "stats": {
+            "startTime": "2026-09-30T19:11:01.090Z",
+            "duration": 27186.832,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-2-desktop-chromium-results.json",
+          "stats": {
+            "startTime": "2026-09-30T19:12:00.061Z",
+            "duration": 24968.499,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "file": "round-2-mobile-chromium-emulated-results.json",
+          "stats": {
+            "startTime": "2026-09-30T19:12:29.223Z",
+            "duration": 26691.337,
+            "expected": 5,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        }
+      ]
+    }
+  ],
+  "failuresPreserved": [
+    {
+      "stage": "SSE frontend before correction",
+      "file": "sse-client-before.json",
+      "failed": 3
+    },
+    {
+      "stage": "Cookie logout/expiry before correction with corrected fixtures",
+      "file": "cookie-reproduction.json",
+      "failed": 2
+    },
+    {
+      "stage": "Reload while response still pending before correction",
+      "file": "pending-reload-before.json",
+      "failed": 1
+    },
+    {
+      "stage": "UI setup",
+      "runs": ["run-1790790541720", "run-1790790663358", "run-1790790906580"],
+      "reason": "Wrong npm version; temporary old commercial-intent export absent; repeated fixture restoration error. No browser scenarios executed."
+    },
+    {
+      "stage": "UI fixture",
+      "run": "run-1790791051159",
+      "reason": "M04 absent from seed; corrected own fixture to M03, retained failure."
+    },
+    {
+      "stage": "Real lost response gap",
+      "run": "run-1790791282384",
+      "reason": "Operation committed; uncertainty/recovery banner absent after transport response was lost."
+    },
+    {
+      "stage": "Recovery assertion fixture",
+      "run": "run-1790791685847",
+      "reason": "Two URL assertions expected plain /login; actual valid redirect includes ?next=%2Ffloor. Corrected exact redirect assertion and retained visible form checks."
+    },
+    {
+      "stage": "Trace isolation",
+      "reason": "Shared outputDir removed desktop direct screenshots during mobile project; added round/project-specific directories and reran both clean rounds."
+    }
+  ],
+  "privacy": {
+    "scope": "output/playwright/run-1790795330040",
+    "textEntries": 1959,
+    "archives": 40,
+    "findings": [],
+    "note": "Read-only scan of sanitized JSON, NDJSON, ZIP entries and embedded HTML ZIP; detects JWT, generated passwords, DB credentials and retained cookie/storageState. Not a claim of exhaustive DLP."
+  },
+  "screenshots": {
+    "count": 7,
+    "agentInspected": true,
+    "humanReviewed": false,
+    "manifest": "../screenshots/manifest.json"
+  },
+  "backendCI": "backend-final-ci.json",
+  "limits": [
+    "Bearer legacy without jti remains valid after logout until expiry, subject to current user/role checks.",
+    "Historical incomplete idempotency entries retain explicit conflict; conservative manual reconciliation only; confirmed keys retained indefinitely.",
+    "No distributed SSE infrastructure or physical mobile testing.",
+    "Known visual fallback labels, actor UUID and missing channel name are documented; human review pending."
+  ]
+}

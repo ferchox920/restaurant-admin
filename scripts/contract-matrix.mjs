@@ -103,7 +103,7 @@ writeFileSync(
   "docs/verification/contract-matrix.json",
   JSON.stringify(
     {
-      backendSha: "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+      backendSha: "5562dec6cef7c00f76c31cc5bf663f5cf282ae14",
       source:
         "OpenAPI ejecutado + controladores del clon fijado + consumidores frontend; no acredita ejecución de todos los CRUD",
       consumers: unique,
@@ -116,7 +116,7 @@ writeFileSync(
 const lines = [
   "# Matriz de consumidores HTTP",
   "",
-  "Fuente: OpenAPI ejecutado del backend e25b7e1 y controladores/DTO de ese clon. El JSON adyacente conserva parámetros, cuerpos, respuestas y campos de todos los schemas. Esta matriz estática no sustituye las pruebas full-stack.",
+  "Fuente: OpenAPI ejecutado del backend 5562dec y controladores/DTO de ese clon. El JSON adyacente conserva parámetros, cuerpos, respuestas y campos de todos los schemas. Esta matriz estática no sustituye las pruebas full-stack.",
   "",
   "| Consumidor | Método | Ruta | Roles efectivos | OpenAPI |",
   "| --- | --- | --- | --- | --- |",

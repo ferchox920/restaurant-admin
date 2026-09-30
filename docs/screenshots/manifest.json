@@ -1,0 +1,53 @@
+{
+  "sourceRun": "run-1790795330040",
+  "backendSha": "5562dec6cef7c00f76c31cc5bf663f5cf282ae14",
+  "project": "desktop-chromium",
+  "round": 1,
+  "agentVisualInspection": true,
+  "humanVisualReview": false,
+  "scope": "Fictitious data; genuine browser screenshots copied without editing; floor from completed resync capture",
+  "files": [
+    {
+      "file": "login.png",
+      "sha256": "3ff6558c98fef6ce4ec023a1b3fcb29e2eb844c178987019ae1dd759a3caff3d",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "floor.png",
+      "sha256": "a333264ed690951f2ff822d44f8891774b73248d6f9918976441ff27d0ce8afb",
+      "width": 1280,
+      "height": 1268
+    },
+    {
+      "file": "order.png",
+      "sha256": "3549ebd048ef4230a4e755c26b2c8a6db321b79d302557d2479f4fc0c20f91ad",
+      "width": 1280,
+      "height": 1268
+    },
+    {
+      "file": "sale.png",
+      "sha256": "ebdc8658a7b89652fd2a2fa99848c0b0326b98ccf8ebc503c31eace9277b715c",
+      "width": 1280,
+      "height": 1268
+    },
+    {
+      "file": "inventory.png",
+      "sha256": "0e24438a4873f283cb32cbb7ff72e92a5e3023bc0a559b43d178ac58e04a1ac8",
+      "width": 1280,
+      "height": 1268
+    },
+    {
+      "file": "audit.png",
+      "sha256": "71f7ecb18c3d2dc97fa3e2b44e6d3bd92b6b07b6dfd172d589798467b2cfdbc7",
+      "width": 1280,
+      "height": 1268
+    },
+    {
+      "file": "report.png",
+      "sha256": "6e4afe9100d55a2d0df0919250d7d991f2c0eb05fa2ee40f7116046a67e7b409",
+      "width": 1280,
+      "height": 1268
+    }
+  ]
+}

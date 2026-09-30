@@ -33,7 +33,7 @@ writeFileSync(
   process.env.INTEGRATION_BEARER_RESULT,
   JSON.stringify(
     {
-      backendSha: "e25b7e1d136247210c6a73c5cdc6d0b50c1eacfd",
+      backendSha: "5562dec6cef7c00f76c31cc5bf663f5cf282ae14",
       checks,
       passed: checks.length,
       browser: false,

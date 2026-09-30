@@ -23,10 +23,8 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.6.2
       - run: npm ci
+      - run: npm run audit:check
       - run: npm run verify
-      - run: |
-          npm audit --json > output/playwright/audit.json || test "$?" -eq 1
-          npm audit --omit=dev --json > output/playwright/audit-production.json || test "$?" -eq 1
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
@@ -50,8 +48,12 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run test:fullstack
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - name: Sanitize trace and HTML credentials, including failed runs
+        id: sanitize
         if: always()
+        run: node scripts/sanitize-evidence.mjs output/playwright
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: ${{ !cancelled() && steps.sanitize.outcome == 'success' }}
         with:
           name: frontend-fullstack
           retention-days: 14

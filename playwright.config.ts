@@ -7,7 +7,7 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
-  outputDir: `${process.env.INTEGRATION_OUTPUT || "output/playwright"}/round-${process.env.INTEGRATION_ROUND || "debug"}-traces`,
+  outputDir: `${process.env.INTEGRATION_OUTPUT || "output/playwright"}/round-${process.env.INTEGRATION_ROUND || "debug"}-${process.env.INTEGRATION_PROJECT || "debug-project"}-traces`,
   reporter: [["list"], ["json"], ["html", { open: "never" }]],
   use: {
     actionTimeout: 10_000,

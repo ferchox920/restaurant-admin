@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CommercialRecovery } from "@/components/feedback/commercial-recovery";
 import dynamic from "next/dynamic";
 import { ArrowLeft } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -181,6 +182,7 @@ export function TableOrderDetailPage({ orderId }: Props) {
 
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <CommercialRecovery operation={`/api/table-orders/${orderId}/close`} />
       <PageHeader
         eyebrow="Orden de mesa"
         title={`Mesa ${order.tableCode}`}

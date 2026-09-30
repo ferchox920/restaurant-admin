@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CommercialRecovery } from "@/components/feedback/commercial-recovery";
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorMessage } from "@/components/feedback/error-message";
@@ -233,6 +234,10 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
     null;
   return (
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+      <CommercialRecovery
+        operation={`/api/sales/tickets/${ticketId}/confirm`}
+      />
+      <CommercialRecovery operation={`/api/sales/tickets/${ticketId}/void`} />
       <SaleTicketHeader
         ticket={ticket}
         onBack={onBack}

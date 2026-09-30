@@ -3,6 +3,32 @@ import { commercialIntent } from "./commercial-intent";
 
 describe("commercial intention", () => {
   beforeEach(() => sessionStorage.clear());
+  it("recovers the pre-send payload/key when reload interrupts a still-pending response", async () => {
+    const operation = "/api/table-orders/pending/close";
+    const payload = {
+      paymentMethod: "CASH",
+      expectedVersion: "9007199254740993",
+    };
+    let finish!: (value: string) => void;
+    let originalKey = "";
+    const request = commercialIntent(operation, payload, (key) => {
+      originalKey = key;
+      return new Promise<string>((resolve) => {
+        finish = resolve;
+      });
+    });
+    await Promise.resolve();
+    vi.resetModules();
+    const reloaded = await import("./commercial-intent");
+    try {
+      expect(reloaded.readUncertainIntents(operation)).toEqual([
+        { operation, payload, key: originalKey },
+      ]);
+    } finally {
+      finish("confirmed");
+      await request;
+    }
+  });
   it("coalesces double submission before the first response", async () => {
     let finish!: (value: string) => void;
     const send = vi.fn(
