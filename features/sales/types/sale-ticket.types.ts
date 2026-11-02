@@ -21,7 +21,11 @@ export type SaleTicketChannel = {
   active?: boolean;
 };
 
-export type SalePaymentMethod = "CASH" | "TRANSFER";
+export type SalePaymentMethod = "CASH" | "TRANSFER" | "MERCADO_PAGO";
+export type ManualSalePaymentMethod = Exclude<
+  SalePaymentMethod,
+  "MERCADO_PAGO"
+>;
 
 export type SaleTicketItem = {
   id: string;
@@ -84,7 +88,7 @@ export type SaleTicketFilters = PaginationParams & {
 export type CreateSaleTicketInput = {
   salesChannelId: string;
   notes?: string;
-  paymentMethod?: SalePaymentMethod;
+  paymentMethod?: ManualSalePaymentMethod;
   paymentBankId?: string;
 };
 
@@ -92,13 +96,13 @@ export type UpdateSaleTicketInput = {
   expectedVersion?: string;
   salesChannelId?: string;
   notes?: string;
-  paymentMethod?: SalePaymentMethod;
+  paymentMethod?: ManualSalePaymentMethod;
   paymentBankId?: string;
 };
 
 export type ConfirmSaleTicketInput = {
   expectedVersion?: string;
-  paymentMethod: SalePaymentMethod;
+  paymentMethod: ManualSalePaymentMethod;
   paymentBankId?: string;
 };
 
@@ -126,13 +130,13 @@ export type VoidSaleTicketInput = {
 export type CreateSaleTicketFormValues = {
   salesChannelId: string;
   notes?: string;
-  paymentMethod?: SalePaymentMethod;
+  paymentMethod?: ManualSalePaymentMethod;
   paymentBankId?: string;
 };
 
 export type SaleTicketPaymentFormValues = {
   expectedVersion?: string;
-  paymentMethod: SalePaymentMethod;
+  paymentMethod: ManualSalePaymentMethod;
   paymentBankId?: string;
 };
 

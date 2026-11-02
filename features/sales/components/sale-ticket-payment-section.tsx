@@ -16,11 +16,14 @@ import { EmptyState } from "@/components/feedback/empty-state";
 import { ErrorMessage } from "@/components/feedback/error-message";
 import { LoadingState } from "@/components/feedback/loading-state";
 import type { PaymentBank } from "@/features/payment-banks/types/payment-bank.types";
-import type { SalePaymentMethod } from "@/features/sales/types/sale-ticket.types";
+import type {
+  ManualSalePaymentMethod,
+  SalePaymentMethod,
+} from "@/features/sales/types/sale-ticket.types";
 import { getApiErrorMessages } from "@/lib/api/error-messages";
 
 type SaleTicketPaymentSectionProps = {
-  paymentMethod: SalePaymentMethod | "";
+  paymentMethod: ManualSalePaymentMethod | "";
   paymentBankId: string;
   banks: PaymentBank[];
   isBanksLoading?: boolean;
@@ -28,7 +31,7 @@ type SaleTicketPaymentSectionProps = {
   isSaving?: boolean;
   saveError?: unknown;
   disabled?: boolean;
-  onPaymentMethodChange: (paymentMethod: SalePaymentMethod) => void;
+  onPaymentMethodChange: (paymentMethod: ManualSalePaymentMethod) => void;
   onPaymentBankChange: (paymentBankId: string) => void;
   onSave: () => Promise<void> | void;
 };
@@ -42,6 +45,10 @@ export function getSalePaymentMethodLabel(
 
   if (paymentMethod === "TRANSFER") {
     return "Transferencia";
+  }
+
+  if (paymentMethod === "MERCADO_PAGO") {
+    return "Mercado Pago";
   }
 
   return "Sin definir";

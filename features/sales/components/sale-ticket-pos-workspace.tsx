@@ -12,12 +12,13 @@ import { LoadingState } from "@/components/feedback/loading-state";
 import { ConfirmSaleTicketDialog } from "@/features/sales/components/confirm-sale-ticket-dialog";
 import { CancelSaleTicketDialog } from "@/features/sales/components/cancel-sale-ticket-dialog";
 import { SaleTicketPaymentSection } from "@/features/sales/components/sale-ticket-payment-section";
+import { MercadoPagoCheckoutDialog } from "@/features/mercado-pago/components/mercado-pago-checkout-dialog";
 import { saleTicketPaymentSchema } from "@/features/sales/schemas/sale-ticket.schema";
 import type { PaymentBank } from "@/features/payment-banks/types/payment-bank.types";
 import type {
   AddSaleTicketItemFormValues,
   ConfirmSaleTicketInput,
-  SalePaymentMethod,
+  ManualSalePaymentMethod,
   SaleProductOption,
   SaleTicketDetail,
   SaleTicketPaymentFormValues,
@@ -177,8 +178,12 @@ export function SaleTicketPosWorkspace({
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [search, setSearch] = useState("");
   const [openPanel, setOpenPanel] = useState<"products" | "order">("products");
-  const [paymentMethod, setPaymentMethod] = useState<SalePaymentMethod | "">(
-    ticket.paymentMethod ?? ""
+  const [paymentMethod, setPaymentMethod] = useState<
+    ManualSalePaymentMethod | ""
+  >(
+    ticket.paymentMethod === "CASH" || ticket.paymentMethod === "TRANSFER"
+      ? ticket.paymentMethod
+      : ""
   );
   const [paymentBankId, setPaymentBankId] = useState(ticket.paymentBankId ?? "");
   const [blockedProductReasons, setBlockedProductReasons] = useState<
@@ -791,6 +796,12 @@ export function SaleTicketPosWorkspace({
                   }}
                   onPaymentBankChange={setPaymentBankId}
                   onSave={handleSavePayment}
+                />
+                <MercadoPagoCheckoutDialog
+                  ticketId={ticket.id}
+                  total={ticket.total}
+                  itemsCount={ticket.items.length}
+                  disabled={isMutating}
                 />
                 <ConfirmSaleTicketDialog
                   itemsCount={ticket.items.length}

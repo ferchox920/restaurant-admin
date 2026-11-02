@@ -3,7 +3,7 @@ import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SaleTicketPaymentSection } from "@/features/sales/components/sale-ticket-payment-section";
 import type { PaymentBank } from "@/features/payment-banks/types/payment-bank.types";
-import type { SalePaymentMethod } from "@/features/sales/types/sale-ticket.types";
+import type { ManualSalePaymentMethod } from "@/features/sales/types/sale-ticket.types";
 
 const banks: PaymentBank[] = [
   {
@@ -25,10 +25,10 @@ function PaymentSectionHarness({
   initialPaymentMethod = "",
   initialPaymentBankId = "",
 }: {
-  initialPaymentMethod?: SalePaymentMethod | "";
+  initialPaymentMethod?: ManualSalePaymentMethod | "";
   initialPaymentBankId?: string;
 }) {
-  const [paymentMethod, setPaymentMethod] = useState<SalePaymentMethod | "">(
+  const [paymentMethod, setPaymentMethod] = useState<ManualSalePaymentMethod | "">(
     initialPaymentMethod
   );
   const [paymentBankId, setPaymentBankId] = useState(initialPaymentBankId);

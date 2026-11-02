@@ -249,7 +249,11 @@ export function SaleTicketPage({ ticketId, onBack }: SaleTicketPageProps) {
               });
             }}
             onConfirm={async () => {
-              if (!hasItems || !ticket.paymentMethod) {
+              if (
+                !hasItems ||
+                (ticket.paymentMethod !== "CASH" &&
+                  ticket.paymentMethod !== "TRANSFER")
+              ) {
                 return;
               }
 

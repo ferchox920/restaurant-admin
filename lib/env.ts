@@ -17,3 +17,5 @@ export const stockReportPaginationEnabled =
   "true";
 export const posCatalogEnabled =
   process.env.NEXT_PUBLIC_POS_CATALOG_ENABLED?.trim().toLowerCase() === "true";
+export const mercadoPagoPublicKey =
+  process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY?.trim() || "";

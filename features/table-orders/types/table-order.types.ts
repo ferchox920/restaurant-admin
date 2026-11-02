@@ -1,5 +1,5 @@
 import type { ProductUnit } from "@/features/products/types/product.types";
-import type { SalePaymentMethod } from "@/features/sales/types/sale-ticket.types";
+import type { ManualSalePaymentMethod } from "@/features/sales/types/sale-ticket.types";
 import type { PaginationParams } from "@/types/common";
 
 export const tableOrderStatuses = ["OPEN", "CANCELLED", "CLOSED"] as const;
@@ -97,7 +97,7 @@ export type CancelTableOrderInput = {
 
 export type CloseTableOrderInput = {
   expectedVersion?: string;
-  paymentMethod: SalePaymentMethod;
+  paymentMethod: ManualSalePaymentMethod;
   paymentBankId?: string;
 };
 
@@ -124,6 +124,6 @@ export type CancelTableOrderFormValues = {
 
 export type CloseTableOrderFormValues = {
   expectedVersion?: string;
-  paymentMethod: SalePaymentMethod;
+  paymentMethod: ManualSalePaymentMethod;
   paymentBankId?: string;
 };
